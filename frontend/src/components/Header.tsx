@@ -1,23 +1,30 @@
+import { AccountCircle } from '@mui/icons-material';
 import {
   AppBar,
   Box,
+  IconButton,
   ThemeProvider,
   Toolbar,
   Typography,
   createTheme,
 } from '@mui/material';
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 
 const theme = createTheme({
   palette: {
     header: {
       main: '#ffffff',
-      contrastText: '#242105',
+      contrastText: '#464643',
+    },
+    accountIcon: {
+      main: '#000000',
     },
   },
 });
 
 export const Header = (): ReactElement => {
+  const [isLogin, setIsLogin] = useState<boolean>(true);
+
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ flexGrow: 1 }}>
@@ -30,21 +37,40 @@ export const Header = (): ReactElement => {
             >
               BBANGTING
             </Typography>
-            <Typography
-              variant="h6"
-              component={'div'}
-              sx={{ flexGrow: 0, fontWeight: 400 }}
-              mr={3}
-            >
-              로그인
-            </Typography>
-            <Typography
-              variant="h6"
-              component={'div'}
-              sx={{ flexGrow: 0, fontWeight: 400 }}
-            >
-              회원가입
-            </Typography>
+            {!isLogin ? (
+              <>
+                <Typography
+                  variant="h6"
+                  component={'div'}
+                  sx={{ flexGrow: 0, fontWeight: 400 }}
+                  mr={3}
+                >
+                  로그인
+                </Typography>
+                <Typography
+                  variant="h6"
+                  component={'div'}
+                  sx={{ flexGrow: 0, fontWeight: 400 }}
+                >
+                  회원가입
+                </Typography>
+              </>
+            ) : (
+              <>
+                <IconButton
+                  size="large"
+                  aria-label="menu"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  onClick={() => {
+                    setIsLogin(false);
+                  }}
+                  color="accountIcon"
+                >
+                  <AccountCircle />
+                </IconButton>
+              </>
+            )}
           </Toolbar>
         </AppBar>
       </Box>
@@ -59,10 +85,22 @@ declare module '@mui/material/styles' {
   interface PaletteOptions {
     header?: PaletteOptions['primary'];
   }
+  interface Palette {
+    accountIcon: Palette['primary'];
+  }
+  interface PaletteOptions {
+    accountIcon?: PaletteOptions['primary'];
+  }
 }
 
 declare module '@mui/material/AppBar' {
   interface AppBarPropsColorOverrides {
     header: true;
+  }
+}
+
+declare module '@mui/material/IconButton' {
+  interface IconButtonPropsColorOverrides {
+    accountIcon: true;
   }
 }
