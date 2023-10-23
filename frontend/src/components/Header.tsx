@@ -77,30 +77,3 @@ export const Header = (): ReactElement => {
     </ThemeProvider>
   );
 };
-
-declare module '@mui/material/styles' {
-  interface Palette {
-    header: Palette['primary'];
-  }
-  interface PaletteOptions {
-    header?: PaletteOptions['primary'];
-  }
-  interface Palette {
-    accountIcon: Palette['primary'];
-  }
-  interface PaletteOptions {
-    accountIcon?: PaletteOptions['primary'];
-  }
-}
-
-declare module '@mui/material/AppBar' {
-  interface AppBarPropsColorOverrides {
-    header: true;
-  }
-}
-
-declare module '@mui/material/IconButton' {
-  interface IconButtonPropsColorOverrides {
-    accountIcon: true;
-  }
-}
