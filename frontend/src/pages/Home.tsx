@@ -1,7 +1,10 @@
+import { MainBanner } from '../components/Home/MainBanner';
+
 export const Home = () => {
   return (
-    <div>
+    <>
+      <MainBanner />
       <div>홈 </div>
-    </div>
+    </>
   );
 };

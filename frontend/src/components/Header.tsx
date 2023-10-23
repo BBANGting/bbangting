@@ -7,6 +7,7 @@ import {
   Toolbar,
   Typography,
   createTheme,
+  useMediaQuery,
 } from '@mui/material';
 import { ReactElement, useState } from 'react';
 
@@ -25,11 +26,13 @@ const theme = createTheme({
 export const Header = (): ReactElement => {
   const [isLogin, setIsLogin] = useState<boolean>(true);
 
+  const width = useMediaQuery('(max-width:1440px)');
+
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static" color="header" sx={{ placeItems: 'center' }}>
-          <Toolbar sx={{ width: 1440 }}>
+          <Toolbar sx={{ minWidth: width ? 1000 : 1440 }}>
             <Typography
               variant="h6"
               component={'div'}
