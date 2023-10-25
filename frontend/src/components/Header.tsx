@@ -24,7 +24,7 @@ const theme = createTheme({
 });
 
 export const Header = (): ReactElement => {
-  const [isLogin, setIsLogin] = useState<boolean>(true);
+  const [isLogin, setIsLogin] = useState<boolean>(false);
 
   const width = useMediaQuery('(max-width:1440px)');
 
