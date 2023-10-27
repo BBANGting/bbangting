@@ -28,6 +28,7 @@ public class UserApiController {
         return "user/userForm";
     }
 
+    // 일단 save 만 수정함!
     @PostMapping("/auth/joinProc")
     public ResponseDto<Integer> save(@RequestBody UserFormDto userFormDto) {
 

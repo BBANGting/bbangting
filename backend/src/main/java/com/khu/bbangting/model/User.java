@@ -91,16 +91,4 @@ public class User implements UserDetails {
         return false;
     }
 
-/*    //엔티티에서 회원 생성 메서드를 만들어 관리하면 -> 코드가 변경되더라도 한 군데만 수정하면 되는 이점이 있음.
-    public static User createUser(UserFormDto userFormDto, PasswordEncoder passwordEncoder) {
-        User user = new User();
-        user.setEmail(userFormDto.getEmail());
-        String password = passwordEncoder.encode(userFormDto.getPassword());
-        user.setPassword(password);
-        user.setUsername(userFormDto.getUsername());
-        user.setBanCount(0);
-        user.setRole(Role.USER);
-        user.setType(Type.GENERAL);
-        return user;
-    }*/
 }

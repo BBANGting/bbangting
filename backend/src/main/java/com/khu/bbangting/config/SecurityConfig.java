@@ -51,7 +51,7 @@ public class SecurityConfig {
                         .loginPage("/auth/loginForm")
                         .loginProcessingUrl("/auth/loginProc")
                         .defaultSuccessUrl("/")
-                        //.failureUrl("/auth/loginForm")
+                        .failureUrl("/auth/loginForm")
                         .usernameParameter("email")
 
                 )

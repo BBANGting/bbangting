@@ -40,11 +40,4 @@ public class UserService {
                 .build());
     }
 
-//    private void validateDuplicateUser(String email) {
-//        userRepository.findByEmail(email);
-//        if (findUser != null) {
-//            throw new IllegalStateException("이미 가입된 회원입니다.");
-//        }
-//    }
-
 }
