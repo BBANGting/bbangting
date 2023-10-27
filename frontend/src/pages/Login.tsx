@@ -1,5 +1,6 @@
 import { Box, Container, Grid, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
+import { AuthButton } from '../components/Login/AuthButton';
 
 export const Login = () => {
   const [isError, setIsError] = useState<boolean>(false);
@@ -8,14 +9,15 @@ export const Login = () => {
   const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setInputEmail(e.target.value);
+    const confirmEmail: boolean = /^[\w+_]\w+@\w+\.\w+/.test(inputEmail);
+    console.log(confirmEmail);
     setIsError(!confirmEmail);
   };
-
-  const confirmEmail: boolean = /^[\w+_]\w+@\w+\.\w+/.test(inputEmail);
 
   return (
     <Container
       sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+      component={'form'}
     >
       <Typography variant="h4" sx={{ fontWeight: 600 }} mt={10} mb={10}>
         로그인
@@ -27,7 +29,6 @@ export const Login = () => {
           </Typography>
           <TextField
             onChange={inputHandler}
-            onKeyDown={() => setIsError(true)}
             error={isError}
             fullWidth
             placeholder="이메일 입력"
@@ -39,6 +40,9 @@ export const Login = () => {
             비밀번호
           </Typography>
           <TextField fullWidth placeholder="비밀번호 입력" />
+        </Grid>
+        <Grid mt={3}>
+          <AuthButton text="로그인" />
         </Grid>
       </Box>
     </Container>
