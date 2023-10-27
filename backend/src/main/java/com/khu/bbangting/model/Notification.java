@@ -6,17 +6,13 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "notification")
+@Table(name = "notifications")
 public class Notification {
 
     @Id
     @Column(name = "notiId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name="userId")
-    private User user;
 
     @Column(nullable = false)
     private String message;
@@ -26,4 +22,9 @@ public class Notification {
 
     @CreationTimestamp
     private Timestamp lastReadTime;
+
+    @ManyToOne
+    @JoinColumn(name="userId")
+    private User users;
+
 }

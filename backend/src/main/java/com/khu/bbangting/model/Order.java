@@ -12,20 +12,13 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name="orders")
 public class Order {
 
     @Id
     @Column(name = "orderId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name="userId")
-    private User user;
-
-    @OneToOne
-    @JoinColumn(name="breadId")
-    private Bread bread;
 
     @Column(nullable = false)
     private int quantity;
@@ -38,5 +31,13 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+
+    @ManyToOne
+    @JoinColumn(name="userId")
+    private User users;
+
+    @OneToOne
+    @JoinColumn(name="breadId")
+    private Bread breads;
 
 }

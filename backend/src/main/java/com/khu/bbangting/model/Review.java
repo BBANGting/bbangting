@@ -13,17 +13,13 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "review")
+@Table(name = "reviews")
 public class Review {
 
     @Id
     @Column(name = "reviewId")
     @GeneratedValue
     private Long id;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="orderId")
-    private Order order;
 
     @Column(nullable = true)
     private int rating;
@@ -33,4 +29,9 @@ public class Review {
 
     @CreationTimestamp
     private Timestamp createdDate;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="orderId")
+    private Order orders;
+
 }
