@@ -1,15 +1,19 @@
 package com.khu.bbangting.controller;
 
+import com.khu.bbangting.dto.ResponseDto;
 import com.khu.bbangting.dto.UserFormDto;
 import com.khu.bbangting.model.User;
 import com.khu.bbangting.service.UserService;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController //Json 형태로 객체 데이터 반환
@@ -17,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserApiController {
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/join")
     public String userForm(Model model) {
@@ -25,22 +28,13 @@ public class UserApiController {
         return "user/userForm";
     }
 
-    @PostMapping("/join")
-    public String userForm(@Valid UserFormDto userFormDto, BindingResult bindingResult, Model model) {
+    @PostMapping("/auth/joinProc")
+    public ResponseDto<Integer> save(@RequestBody UserFormDto userFormDto) {
 
-        if(bindingResult.hasErrors()){
-            return "user/userForm";
-        }
+        System.out.println("UserApiController: save 함수 호출됨");
+        userService.saveUser(userFormDto);
 
-        try {
-            User user = User.createUser(userFormDto, passwordEncoder);
-            userService.saveUser(user);
-        } catch (IllegalStateException e){
-            model.addAttribute("errorMessage", e.getMessage());
-            return "user/userForm";
-        }
-
-        return "redirect:/";
+        return new ResponseDto<Integer>(HttpStatus.OK.value(), 1);
     }
 
     @GetMapping(value="/login")

@@ -1,7 +1,9 @@
 package com.khu.bbangting.config;
 
+import com.khu.bbangting.service.UserDetailService;
 import com.khu.bbangting.service.UserService;
 import jakarta.servlet.DispatcherType;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +21,7 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     @Bean
@@ -36,13 +39,21 @@ public class SecurityConfig {
                                            HandlerMappingIntrospector introspector) throws Exception {
         MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
         http.csrf(AbstractHttpConfigurer::disable);
-        http
+        http.authorizeHttpRequests(request -> request
+                        .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
+                        .requestMatchers(mvcMatcherBuilder.pattern("/")).permitAll()
+                        .requestMatchers(mvcMatcherBuilder.pattern("/auth/**")).permitAll()
+                        .requestMatchers(mvcMatcherBuilder.pattern("/js/**")).permitAll()
+                        .requestMatchers(mvcMatcherBuilder.pattern("/css/**")).permitAll()
+                        .requestMatchers(mvcMatcherBuilder.pattern("/image/**")).permitAll()
+                .anyRequest().authenticated())
                 .formLogin(login -> login
-                        .loginPage("/login")
+                        .loginPage("/auth/loginForm")
+                        .loginProcessingUrl("/auth/loginProc")
                         .defaultSuccessUrl("/")
+                        //.failureUrl("/auth/loginForm")
                         .usernameParameter("email")
-                        .failureUrl("/login/error")
-                        .usernameParameter("email")
+
                 )
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))

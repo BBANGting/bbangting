@@ -1,11 +1,14 @@
 package com.khu.bbangting.service;
 
+import com.khu.bbangting.dto.UserFormDto;
 import com.khu.bbangting.model.User;
 import com.khu.bbangting.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,36 +17,34 @@ import static org.springframework.security.core.userdetails.User.*;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserService {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    public User saveUser(User user) {
-        validateDuplicateUser(user);
-        return userRepository.save(user);
-    }
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
-    private void validateDuplicateUser(User user) {
-        User findUser = userRepository.findByEmail(user.getEmail());
-        if (findUser != null) {
+    public User saveUser(UserFormDto userDto) {
+
+    //    validateDuplicateUser(userDto.getEmail());
+
+        if(userRepository.existsByEmail(userDto.getEmail())){
             throw new IllegalStateException("이미 가입된 회원입니다.");
         }
+
+        return userRepository.save(User.builder()
+                .email(userDto.getEmail())
+                .password(passwordEncoder.encode(userDto.getPassword()))
+                .username(userDto.getUsername())
+                .build());
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String email)
-            throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email);
+//    private void validateDuplicateUser(String email) {
+//        userRepository.findByEmail(email);
+//        if (findUser != null) {
+//            throw new IllegalStateException("이미 가입된 회원입니다.");
+//        }
+//    }
 
-        if(user == null) {
-            throw new UsernameNotFoundException(email);
-        }
-
-        return builder()
-                .username(user.getEmail())
-                .password(user.getPassword())
-                .roles(user.getRole().toString())
-                .build();
-
-    }
 }
