@@ -1,14 +1,12 @@
 package com.khu.bbangting.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
+@Table(name = "follows")
 public class Follow {
 
     @Id
@@ -23,4 +21,5 @@ public class Follow {
     @ManyToOne
     @JoinColumn(name = "userId")
     private User user;
+
 }
