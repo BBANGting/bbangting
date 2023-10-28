@@ -4,25 +4,20 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
-import javax.naming.Name;
 import java.sql.Timestamp;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "breads")
 public class Bread {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "breadId")
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "storeId")
-    private Store store;
 
     @Column(nullable = false, length = 20)
     private String breadName;
@@ -46,5 +41,9 @@ public class Bread {
 
     @Column(nullable = false)
     private char tingStatus;    // 'Y', 'N'
+
+    @ManyToOne
+    @JoinColumn(name = "storeId")
+    private Store store;
 
 }
