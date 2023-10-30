@@ -67,8 +67,8 @@ export const Header = (): ReactElement => {
               </Typography>
             </Link>
             <Box sx={{ flexGrow: 1, display: 'flex' }}>
-              {leftOptions.map(menu => (
-                <Link to={menu.link}>
+              {leftOptions.map((menu, idx) => (
+                <Link to={menu.link} key={idx}>
                   <MenuItem sx={{ borderRadius: 5 }}>
                     <Typography variant="h6" sx={{ fontWeight: 400 }}>
                       {menu.name}
@@ -79,8 +79,8 @@ export const Header = (): ReactElement => {
             </Box>
             {!isLogin ? (
               <>
-                {rightOptions.map(menu => (
-                  <Link to={menu.link}>
+                {rightOptions.map((menu, idx) => (
+                  <Link to={menu.link} key={idx}>
                     <MenuItem sx={{ borderRadius: 5 }}>
                       <Typography variant="h6" sx={{ fontWeight: 400 }}>
                         {menu.name}

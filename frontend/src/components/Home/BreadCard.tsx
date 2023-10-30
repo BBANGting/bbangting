@@ -13,7 +13,7 @@ export const BreadCard = ({ store, name, openTime, img }: BreadCardProps) => {
       item
       xs={4}
       display={'flex'}
-      direction="column"
+      flexDirection="column"
       alignItems={'center'}
       mb={5}
     >
