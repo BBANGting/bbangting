@@ -1,0 +1,51 @@
+[
+  {
+    "name": "튀김소보로",
+    "store": "성심당1",
+    "img": "/imgs/soboro.png",
+    "openTime": "11:00",
+    "openDate": "2023-11-01"
+  },
+  {
+    "name": "튀김소보로",
+    "store": "성심당2",
+    "img": "/imgs/soboro.png",
+    "openTime": "11:00",
+    "openDate": "2023-11-01"
+  },
+  {
+    "name": "튀김소보로",
+    "store": "성심당3",
+    "img": "/imgs/soboro.png",
+    "openTime": "10:00",
+    "openDate": "2023-11-01"
+  },
+  {
+    "name": "튀김소보로",
+    "store": "성심당4",
+    "img": "/imgs/soboro.png",
+    "openTime": "10:00",
+    "openDate": "2023-11-01"
+  },
+  {
+    "name": "튀김소보로",
+    "store": "성심당5",
+    "img": "/imgs/soboro.png",
+    "openTime": "10:00",
+    "openDate": "2023-11-02"
+  },
+  {
+    "name": "튀김소보로",
+    "store": "성심당4",
+    "img": "/imgs/soboro.png",
+    "openTime": "10:00",
+    "openDate": "2023-11-04"
+  },
+  {
+    "name": "튀김소보로",
+    "store": "성심당5",
+    "img": "/imgs/soboro.png",
+    "openTime": "10:00",
+    "openDate": "2023-11-05"
+  }
+]
