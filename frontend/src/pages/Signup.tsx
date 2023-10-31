@@ -1,4 +1,11 @@
-import { Box, Container, Grid, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  Checkbox,
+  Container,
+  Grid,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { useState } from 'react';
 import { AuthButton } from '../components/Login/AuthButton';
 
@@ -57,6 +64,30 @@ export const Signup = () => {
             type="password"
             helperText="비밀번호와 똑같이 입력하세요."
           />
+        </Grid>
+        <Grid>
+          <Grid display="flex" alignItems="center" marginLeft={-1.5}>
+            <Checkbox
+              sx={{
+                color: '#DB9662',
+                '&.Mui-checked': {
+                  color: '#DB9662',
+                },
+              }}
+            />
+            <Typography>만 14세 이상입니다.</Typography>
+          </Grid>
+          <Grid display="flex" alignItems="center" marginLeft={-1.5}>
+            <Checkbox
+              sx={{
+                color: '#DB9662',
+                '&.Mui-checked': {
+                  color: '#DB9662',
+                },
+              }}
+            />
+            <Typography>회원 서비스 가입</Typography>
+          </Grid>
         </Grid>
         <Grid mt={3}>
           <AuthButton text="회원가입 완료" />
