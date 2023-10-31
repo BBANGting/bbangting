@@ -7,6 +7,7 @@ import com.khu.bbangting.service.UserService;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.Model;
@@ -17,10 +18,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController //Json 형태로 객체 데이터 반환
-@RequiredArgsConstructor
 public class UserApiController {
 
-    private final UserService userService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/join")
     public String userForm(Model model) {
@@ -48,4 +49,5 @@ public class UserApiController {
         model.addAttribute("loginErrorMsg", "이메일 또는 비밀번호를 확인하세요.");
         return "/user/userLoginForm";
     }
+
 }

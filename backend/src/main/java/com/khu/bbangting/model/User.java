@@ -13,12 +13,11 @@ import java.sql.Timestamp;
 import java.util.Collection;
 
 @NoArgsConstructor
-//@AllArgsConstructor
-
+@AllArgsConstructor
 @Entity
 @Table(name="users")
 @Getter @Setter
-public class User implements UserDetails {
+public class User{
 
     @Id
     @Column(name = "userId")
@@ -54,41 +53,6 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.username = username;
-    }
-
-    @Override // 권한 반환
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
-
-    @Override // 사용자의 id 반환(고유값)
-    public String getUsername() {
-        return email;
-    }
-
-    @Override // 사용자의 password 반환
-    public String getPassword() {
-        return password;
-    }
-
-    @Override // 계정 만료 여부 반환
-    public boolean isAccountNonExpired() {
-        return false;
-    }
-
-    @Override // 계정 잠금 여부 반환
-    public boolean isAccountNonLocked() {
-        return false;
-    }
-
-    @Override // 패스워드 반료 여부 반환
-    public boolean isCredentialsNonExpired() {
-        return false;
-    }
-
-    @Override // 계정 사용 가능 여부 반환
-    public boolean isEnabled() {
-        return false;
     }
 
 }
