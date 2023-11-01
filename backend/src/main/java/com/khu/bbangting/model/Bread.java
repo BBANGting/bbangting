@@ -1,9 +1,8 @@
 package com.khu.bbangting.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.sql.Timestamp;
 
@@ -12,6 +11,7 @@ import java.sql.Timestamp;
 @Builder
 @Entity
 @Table(name = "breads")
+@Getter
 public class Bread {
 
     @Id
@@ -36,10 +36,10 @@ public class Bread {
     @Column(nullable = false)
     private int maxTingNum;
 
-    @Column(nullable = false)
+    @Column
     private int stock;
 
-    @Column(nullable = false)
+    @ColumnDefault("'Y'")
     private char tingStatus;    // 'Y', 'N'
 
     @ManyToOne
