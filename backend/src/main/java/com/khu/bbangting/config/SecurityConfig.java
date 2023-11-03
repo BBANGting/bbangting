@@ -1,6 +1,7 @@
 package com.khu.bbangting.config;
 
 import jakarta.servlet.DispatcherType;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +13,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @Configuration
@@ -39,6 +39,7 @@ public class SecurityConfig {
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/auth/**")).permitAll()
+                        .requestMatchers(mvcMatcherBuilder.pattern("/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/js/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/css/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/image/**")).permitAll()
@@ -52,8 +53,13 @@ public class SecurityConfig {
 
                 )
                 .logout(logout -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                        .logoutSuccessUrl("/")
+                        .logoutUrl("/logout")
+                        .addLogoutHandler(((request, response, authentication) -> {
+                            HttpSession session = request.getSession();
+                            session.invalidate();
+                        }))
+                        .logoutSuccessHandler((request, response, authentication) -> response.sendRedirect("/"))
+                        .deleteCookies("remember-me")
                 );
 
         return http.build();

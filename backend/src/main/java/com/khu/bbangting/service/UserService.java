@@ -14,26 +14,67 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
-    @Transactional
-    public void saveUser(UserFormDto userDto) {
+    @Autowired
+    private UserRepository userRepository;
 
-        // 중복된 회원정보 존재하는지 확인
-        if(userRepository.existsByEmail(userDto.getEmail())){
-            throw new IllegalStateException("이미 가입된 회원입니다.");
-        }
+    @Transactional
+    public User findUser(String email) {
+        User user = userRepository.findByEmail(email).orElseGet(() -> {
+            return new User();
+        });
+
+        return user;
+    }
+
+    @Transactional
+    public void saveUser(UserFormDto userFormDto) {
+
+        String rawPassword = userFormDto.getPassword();
+        String encPassword = passwordEncoder.encode(rawPassword);
+        System.out.println(rawPassword);
 
         User user = User.builder()
-                .email(userDto.getEmail())
-                .password(passwordEncoder.encode(userDto.getPassword()))
-                .username(userDto.getUsername())
+                .email(userFormDto.getEmail())
+                .password(encPassword)
+                .username(userFormDto.getUsername())
                 .build();
 
         userRepository.save(user);
     }
+
+    @Transactional
+    public void modiUser(UserFormDto userFormDto) {
+        User persistance = userRepository.findByEmail(userFormDto.getEmail())
+                .orElseThrow(() -> {
+                    return new IllegalArgumentException("회원 찾기 실패");
+                });
+
+        String rawPassword = userFormDto.getPassword();
+        String encPassword = passwordEncoder.encode(rawPassword);
+
+        persistance.setPassword(encPassword);
+    }
+
+//    @Autowired
+//    private BCryptPasswordEncoder passwordEncoder;
+//
+//    @Transactional
+//    public void saveUser(UserFormDto userDto) {
+//
+//        // 중복된 회원정보 존재하는지 확인
+//        if(userRepository.existsByEmail(userDto.getEmail())){
+//            throw new IllegalStateException("이미 가입된 회원입니다.");
+//        }
+//
+//        User user = User.builder()
+//                .email(userDto.getEmail())
+//                .password(passwordEncoder.encode(userDto.getPassword()))
+//                .username(userDto.getUsername())
+//                .build();
+//
+//        userRepository.save(user);
+//    }
 
 }
