@@ -1,15 +1,18 @@
 package com.khu.bbangting.model;
 
+import com.khu.bbangting.exception.OutOfStockException;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Data
+@ToString
 @Entity
 @Table(name = "breads")
 public class Bread {
@@ -45,5 +48,25 @@ public class Bread {
     @ManyToOne
     @JoinColumn(name = "storeId")
     private Store store;
+
+    //리뷰 리스트 추가
+    @OneToMany(mappedBy = "breads", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private List<Review> reviews = new ArrayList<>();
+
+    //상품 주문 -> 상품 재고 감소
+    public void subStock(int stock) {
+        int restStock = this.stock - stock;
+
+        if(restStock < 0) {
+            throw new OutOfStockException("상품의 재고가 부족합니다.");
+        }
+        this.stock = restStock;
+    }
+
+    //주문 취소 시 상품 개수 늘림
+    public void addStock(int stock) {
+        this.stock += stock;
+    }
 
 }
