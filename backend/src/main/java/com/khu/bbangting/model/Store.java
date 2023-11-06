@@ -24,11 +24,12 @@ public class Store {
     @Column(nullable = false, length = 20)
     private String storeName;
 
+    @Column(nullable = false)
     private String storeLogo;
 
     private String storeImage;
 
-    private String introduction;
+    private String description;
 
     @Column(nullable = false, length = 256)
     private String location;
