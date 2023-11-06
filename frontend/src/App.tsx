@@ -4,6 +4,8 @@ import { Header } from './components/Header';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
+import { CommingSoon } from './pages/CommingSoon';
+import { Store } from './pages/Store';
 
 function App() {
   return (
@@ -13,6 +15,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/commingsoon" element={<CommingSoon />} />
+        <Route path="/store" element={<Store />} />
       </Routes>
     </>
   );
