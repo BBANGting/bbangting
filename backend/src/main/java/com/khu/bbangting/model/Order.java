@@ -44,23 +44,18 @@ public class Order {
     @JoinColumn(name="breadId")
     private Bread bread;
 
-    public static Order createOrder(User user, Bread bread, int quantity) {
-
-        Order order = new Order();
-        order.setQuantity(quantity);
-        order.setOrderDate(Timestamp.valueOf(LocalDateTime.now()));
-        order.setOrderStatus(OrderStatus.ORDER);
-        order.setUser(user);
-        order.setBread(bread);
+    @Builder Order(User user, Bread bread, int quantity) {
+        this.quantity = quantity;
+        this.orderDate = Timestamp.valueOf(LocalDateTime.now());
+        this.orderStatus = OrderStatus.ORDER;
+        this.user = user;
+        this.bread = bread;
         bread.subStock(quantity);
-
-        return order;
     }
 
     //주문 취소 상태로 변환 & 주문 수량만큼 상품 재고에 더해주기
     public void cancel() {
         this.orderStatus = OrderStatus.CANCEL;
         this.getBread().addStock(quantity);
-
     }
 }

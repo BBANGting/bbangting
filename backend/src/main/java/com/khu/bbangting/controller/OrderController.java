@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.naming.Binding;
 import java.security.Principal;
 import java.util.List;
 
@@ -22,40 +23,26 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 public class OrderController {
-
     private OrderService orderService;
 
     //주문
     @PostMapping("/order")
-    public @ResponseBody ResponseEntity order(@RequestBody @Valid OrderDto orderDto, BindingResult bindingResult, Principal principal) {
+    public @ResponseBody ResponseEntity createOrder(@RequestBody @Valid OrderDto orderDto, BindingResult bindingResult) {
 
-        if(bindingResult.hasErrors()) {
+        // 주문 정보를 받는 orderDto 객체에 데이터 바인딩 시 에러가 있는지 검사
+        if(bindingResult.hasErrors()){
             StringBuilder sb = new StringBuilder();
             List<FieldError> fieldErrors = bindingResult.getFieldErrors();
 
-            for(FieldError fieldError : fieldErrors) {
+            for (FieldError fieldError : fieldErrors) {
                 sb.append(fieldError.getDefaultMessage());
             }
+
             return new ResponseEntity<String>(sb.toString(), HttpStatus.BAD_REQUEST);
         }
 
-        String email = principal.getName();
-        Long orderId;
-
-        try {
-            orderId = orderService.order(orderDto, email);
-        } catch(Exception e) {
-            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity<Long>(orderId, HttpStatus.OK);
+        System.out.println("userId: " + ", breadId: " + orderDto.getBreadId() + ", quantity: " + orderDto.getQuantity());
+        return new ResponseEntity<>(orderService.createOrder(orderDto.getUserId(), orderDto.getBreadId(), orderDto.getQuantity()), HttpStatus.OK);
     }
 
-    //주문 취소
-    @PostMapping("/order/{orderId}/cancel")
-    public @ResponseBody ResponseEntity cancelOrder(@PathVariable("orderId") Long orderId, Principal principal) {
-
-        orderService.cancelOrder(orderId);
-        return new ResponseEntity<Long>(orderId, HttpStatus.OK);
-    }
 }
