@@ -49,10 +49,9 @@ public class Bread {
     @JoinColumn(name = "storeId")
     private Store store;
 
-    //리뷰 리스트 추가
-    @OneToMany(mappedBy = "breads", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private List<Review> reviews = new ArrayList<>();
+//    //리뷰 리스트 추가
+//    @OneToMany(mappedBy = "breads", fetch = FetchType.LAZY)
+//    private List<Review> reviews = new ArrayList<>();
 
     //상품 주문 -> 상품 재고 감소
     public void subStock(int stock) {

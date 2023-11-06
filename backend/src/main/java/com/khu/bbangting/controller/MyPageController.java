@@ -1,6 +1,6 @@
 package com.khu.bbangting.controller;
 
-import com.khu.bbangting.config.auth.PrincipalDetails;
+import com.khu.bbangting.config.auth.PrincipalDetail;
 import com.khu.bbangting.model.Order;
 import com.khu.bbangting.model.User;
 import com.khu.bbangting.service.MyPageService;
@@ -35,8 +35,8 @@ public class MyPageController {
 
     //마이페이지
     @GetMapping("/user/{userId}")
-    public String userPage(@PathVariable("id") Long userId, Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        if(principalDetails.getUser().getId() == userId) {
+    public String userPage(@PathVariable("id") Long userId, Model model, @AuthenticationPrincipal PrincipalDetail principalDetail) {
+        if(principalDetail.getUser().getId() == userId) {
             model.addAttribute("user", myPageService.findUser(userId));
             return "/user/mypageForm";
         } else {

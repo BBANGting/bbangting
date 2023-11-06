@@ -1,6 +1,8 @@
 package com.khu.bbangting.service;
 
 import com.khu.bbangting.dto.UserFormDto;
+import com.khu.bbangting.model.Role;
+import com.khu.bbangting.model.Type;
 import com.khu.bbangting.model.User;
 import com.khu.bbangting.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,72 +11,36 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-
-    @Autowired
-    private UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
 
     @Transactional
-    public User findUser(String email) {
-        User user = userRepository.findByEmail(email).orElseGet(() -> {
-            return new User();
-        });
-
-        return user;
-    }
-
-    @Transactional
-    public void saveUser(UserFormDto userFormDto) {
-
-        String rawPassword = userFormDto.getPassword();
+    public User saveUser(User user) {
+        String rawPassword = user.getPassword();
         String encPassword = passwordEncoder.encode(rawPassword);
-        System.out.println(rawPassword);
+        user.setEmail(user.getEmail());
+        user.setPassword(encPassword);
+        user.setUsername(user.getUsername());
+        user.setRole(Role.USER);
+        user.setType(Type.GENERAL);
 
-        User user = User.builder()
-                .email(userFormDto.getEmail())
-                .password(encPassword)
-                .username(userFormDto.getUsername())
-                .build();
+        User userEntity = userRepository.save(user);
 
-        userRepository.save(user);
+        return userEntity;
     }
 
     @Transactional
-    public void modiUser(UserFormDto userFormDto) {
-        User persistance = userRepository.findByEmail(userFormDto.getEmail())
-                .orElseThrow(() -> {
-                    return new IllegalArgumentException("회원 찾기 실패");
-                });
+    public User updateUser(User user) {
+        User userEntity = userRepository.save(user);
 
-        String rawPassword = userFormDto.getPassword();
-        String encPassword = passwordEncoder.encode(rawPassword);
-
-        persistance.setPassword(encPassword);
+        return userEntity;
     }
-
-//    @Autowired
-//    private BCryptPasswordEncoder passwordEncoder;
-//
-//    @Transactional
-//    public void saveUser(UserFormDto userDto) {
-//
-//        // 중복된 회원정보 존재하는지 확인
-//        if(userRepository.existsByEmail(userDto.getEmail())){
-//            throw new IllegalStateException("이미 가입된 회원입니다.");
-//        }
-//
-//        User user = User.builder()
-//                .email(userDto.getEmail())
-//                .password(passwordEncoder.encode(userDto.getPassword()))
-//                .username(userDto.getUsername())
-//                .build();
-//
-//        userRepository.save(user);
-//    }
 
 }

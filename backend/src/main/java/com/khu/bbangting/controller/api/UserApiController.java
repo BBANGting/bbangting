@@ -2,7 +2,9 @@ package com.khu.bbangting.controller.api;
 
 import com.khu.bbangting.dto.ResponseDto;
 import com.khu.bbangting.dto.UserFormDto;
+import com.khu.bbangting.model.User;
 import com.khu.bbangting.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,31 +14,22 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController //Json 형태로 객체 데이터 반환
+@RequiredArgsConstructor
 public class UserApiController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/auth/joinProc")
-    public ResponseDto<Integer> save(@RequestBody UserFormDto userFormDto) {
+    public ResponseDto<Integer> saveUser(UserFormDto userFormDto) {
 
         System.out.println("UserApiController: save 함수 호출됨");
-        userService.saveUser(userFormDto);
+
+        User user = userFormDto.toEntity();
+        userService.saveUser(user);
 
         return new ResponseDto<Integer>(HttpStatus.OK.value(), 1);
     }
 
-    @PutMapping("/user")
-    public ResponseDto<Integer> update(@RequestBody UserFormDto userFormDto) {
-        userService.modiUser(userFormDto);
-
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userFormDto.getUsername()
-                , userFormDto.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        return new ResponseDto<Integer>(HttpStatus.OK.value(), 1);
-    }
 }

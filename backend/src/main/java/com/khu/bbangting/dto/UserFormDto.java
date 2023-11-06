@@ -1,5 +1,6 @@
 package com.khu.bbangting.dto;
 
+import com.khu.bbangting.model.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -20,4 +21,12 @@ public class UserFormDto {
     @NotEmpty(message="비밀번호는 필수 입력 값입니다.")
     @Length(min=8, message = "비밀번호는 8자 이상 입력하세요.")
     private String password;
+
+    public User toEntity() {
+        return User.builder()
+                .username(username)
+                .email(email)
+                .password(password)
+                .build();
+    }
 }
