@@ -14,7 +14,7 @@ public class MyStoreService {
 
     private final StoreRepository storeRepository;
 
-    public void 스토어등록(StoreFormDto storeFormDto, Long userId) throws Exception {
+    public void 스토어등록(StoreFormDto storeFormDto) throws Exception {
 
         Store store = storeFormDto.newStore();
         storeRepository.save(store);

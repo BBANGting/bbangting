@@ -19,7 +19,7 @@ public class MyStoreController {
     @Autowired
     private MyStoreService myStoreService;
 
-    // 마이스토어 페이지 호출
+    // 1. 마이스토어 페이지 호출
     @GetMapping("/myStore/{userId}")
     public String 마이스토어페이지(@PathVariable(name="userId") Long loginMember){
         // 마이스토어 서비스에서 loginMember(userId)로 해당 유저 myStoreRepo에서 존재하는지 찾고,
@@ -31,29 +31,44 @@ public class MyStoreController {
         return "/myStore";
     }
 
-    // 마이스토어 등록하기
-    @PostMapping("/myStore/{userId}")
-    public String 마이스토어등록(Model model, @Valid StoreFormDto StoreFormDto, BindingResult bindingResult, @PathVariable(name="userId") Long userId) {
+
+    // 2. 마이스토어 등록페이지 호출
+    @GetMapping("/myStore/new")
+    public String myStoreForm(Model model) {
+        System.out.println(new BreadFormDto());
+        model.addAttribute("StoreFormDto", new StoreFormDto());
+        return "myStore/StoreForm";
+    }
+
+
+    // 3. 마이스토어 등록하기
+/*    @PostMapping("/myStore/new")
+    public String 마이스토어등록(Model model, @Valid StoreFormDto StoreFormDto, BindingResult bindingResult) {
 
         if(bindingResult.hasErrors()){
-            log.info("마이스토어 등록 오류 발생 bindingResult = {}", bindingResult);
-            return "myStore/myStoreForm";
+            return "myStore/StoreForm";
         }
-
-//        // 스토어 로고 등록 안할 시, errorMessage 담기
-//        if(itemImgFileList.get(0).isEmpty() && myStoreFormDto.getId() == null){
-//            model.addAttribute("errorMessage", "스토어 로고 이미지는 필수 입력 값 입니다.");
-//            return "myStore/myStoreForm";
-//        }
 
         try {
-            myStoreService.스토어등록(StoreFormDto, userId);
+            myStoreService.스토어등록(StoreFormDto);
         } catch (Exception e) {
             model.addAttribute("errorMessage", "마이스토어 등록 중 에러가 발생하였습니다.");
-            return "myStore/myStoreForm";
+            return "myStore/StoreForm";
         }
 
-        return "redirect:/myStore/{userId}";    // 마이스토어 페이지로 리다이렉트
+        return "redirect:/myStore";    // 마이스토어 페이지로 리다이렉트
+    }*/
+
+    @PostMapping("/myStore/new")
+    public String 마이스토어등록(@Valid @RequestBody StoreFormDto StoreFormDto, BindingResult bindingResult) {
+
+        try {
+            myStoreService.스토어등록(StoreFormDto);
+        } catch (Exception e) {
+
+        }
+
+        return "redirect:/myStore";    // 마이스토어 페이지로 리다이렉트
     }
 
     // 빵 등록 페이지 호출
@@ -62,13 +77,6 @@ public class MyStoreController {
         model.addAttribute("breadFormDto", new BreadFormDto());
         return "bread/breadForm";
     }
-
-//    // 빵 리스트
-//    @GetMapping("/myStore/{userId}")
-//    public String findById(Model model, @PathVariable Long userId) {
-//        model.addAttribute("");
-//        return "hi";
-//    }
 
 
 }
