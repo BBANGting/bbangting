@@ -21,7 +21,7 @@ public class BreadFormDto {
     @NotBlank(message = "상품명은 필수 입력 값입니다.")
     private String breadName;
 
-    private String breadImage;
+//    private String breadImage;
 
     private String description;
 
@@ -38,15 +38,7 @@ public class BreadFormDto {
 
     private char tingStatus;
 
-    private List<ImageDto> imageDtoList = new ArrayList<>();
+//    private List<ImageDto> imageDtoList = new ArrayList<>();
 
-    private static ModelMapper modelMapper = new ModelMapper();
 
-    public Bread newBread(){
-        return modelMapper.map(this, Bread.class);
-    }
-
-    public static BreadFormDto of(Bread bread) {
-        return modelMapper.map(bread, BreadFormDto.class);
-    }
 }

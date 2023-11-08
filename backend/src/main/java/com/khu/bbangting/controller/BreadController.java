@@ -4,6 +4,7 @@ import com.khu.bbangting.dto.BreadFormDto;
 import com.khu.bbangting.service.BreadService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,14 +19,10 @@ import java.util.List;
 @RestController
 public class BreadController {
 
-    private final BreadService breadService;
+    @Autowired
+    private BreadService breadService;
 
-    // 빵 등록 페이지 호출
-    @GetMapping("/myStore/bread")
-    public String breadForm(Model model) {
-        model.addAttribute("breadFormDto", new BreadFormDto());
-        return "bread/breadForm";
-    }
+
 
     // 빵 등록
     @PostMapping("/myStore/bread")
@@ -35,8 +32,14 @@ public class BreadController {
             return "bread/breadForm";
         }
 
+        // 대표이미지 등록 안할 시, errorMessage 담기
+//        if(itemImgFileList.get(0).isEmpty() && myStoreFormDto.getId() == null){
+//            model.addAttribute("errorMessage", "대표이미지는 필수 입력 값 입니다.");
+//            return "myStore/myStoreForm";
+//        }
+
         try {
-            breadService.saveBread(breadFormDto, imageFileList);
+            breadService.saveBread(breadFormDto);  // imageFileList 이후에 추가
         } catch (Exception e){
             model.addAttribute("errorMessage", "상품 등록 중 에러가 발생하였습니다.");
             return "bread/breadForm";
