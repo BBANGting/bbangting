@@ -25,7 +25,7 @@ public class Bread {
     private String breadImage;
 
     @Column(length = 1000)
-    private String content;
+    private String description;
 
     @Column(nullable = false)
     private int price;

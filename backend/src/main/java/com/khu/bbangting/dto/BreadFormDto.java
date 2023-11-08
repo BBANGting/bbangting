@@ -23,7 +23,7 @@ public class BreadFormDto {
 
     private String breadImage;
 
-    private String content;
+    private String description;
 
     @NotBlank(message = "가격은 필수 입력 값입니다.")
     private int price;
