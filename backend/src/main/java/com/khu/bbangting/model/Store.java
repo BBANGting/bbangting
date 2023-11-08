@@ -3,17 +3,15 @@ package com.khu.bbangting.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "stores")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class Store {
 
     @Id
@@ -24,10 +22,10 @@ public class Store {
     @Column(nullable = false, length = 20)
     private String storeName;
 
-    @Column(nullable = false)
-    private String storeLogo;
+//    @Column(nullable = false)
+//    private String storeLogo;
 
-    private String storeImage;
+//    private String storeImage;
 
     private String description;
 
@@ -41,4 +39,10 @@ public class Store {
     @JoinColumn(name = "userId")
     private User user;
 
+    @Builder
+    private Store(String storeName, String description, String location) {
+        this.storeName = storeName;
+        this.description = description;
+        this.location = location;
+    }
 }
