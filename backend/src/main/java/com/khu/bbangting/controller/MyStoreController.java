@@ -6,8 +6,10 @@ import com.khu.bbangting.service.MyStoreService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +37,6 @@ public class MyStoreController {
     // 2. 마이스토어 등록페이지 호출
     @GetMapping("/myStore/new")
     public String myStoreForm(Model model) {
-        System.out.println(new BreadFormDto());
         model.addAttribute("StoreFormDto", new StoreFormDto());
         return "myStore/StoreForm";
     }
@@ -60,13 +61,13 @@ public class MyStoreController {
     }*/
 
     @PostMapping("/myStore/new")
-    public String 마이스토어등록(@Valid @RequestBody StoreFormDto StoreFormDto, BindingResult bindingResult) {
+    public String 마이스토어등록(@Valid @RequestBody StoreFormDto requestDto, BindingResult bindingResult){
 
-        try {
-            myStoreService.스토어등록(StoreFormDto);
-        } catch (Exception e) {
-
+        if (bindingResult.hasErrors()) {
+            log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());
         }
+
+        myStoreService.스토어등록(requestDto);
 
         return "redirect:/myStore";    // 마이스토어 페이지로 리다이렉트
     }

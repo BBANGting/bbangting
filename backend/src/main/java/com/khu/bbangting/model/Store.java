@@ -1,5 +1,6 @@
 package com.khu.bbangting.model;
 
+import com.khu.bbangting.repository.UserRepository;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,9 +41,11 @@ public class Store {
     private User user;
 
     @Builder
-    private Store(String storeName, String description, String location) {
+    private Store(User user, String storeName, String description, String location) {
+        this.user = user;
         this.storeName = storeName;
         this.description = description;
         this.location = location;
     }
+
 }
