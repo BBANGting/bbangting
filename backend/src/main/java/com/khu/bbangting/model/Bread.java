@@ -1,8 +1,11 @@
 package com.khu.bbangting.model;
 
+import com.khu.bbangting.dto.BreadFormDto;
+import com.khu.bbangting.dto.BreadUpdateFormDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.sql.Timestamp;
 
@@ -11,6 +14,8 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@DynamicInsert
+@ToString
 public class Bread {
 
     @Id
@@ -18,7 +23,7 @@ public class Bread {
     @Column(name = "breadId")
     private Long id;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 20, unique = true)
     private String breadName;
 
 //    private String breadImage;
@@ -39,6 +44,7 @@ public class Bread {
     private int stock;
 
     @ColumnDefault("'Y'")
+    @Column(insertable = false)
     private char tingStatus;    // 'Y', 'N'
 
     @ManyToOne
@@ -46,12 +52,14 @@ public class Bread {
     private Store store;
 
     @Builder
-    private Bread(String breadName, String description, int price, String tingTime, int maxTingNum) {
+    private Bread(Store store, String breadName, String description, int price, String tingTime, int maxTingNum, int stock, char tingStatus) {
+        this.store = store;
         this.breadName = breadName;
         this.description = description;
         this.price = price;
         this.tingTime = tingTime;
         this.maxTingNum = maxTingNum;
-        this.stock = maxTingNum;              // *** 이후 재고 변동될 시, 문제 없는지 체크 필요
+        this.stock = stock;               // *** 이후 재고 변동될 시, 문제 없는지 체크 필요
     }
+
 }
