@@ -1,19 +1,21 @@
 package com.khu.bbangting.service;
 
 import com.khu.bbangting.dto.BreadFormDto;
-import com.khu.bbangting.dto.BreadUpdateFormDto;
 import com.khu.bbangting.model.Bread;
 import com.khu.bbangting.model.Store;
 import com.khu.bbangting.repository.BreadRepository;
 import com.khu.bbangting.repository.StoreRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class BreadService {
 
     private final BreadRepository breadRepository;
@@ -24,7 +26,25 @@ public class BreadService {
 //    private ImageService imageService;
 
 
-    public void save(BreadFormDto requestDto) {
+    // 등록된 상품 불러오기
+    public BreadFormDto getBreadForm(Long breadId) {
+
+        Bread bread = breadRepository.findById(breadId)
+                .orElseThrow(EntityNotFoundException::new);
+
+        BreadFormDto breadFormDto = BreadFormDto.builder()
+                .storeId(bread.getStore().getId())
+                .breadName(bread.getBreadName())
+                .description(bread.getDescription())
+                .price(bread.getPrice())
+                .tingTime(bread.getTingTime())
+                .maxTingNum(bread.getMaxTingNum())
+                .tingStatus(bread.getTingStatus()).build();
+
+        return breadFormDto;
+    }
+
+    public void saveBread(BreadFormDto requestDto) {
 
         Store store = storeRepository.findById(requestDto.getStoreId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 스토어가 존재하지 않습니다. id = " + requestDto.getStoreId()));
@@ -40,7 +60,7 @@ public class BreadService {
         breadRepository.save(requestDto.toEntity(store));
     }
 
-    public void delete(Long breadId) {
+    public void deleteBread(Long breadId) {
 
         Bread bread = breadRepository.findById(breadId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 id를 가진 빵이 존재하지 않습니다. id = " + breadId));
@@ -49,4 +69,11 @@ public class BreadService {
 
     }
 
+    public void updateBread(Long breadId, BreadFormDto requestDto) {
+        Bread bread = breadRepository.findById(breadId)
+                .orElseThrow(EntityNotFoundException::new);
+
+        bread.update(requestDto);
+        log.info(bread.toString());
+    }
 }
