@@ -1,6 +1,7 @@
 package com.khu.bbangting.service;
 
 import com.khu.bbangting.dto.BreadFormDto;
+import com.khu.bbangting.dto.BreadUpdateFormDto;
 import com.khu.bbangting.model.Bread;
 import com.khu.bbangting.model.Store;
 import com.khu.bbangting.repository.BreadRepository;
@@ -69,9 +70,13 @@ public class BreadService {
 
     }
 
-    public void updateBread(Long breadId, BreadFormDto requestDto) {
+    public void updateBread(Long breadId, BreadUpdateFormDto requestDto) {
         Bread bread = breadRepository.findById(breadId)
                 .orElseThrow(EntityNotFoundException::new);
+
+        if (requestDto.getBreadName() == null) {
+            requestDto.setBreadName(bread.getBreadName());
+        }
 
         bread.update(requestDto);
         log.info(bread.toString());
