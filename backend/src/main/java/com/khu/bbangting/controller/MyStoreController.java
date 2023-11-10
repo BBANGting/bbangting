@@ -33,33 +33,7 @@ public class MyStoreController {
         return "/myStore";
     }
 
-
-    // 2. 마이스토어 등록페이지 호출
-    @GetMapping("/myStore/new")
-    public String myStoreForm(Model model) {
-        model.addAttribute("StoreFormDto", new StoreFormDto());
-        return "myStore/StoreForm";
-    }
-
-
-    // 3. 마이스토어 등록하기
-/*    @PostMapping("/myStore/new")
-    public String 마이스토어등록(Model model, @Valid StoreFormDto StoreFormDto, BindingResult bindingResult) {
-
-        if(bindingResult.hasErrors()){
-            return "myStore/StoreForm";
-        }
-
-        try {
-            myStoreService.스토어등록(StoreFormDto);
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "마이스토어 등록 중 에러가 발생하였습니다.");
-            return "myStore/StoreForm";
-        }
-
-        return "redirect:/myStore";    // 마이스토어 페이지로 리다이렉트
-    }*/
-
+    // 2. 마이스토어 등록하기
     @PostMapping("/myStore/new")
     public String 마이스토어등록(@Valid @RequestBody StoreFormDto requestDto, BindingResult bindingResult){
 
@@ -72,12 +46,6 @@ public class MyStoreController {
         return "redirect:/myStore";    // 마이스토어 페이지로 리다이렉트
     }
 
-    // 빵 등록 페이지 호출
-    @GetMapping("/myStore/bread/new")
-    public String breadForm(Model model) {
-        model.addAttribute("breadFormDto", new BreadFormDto());
-        return "bread/breadForm";
-    }
 
 
 }
