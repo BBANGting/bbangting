@@ -1,14 +1,14 @@
 package com.khu.bbangting.controller;
 
 import com.khu.bbangting.dto.BreadFormDto;
-import com.khu.bbangting.dto.BreadUpdateFormDto;
-import com.khu.bbangting.repository.BreadRepository;
 import com.khu.bbangting.service.BreadService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +34,7 @@ public class BreadController {
 //        }
 
         try {
-            breadService.save(requestDto);
+            breadService.saveBread(requestDto);
         } catch (DataIntegrityViolationException e) {
             bindingResult.reject("빵 등록 실패", "이미 등록된 빵입니다.");
             return "myStore/bread/breadForm";
@@ -49,7 +49,43 @@ public class BreadController {
     @DeleteMapping("myStore/bread/{breadId}")
     public String 빵삭제(@PathVariable Long breadId) {
 
-        breadService.delete(breadId);
+        breadService.deleteBread(breadId);
+
+        return "redirect:myStore/";
+    }
+
+    @GetMapping("myStore/bread/{breadId}")
+    public String 빵수정Form(@PathVariable Long breadId, Model model) {
+
+        try {
+            BreadFormDto breadFormDto = breadService.getBreadForm(breadId);
+            log.info(breadFormDto.toString());
+            model.addAttribute("breadFormDto", breadFormDto);
+        } catch(EntityNotFoundException e){
+            model.addAttribute("errorMessage", "해당 제품을 찾을 수 없습니다.");
+            return "myStore/bread/breadFrom";
+        }
+
+        return "myStore/bread/breadFrom";
+    }
+
+    @PutMapping("myStore/bread/{breadId}")
+    public String 빵수정(@Valid @RequestBody BreadFormDto requestDto, BindingResult bindingResult, @PathVariable Long breadId) {
+
+        if (bindingResult.hasErrors()) {
+            log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());
+            return "myStore/bread/breadFrom";
+        }
+
+        try {
+            breadService.updateBread(breadId, requestDto);
+        } catch (DataIntegrityViolationException e) {
+            bindingResult.reject("빵 수정 실패", "이미 등록된 제품명입니다.");
+            return "myStore/bread/breadForm";
+        } catch (Exception e) {
+            bindingResult.reject("빵 수정 실패", e.getMessage());
+            return "myStore/bread/breadForm";
+        }
 
         return "redirect:myStore/";
     }

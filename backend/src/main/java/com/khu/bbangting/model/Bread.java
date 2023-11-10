@@ -1,7 +1,6 @@
 package com.khu.bbangting.model;
 
 import com.khu.bbangting.dto.BreadFormDto;
-import com.khu.bbangting.dto.BreadUpdateFormDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -60,6 +59,15 @@ public class Bread {
         this.tingTime = tingTime;
         this.maxTingNum = maxTingNum;
         this.stock = stock;               // *** 이후 재고 변동될 시, 문제 없는지 체크 필요
+    }
+
+        public void update(BreadFormDto requestDto) {
+        this.breadName = requestDto.getBreadName();
+        this.description = requestDto.getDescription();
+        this.price = requestDto.getPrice();
+        this.tingTime = requestDto.getTingTime();
+        this.maxTingNum = requestDto.getMaxTingNum();
+        this.tingStatus = requestDto.getTingStatus();
     }
 
 }

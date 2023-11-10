@@ -9,7 +9,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@ToString
 @Getter
 @NoArgsConstructor
 public class BreadFormDto {
@@ -34,16 +36,19 @@ public class BreadFormDto {
     @Min(value = 1)
     private int maxTingNum;
 
+    private char tingStatus;
+
 //    private List<ImageDto> imageDtoList = new ArrayList<>();
 
     @Builder
-    public BreadFormDto(Long storeId, String breadName, String description, int price, String tingTime, int maxTingNum) {
+    public BreadFormDto(Long storeId, String breadName, String description, int price, String tingTime, int maxTingNum, char tingStatus) {
         this.storeId = storeId;
         this.breadName = breadName;
         this.description = description;
         this.price = price;
         this.tingTime = tingTime;
         this.maxTingNum = maxTingNum;
+        this.tingStatus = tingStatus;
     }
 
     public Bread toEntity(Store store) {
