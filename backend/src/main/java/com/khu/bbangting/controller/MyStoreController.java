@@ -46,6 +46,13 @@ public class MyStoreController {
         return "redirect:/myStore";    // 마이스토어 페이지로 리다이렉트
     }
 
+    @DeleteMapping("/myStore/{userId}")
+    public String 마이스토어삭제(@PathVariable Long userId) {
+
+        myStoreService.스토어삭제(userId);
+
+        return "redirect:myStore/none";      // 마이스토어 등록 안된 상태의 페이지
+    }
 
 
 }
