@@ -1,6 +1,5 @@
 package com.khu.bbangting.model;
 
-import com.khu.bbangting.dto.BreadFormDto;
 import com.khu.bbangting.dto.BreadUpdateFormDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -62,7 +61,7 @@ public class Bread {
         this.stock = stock;               // *** 이후 재고 변동될 시, 문제 없는지 체크 필요
     }
 
-        public void update(BreadUpdateFormDto requestDto) {
+    public void update(BreadUpdateFormDto requestDto) {
         this.breadName = requestDto.getBreadName();
         this.description = requestDto.getDescription();
         this.price = requestDto.getPrice();

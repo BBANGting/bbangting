@@ -55,8 +55,8 @@ public class BreadController {
         return "redirect:myStore/";
     }
 
-    @GetMapping("myStore/bread/{breadId}")
-    public String 빵수정Form(@PathVariable Long breadId, Model model) {
+    @GetMapping("myStore/bread/edit/{breadId}")
+    public String 빵수정페이지(@PathVariable Long breadId, Model model) {
 
         try {
             BreadFormDto breadFormDto = breadService.getBreadForm(breadId);
@@ -64,13 +64,13 @@ public class BreadController {
             model.addAttribute("breadFormDto", breadFormDto);
         } catch(EntityNotFoundException e){
             model.addAttribute("errorMessage", "해당 제품을 찾을 수 없습니다.");
-            return "myStore/bread/breadFrom";
+            return "myStore/";
         }
 
         return "myStore/bread/breadFrom";
     }
 
-    @PutMapping("myStore/bread/{breadId}")
+    @PutMapping("myStore/bread/edit/{breadId}")
     public String 빵수정(@Valid @RequestBody BreadUpdateFormDto requestDto, BindingResult bindingResult, @PathVariable Long breadId) {
 
         if (bindingResult.hasErrors()) {
