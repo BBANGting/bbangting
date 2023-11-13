@@ -46,7 +46,7 @@ public class BreadService {
     public void saveBread(BreadFormDto requestDto) {
 
         Store store = storeRepository.findById(requestDto.getStoreId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 스토어가 존재하지 않습니다. id = " + requestDto.getStoreId()));
+                .orElseThrow(() -> new EntityNotFoundException("해당 스토어가 존재하지 않습니다. id = " + requestDto.getStoreId()));
 
 //        // 이미지 등록
 //        for (int i = 0; i < imageFileList.size(); i++) {
@@ -62,7 +62,7 @@ public class BreadService {
     public void deleteBread(Long breadId) {
 
         Bread bread = breadRepository.findById(breadId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 id를 가진 빵이 존재하지 않습니다. id = " + breadId));
+                .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 빵이 존재하지 않습니다. id = " + breadId));
 
         breadRepository.delete(bread);
 
@@ -70,7 +70,7 @@ public class BreadService {
 
     public void updateBread(Long breadId, BreadUpdateFormDto requestDto) {
         Bread bread = breadRepository.findById(breadId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 id를 가진 빵이 존재하지 않습니다. id = " + breadId));
+                .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 빵이 존재하지 않습니다. id = " + breadId));
 
         bread.update(requestDto);
         log.info(bread.toString());

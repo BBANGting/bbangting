@@ -36,9 +36,6 @@ public class BreadController {
 
         try {
             breadService.saveBread(requestDto);
-        } catch (DataIntegrityViolationException e) {
-            bindingResult.reject("빵 등록 실패", "이미 등록된 빵입니다.");
-            return "myStore/bread/breadForm";
         } catch (Exception e) {
             bindingResult.reject("빵 등록 실패", e.getMessage());
             return "myStore/bread/breadForm";

@@ -13,7 +13,6 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@DynamicInsert
 @ToString
 public class Bread {
 
@@ -22,7 +21,7 @@ public class Bread {
     @Column(name = "breadId")
     private Long id;
 
-    @Column(nullable = false, length = 20, unique = true)
+    @Column(nullable = false, length = 20)
     private String breadName;
 
 //    private String breadImage;
@@ -42,8 +41,7 @@ public class Bread {
     @Column
     private int stock;
 
-    @ColumnDefault("'Y'")
-    @Column(insertable = false)
+    @Column(nullable = false)
     private char tingStatus;    // 'Y', 'N'
 
     @ManyToOne
@@ -59,6 +57,7 @@ public class Bread {
         this.tingTime = tingTime;
         this.maxTingNum = maxTingNum;
         this.stock = stock;               // *** 이후 재고 변동될 시, 문제 없는지 체크 필요
+        this.tingStatus = tingStatus;
     }
 
     public void update(BreadUpdateFormDto requestDto) {

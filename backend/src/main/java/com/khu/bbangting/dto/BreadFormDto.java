@@ -59,7 +59,8 @@ public class BreadFormDto {
                 .price(price)
                 .tingTime(tingTime)
                 .maxTingNum(maxTingNum)
-                .stock(maxTingNum).build();
+                .stock(maxTingNum)
+                .tingStatus(tingStatus).build();
     }
 
 }
