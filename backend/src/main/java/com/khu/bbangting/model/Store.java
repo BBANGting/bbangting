@@ -30,7 +30,7 @@ public class Store {
 
     private String description;
 
-    @Column(nullable = false, length = 256)
+    @Column(nullable = false, length = 256, unique = true)
     private String location;
 
     @ColumnDefault("0")

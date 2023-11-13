@@ -29,7 +29,7 @@ public class MyStoreApiController {
             log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());
         }
 
-        myStoreService.스토어등록(requestDto);
+        myStoreService.saveBread(requestDto);
 
         return "redirect:/myStore";    // 마이스토어 페이지로 리다이렉트
     }
@@ -37,7 +37,7 @@ public class MyStoreApiController {
     @DeleteMapping("myStore/{userId}")
     public String 마이스토어삭제(@PathVariable Long userId) {
 
-        myStoreService.스토어삭제(userId);
+        myStoreService.deleteBread(userId);
 
         return "redirect:myStore/none";      // 마이스토어 등록 안된 상태의 페이지
     }

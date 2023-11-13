@@ -1,9 +1,13 @@
 package com.khu.bbangting.controller;
 
+import com.khu.bbangting.dto.MyStoreInfoDto;
+import com.khu.bbangting.dto.StoreFormDto;
 import com.khu.bbangting.service.MyStoreService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,12 +20,16 @@ public class MyStoreController {
 
     // 1. 마이스토어 페이지 호출
     @GetMapping("/myStore/{userId}")
-    public String 마이스토어페이지(@PathVariable(name="userId") Long loginMember){
-        // 마이스토어 서비스에서 loginMember(userId)로 해당 유저 myStoreRepo에서 존재하는지 찾고,
+    public String 마이스토어페이지(@PathVariable Long userId, Model model){
 
-        // 존재한다면 마이스토어페이지에 띄워야하는 정보들 return
-
-        // 존재하지 않으면, 존재하지 않는다고 값 보냄
+        try {
+            MyStoreInfoDto myStoreInfoDto = myStoreService.getMyStoreInfo(userId);
+            log.info(myStoreInfoDto.toString());
+            model.addAttribute("myStoreInfoDto", myStoreInfoDto);
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("errorMessage", "해당 제품을 찾을 수 없습니다.");
+            return "myStore/";
+        }
 
         return "/myStore";
     }
