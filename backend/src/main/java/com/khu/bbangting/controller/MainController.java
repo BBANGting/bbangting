@@ -19,6 +19,7 @@ public class MainController {
     @Autowired
     private BreadService breadService;
 
+    // 메인페이지 호출
     @GetMapping("/")
     public String main(Model model) {
         List<BreadInfoDto> breadInfoDtoList = breadService.getTodayTing();
@@ -28,6 +29,7 @@ public class MainController {
         return "/";
     }
 
+    // 오픈예정페이지 호출
     @GetMapping("/comingSoon")
     public String openLineUp(Model model) {
         List<BreadInfoDto> breadInfoDtoList = breadService.getOpenLineUp();
