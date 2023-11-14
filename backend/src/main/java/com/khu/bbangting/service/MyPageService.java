@@ -1,24 +1,13 @@
 package com.khu.bbangting.service;
 
-import com.khu.bbangting.model.User;
-import com.khu.bbangting.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class MyPageService {
-
-    private final UserRepository userRepository;
-
-    public User findUser(Long userId) {
-        return userRepository.findById(userId).get();
-    }
-
-    public void updateUser(Long userId, User user) {
-        User tempUser = userRepository.findById(userId).get();
-
-        userRepository.save(tempUser);
-    }
-
 }

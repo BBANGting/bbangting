@@ -11,7 +11,9 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Entity
 @Table(name="users")
-@Getter @Setter
+@Getter
+@Setter
+@Builder
 public class User{
 
     @Id
@@ -27,6 +29,10 @@ public class User{
 
     @Column(nullable = false, length = 100)
     private String username;
+
+    //닉네임 추가
+    @Column(length = 10)
+    private String nickname;
 
     @ColumnDefault("0")
     private int banCount;
@@ -47,6 +53,11 @@ public class User{
         this.email = email;
         this.password = password;
         this.username = username;
+    }
+
+    public void updateUser(String nickname, String password) {
+        this.username = nickname;
+        this.password = password;
     }
 
 }

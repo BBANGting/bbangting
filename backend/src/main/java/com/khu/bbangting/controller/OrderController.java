@@ -1,48 +1,56 @@
 package com.khu.bbangting.controller;
 
-import com.khu.bbangting.dto.OrderDto;
+import com.khu.bbangting.dto.order.OrderFormDto;
+import com.khu.bbangting.dto.order.OrderHistDto;
 import com.khu.bbangting.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import javax.naming.Binding;
-import java.security.Principal;
-import java.util.List;
+import java.util.Optional;
 
-@Slf4j
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class OrderController {
-    private OrderService orderService;
 
-    //주문
+    private final OrderService orderService;
+
+    /**
+     * 주문
+     */
     @PostMapping("/order")
-    public @ResponseBody ResponseEntity createOrder(@RequestBody @Valid OrderDto orderDto, BindingResult bindingResult) {
+    public ResponseEntity<?> addOrder(@RequestBody @Valid OrderFormDto requestDto) {
 
-        // 주문 정보를 받는 orderDto 객체에 데이터 바인딩 시 에러가 있는지 검사
-        if(bindingResult.hasErrors()){
-            StringBuilder sb = new StringBuilder();
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+        orderService.addOrder(requestDto);
 
-            for (FieldError fieldError : fieldErrors) {
-                sb.append(fieldError.getDefaultMessage());
-            }
+        return ResponseEntity.ok().build();
+    }
 
-            return new ResponseEntity<String>(sb.toString(), HttpStatus.BAD_REQUEST);
-        }
+    /**
+     * 주문 취소
+     */
+    @DeleteMapping("/{orderId}")
+    public ResponseEntity<?> cancelOrder(@PathVariable Long orderId) {
 
-        System.out.println("userId: " + ", breadId: " + orderDto.getBreadId() + ", quantity: " + orderDto.getQuantity());
-        return new ResponseEntity<>(orderService.createOrder(orderDto.getUserId(), orderDto.getBreadId(), orderDto.getQuantity()), HttpStatus.OK);
+        orderService.cancelOrder(orderId);
+
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 주문 내역 조회
+     */
+    @GetMapping({"/myPage/order", "/myPage/order/{page}"})
+    public String userOrderHist(@PathVariable("page") Optional<Integer> page,  String email) {
+
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5);
+        Page<OrderHistDto> orderHistDtoList = orderService.getOrderList(email, pageable);
+
+        return "order/orderHist";
     }
 
 }

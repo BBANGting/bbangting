@@ -1,36 +1,63 @@
 package com.khu.bbangting.controller;
 
-import com.khu.bbangting.dto.ResponseDto;
-import com.khu.bbangting.dto.ReviewDto;
-import com.khu.bbangting.dto.UserFormDto;
-import com.khu.bbangting.model.Review;
+import com.khu.bbangting.dto.review.ReviewFormDto;
 import com.khu.bbangting.service.ReviewService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.aspectj.bridge.Message;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.StandardCharsets;
+import java.util.List;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping("/review")
-    public ResponseDto<Integer> addReview(@RequestBody ReviewDto reviewDto) {
+    /**
+     * 빵 상세페이지에서 리뷰 목록 조회
+     */
+    @GetMapping("/bread/{breadId}/review")
+    public ResponseEntity<List<ReviewFormDto>> getReviewList(@PathVariable("breadId") Long breadId) {
 
-        System.out.println("ReviewController: save 함수 호출됨");
-        reviewService.addReview(reviewDto);
+        List<ReviewFormDto> reviewFormDtoList = reviewService.getListOfBread(breadId);
 
-        return new ResponseDto<Integer>(HttpStatus.OK.value(), 1);
+        return new ResponseEntity<>(reviewFormDtoList, HttpStatus.OK);
     }
+
+    /**
+     * 리뷰 작성
+     */
+    @PostMapping("/review/{breadId}")
+    public ResponseEntity<Long> addReview(@RequestBody ReviewFormDto reviewFormDto) {
+
+        Long reviewId = reviewService.register(reviewFormDto);
+
+        return new ResponseEntity<>(reviewId, HttpStatus.OK);
+    }
+
+    /**
+     * 리뷰 수정
+     */
+    @PutMapping("/review/{breadId}/{reviewId}")
+    public ResponseEntity<Long> modifyReview(@PathVariable Long reviewId,
+                                             @RequestBody ReviewFormDto reviewFormDto) {
+
+        reviewService.modify(reviewFormDto);
+
+        return new ResponseEntity<>(reviewId, HttpStatus.OK);
+    }
+
+    /**
+     * 리뷰 삭제
+     */
+    @DeleteMapping("/review/{breadId}/{reviewId}")
+    public ResponseEntity<Long> removeReview(@PathVariable Long reviewId) {
+
+        reviewService.remove(reviewId);
+
+        return new ResponseEntity<>(reviewId, HttpStatus.OK);
+    }
+
 }

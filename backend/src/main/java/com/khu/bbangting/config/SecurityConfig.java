@@ -45,7 +45,7 @@ public class SecurityConfig {
                         .requestMatchers(mvcMatcherBuilder.pattern("/image/**")).permitAll()
                 .anyRequest().authenticated())
                 .formLogin(login -> login
-                        .loginPage("/auth/loginForm")
+                        .loginPage("/user/login")
                         .loginProcessingUrl("/auth/loginProc")
                         .defaultSuccessUrl("/")
                         .failureUrl("/auth/loginForm")

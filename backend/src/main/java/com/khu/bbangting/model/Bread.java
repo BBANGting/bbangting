@@ -1,20 +1,23 @@
 package com.khu.bbangting.model;
 
-import com.khu.bbangting.exception.OutOfStockException;
+import com.khu.bbangting.dto.bread.BreadUpdateFormDto;
+import com.khu.bbangting.error.CustomException;
+import com.khu.bbangting.error.ErrorCode;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@Data
-@ToString
 @Entity
 @Table(name = "breads")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder
+@ToString
 public class Bread {
 
     @Id
@@ -25,21 +28,21 @@ public class Bread {
     @Column(nullable = false, length = 20)
     private String breadName;
 
-    private String breadImage;
+//    private String breadImage;
 
     @Column(length = 1000)
-    private String content;
+    private String description;
 
     @Column(nullable = false)
     private int price;
 
     @Column(nullable = false)
-    private Timestamp tingTime;
+    private LocalDateTime tingTime;
 
     @Column(nullable = false)
     private int maxTingNum;
 
-    @Column(nullable = false)
+    @Column
     private int stock;
 
     @Column(nullable = false)
@@ -49,23 +52,45 @@ public class Bread {
     @JoinColumn(name = "storeId")
     private Store store;
 
-    //리뷰 리스트 추가
-    @OneToMany(mappedBy = "breads", fetch = FetchType.LAZY)
-    private List<Review> reviews = new ArrayList<>();
-
-    //상품 주문 -> 상품 재고 감소
-    public void subStock(int stock) {
-        int restStock = this.stock - stock;
-
-        if(restStock < 0) {
-            throw new OutOfStockException("상품의 재고가 부족합니다.");
-        }
-        this.stock = restStock;
+    @Builder
+    private Bread(Store store, String breadName, String description, int price, LocalDateTime tingTime, int maxTingNum, int stock, char tingStatus) {
+        this.store = store;
+        this.breadName = breadName;
+        this.description = description;
+        this.price = price;
+        this.tingTime = tingTime;
+        this.maxTingNum = maxTingNum;
+        this.stock = stock;               // *** 이후 재고 변동될 시, 문제 없는지 체크 필요
+        this.tingStatus = tingStatus;
     }
 
-    //주문 취소 시 상품 개수 늘림
-    public void addStock(int stock) {
-        this.stock += stock;
+    public void update(BreadUpdateFormDto requestDto) {
+        this.breadName = requestDto.getBreadName();
+        this.description = requestDto.getDescription();
+        this.price = requestDto.getPrice();
+        this.tingTime = LocalDateTime.parse(requestDto.getTingTime());
+        this.maxTingNum = requestDto.getMaxTingNum();
+        this.tingStatus = requestDto.getTingStatus();
+    }
+
+    public boolean isTingTime() {
+        return LocalDateTime.now().isAfter(this.tingTime);
+    }
+
+    public boolean isSoldOut() {
+        return this.stock == 0;
+    }
+
+    public void removeStock(int quantity) {
+        int reStock = this.stock - quantity;
+        if (reStock < 0) {
+            throw new CustomException(ErrorCode.BREAD_SOLD_OUT);
+        }
+        this.stock = reStock;
+    }
+
+    public void addStock(int quantity) {
+        this.stock += quantity;
     }
 
 }

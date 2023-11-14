@@ -1,19 +1,18 @@
 package com.khu.bbangting.model;
 
+import com.khu.bbangting.dto.store.StoreUpdateFormDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "stores")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class Store {
 
     @Id
@@ -24,11 +23,12 @@ public class Store {
     @Column(nullable = false, length = 20)
     private String storeName;
 
-    private String storeLogo;
+//    @Column(nullable = false)
+//    private String storeLogo;
 
-    private String storeImage;
+//    private String storeImage;
 
-    private String introduction;
+    private String description;
 
     @Column(nullable = false, length = 256)
     private String location;
@@ -39,5 +39,19 @@ public class Store {
     @OneToOne
     @JoinColumn(name = "userId")
     private User user;
+
+    @Builder
+    private Store(User user, String storeName, String description, String location) {
+        this.user = user;
+        this.storeName = storeName;
+        this.description = description;
+        this.location = location;
+    }
+
+    public void update(StoreUpdateFormDto requestDto) {
+        this.storeName = requestDto.getStoreName();
+        this.description = requestDto.getDescription();
+        this.location = requestDto.getLocation();
+    }
 
 }

@@ -1,18 +1,17 @@
 package com.khu.bbangting.service;
 
-import com.khu.bbangting.dto.UserFormDto;
+import com.khu.bbangting.dto.user.UpdateUserDto;
+import com.khu.bbangting.dto.user.UserFormDto;
+import com.khu.bbangting.error.CustomException;
+import com.khu.bbangting.error.ErrorCode;
 import com.khu.bbangting.model.Role;
 import com.khu.bbangting.model.Type;
 import com.khu.bbangting.model.User;
 import com.khu.bbangting.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -22,25 +21,34 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public User saveUser(User user) {
-        String rawPassword = user.getPassword();
-        String encPassword = passwordEncoder.encode(rawPassword);
-        user.setEmail(user.getEmail());
-        user.setPassword(encPassword);
-        user.setUsername(user.getUsername());
-        user.setRole(Role.USER);
-        user.setType(Type.GENERAL);
+    public Long joinUser(UserFormDto userFormDto) {
+        validUserEmailDuplicate(userFormDto.getEmail());
 
-        User userEntity = userRepository.save(user);
+        return userRepository.save(User.builder()
+                .email(userFormDto.getEmail())
+                .password(passwordEncoder.encode(userFormDto.getPassword()))
+                .username(userFormDto.getUsername())
+                .nickname(userFormDto.getNickname())
+                .role(Role.USER)
+                .type(Type.GENERAL)
+                .build()).getId();
 
-        return userEntity;
+    }
+
+    //회원 이메일 중복 검증
+    private void validUserEmailDuplicate(String email) {
+        if (userRepository.existsByEmail(email))
+            throw new CustomException(ErrorCode.DUPLICATED_LOGIN_EMAIL);
     }
 
     @Transactional
-    public User updateUser(User user) {
-        User userEntity = userRepository.save(user);
+    public User updateUser(Long userId, UpdateUserDto updateUserDto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        return userEntity;
+        user.updateUser(updateUserDto.getNickname(), updateUserDto.getPassword());
+
+        return user;
     }
 
 }

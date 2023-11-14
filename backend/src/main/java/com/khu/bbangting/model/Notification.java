@@ -14,24 +14,17 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
-
     @Column(nullable = false)
     private String message;
-
-    private boolean checked;
 
     @CreationTimestamp
     private Timestamp createdTime;
 
-//    @CreationTimestamp
-//    private Timestamp lastReadTime;
+    @CreationTimestamp
+    private Timestamp lastReadTime;
 
     @ManyToOne
     @JoinColumn(name="userId")
     private User users;
-
-    @Enumerated(EnumType.STRING)
-    private NotificationType notificationType;
 
 }

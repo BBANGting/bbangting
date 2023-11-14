@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" th:fragment="header">
+<head>
+    <meta charset="UTF-8">
+    <title>header</title>
+    <!-- CSS -->
+    <link th:href="@{/css/header.css}" rel="stylesheet">
+</head>
+<body>
+<div class="sticky-top">
+    <nav class="py-2 border-bottom">
+        <div class="container d-flex flex-wrap">
+            <ul class="nav me-auto">
+                <li class="nav-item"><span class="nav-menu nav-link link-secondary px-3"></span></li>
+            </ul>
+            <ul class="nav">
+                <!-- 비로그인 -->
+                <th:block sec:authorize="isAnonymous()">
+                    <li class="nav-item"><a th:href="@{/user/signin}" class="nav-menu nav-link link-secondary px-3">로그인</a></li>
+                    <li class="nav-item"><a th:href="@{/user/signup}" class="nav-menu nav-link link-secondary px-3">회원가입</a></li>
+                </th:block>
+                <!-- 로그인(회원) -->
+                <th:block sec:authorize="isAuthenticated()">
+                    <li class="nav-item"><a href="#" class="nav-menu nav-link link-secondary px-3">마이페이지</a></li>
+                    <li class="nav-item"><a th:href="@{/user/signout}" class="nav-menu nav-link link-secondary px-3">로그아웃</a></li>
+                </th:block>
+            </ul>
+        </div>
+    </nav>
+    <header class="py-3 mb-4 border-bottom">
+        <div class="container d-flex flex-wrap justify-content-center container-fluid">
+            <a href="/" class="d-flex align-items-center mb-3 mb-lg-0 me-lg-auto text-dark text-decoration-none">
+                <span class="fs-4">빵팅</span>
+            </a>
+            <ul class="nav me-auto">
+                <li class="nav-item"><a href="#" class="head-menu nav-link link-secondary px-3"><b>오픈예정</b></a></li>
+                <li class="nav-item"><a href="#" class="head-menu nav-link link-secondary px-3">스토어</a></li>
+            </ul>
+        </div>
+    </header>
+</div>
+</body>
+</html>

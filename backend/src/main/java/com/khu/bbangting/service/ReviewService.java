@@ -1,45 +1,53 @@
 package com.khu.bbangting.service;
 
-import com.khu.bbangting.dto.ReviewDto;
+import com.khu.bbangting.dto.review.ReviewFormDto;
 import com.khu.bbangting.model.Bread;
 import com.khu.bbangting.model.Review;
 import com.khu.bbangting.model.User;
-import com.khu.bbangting.repository.BreadRepository;
-import com.khu.bbangting.repository.ReviewRepository;
-import com.khu.bbangting.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-@Slf4j
-public class ReviewService {
+public interface ReviewService {
 
-    private final ReviewRepository reviewRepository;
-    private final BreadRepository breadRepository;
-    private final UserRepository userRepository;
+    // 빵 상세정보에서 리뷰들 가져오기
+    List<ReviewFormDto> getListOfBread(Long breadId);
 
-    /* 리뷰 작성 */
-    @Transactional
-    public Long addReview(ReviewDto reviewDto) {
-        Bread bread = breadRepository.findById(reviewDto.getId())
-                .orElseThrow(EntityNotFoundException::new);
+    //리뷰 작성
+    Long register(ReviewFormDto reviewFormDto);
 
-        User user = userRepository.findById(reviewDto.getId())
-                .orElseThrow(() -> new IllegalStateException("해당 회원이 존재하지 않습니다."));
+    //리뷰 수정
 
-        Review createdReview = Review.createReview(user, bread);
-        createdReview.setRating(reviewDto.getRating());
-        createdReview.setContent(reviewDto.getContent());
-        createdReview.setCreatedDate(Timestamp.valueOf(LocalDateTime.now()));
+    void modify(ReviewFormDto reviewFormDto);
 
-        reviewRepository.save(createdReview);
-        return createdReview.getId();
+    //리뷰 삭제
+    void remove(Long reviewId);
+
+    default Review toEntity(ReviewFormDto reviewFormDto) {
+
+        Review breadReview = Review.builder()
+                .id(reviewFormDto.getReviewId())
+                .rating(reviewFormDto.getRating())
+                .content(reviewFormDto.getContent())
+                .createdDate(LocalDateTime.now())
+                .bread(Bread.builder().id(reviewFormDto.getBreadId()).build())
+                .user(User.builder().id(reviewFormDto.getUserId()).build())
+                .build();
+
+        return breadReview;
+    }
+
+    default ReviewFormDto fromReview(Review review) {
+
+        ReviewFormDto breadReviewDto = ReviewFormDto.builder()
+                .reviewId(review.getId())
+                .breadId(review.getBread().getId())
+                .userId(review.getUser().getId())
+                .username(review.getUser().getUsername())
+                .rating(review.getRating())
+                .content(review.getContent())
+                .build();
+
+        return breadReviewDto;
     }
 }

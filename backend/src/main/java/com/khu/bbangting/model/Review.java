@@ -1,26 +1,25 @@
 package com.khu.bbangting.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 @Builder
-@Data
 @Entity
+@ToString(exclude = {"bread", "user"})
 @Table(name = "reviews")
 public class Review {
 
     @Id
     @Column(name = "reviewId")
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = true)
@@ -30,9 +29,8 @@ public class Review {
     private String content;
 
     @CreationTimestamp
-    private Timestamp createdDate;
+    private LocalDateTime createdDate;
 
-    //Entity 수정
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "breadId")
     private Bread bread;
@@ -41,20 +39,14 @@ public class Review {
     @JoinColumn(name = "userId")
     private User user;
 
-    /* 연관관계 */
-    public void setOrders(Bread bread) {
-        this.bread = bread;
-        bread.getReviews()
-                .add(this);
+    // 별점 수정
+    public void changeRating(int rating) {
+        this.rating = rating;
     }
 
-    /* 생성 메서드 */
-    public static Review createReview(User user, Bread bread) {
-        Review review = new Review();
-        review.setBread(bread);
-        review.setUser(user);
-
-        return review;
+    // 리뷰내용 수정
+    public void changeContent(String content) {
+        this.content = content;
     }
 
 }
