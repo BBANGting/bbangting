@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-public class BreadController {
+public class BreadApiController {
 
     @Autowired
     private BreadService breadService;
