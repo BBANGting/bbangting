@@ -40,6 +40,9 @@ public class Store {
     @JoinColumn(name = "userId")
     private User user;
 
+    @ColumnDefault("0")
+    private double rating;
+
     @Builder
     private Store(User user, String storeName, String description, String location) {
         this.user = user;

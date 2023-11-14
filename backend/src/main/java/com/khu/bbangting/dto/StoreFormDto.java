@@ -27,13 +27,16 @@ public class StoreFormDto {
 
     private int followerNum;
 
+    private double rating;
+
     @Builder
-    public StoreFormDto(Long userId, String storeName, String description, String location, int followerNum) {
+    public StoreFormDto(Long userId, String storeName, String description, String location, int followerNum, double rating) {
         this.userId = userId;
         this.storeName = storeName;
         this.description = description;
         this.location = location;
         this.followerNum = followerNum;
+        this.rating = rating;
     }
 
     public Store toEntity(User user) {
