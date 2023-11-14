@@ -1,6 +1,7 @@
 package com.khu.bbangting.service;
 
 import com.khu.bbangting.dto.BreadFormDto;
+import com.khu.bbangting.dto.BreadInfoDto;
 import com.khu.bbangting.dto.BreadUpdateFormDto;
 import com.khu.bbangting.model.Bread;
 import com.khu.bbangting.model.Store;
@@ -11,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -74,5 +78,42 @@ public class BreadService {
 
         bread.update(requestDto);
         log.info(bread.toString());
+    }
+
+    public List<BreadInfoDto> getTodayTing() {
+        List<Bread> breadList = breadRepository.findByTingStatusOrderByStore('Y');
+
+        List<BreadInfoDto> breadInfoDtoList = new ArrayList<>();
+
+        for (Bread bread : breadList) {
+            BreadInfoDto breadInfoDto = BreadInfoDto.builder()
+                    .breadId(bread.getId())
+                    .breadName(bread.getBreadName())
+                    .storeName(bread.getStore().getStoreName())
+                    .tingTime(bread.getTingTime())
+                    .stock(bread.getStock()).build();
+
+            breadInfoDtoList.add(breadInfoDto);
+        }
+
+        return breadInfoDtoList;
+    }
+
+    public List<BreadInfoDto> getOpenLineUp() {
+        List<Bread> breadList = breadRepository.findAll();
+
+        List<BreadInfoDto> breadInfoDtoList = new ArrayList<>();
+
+        for (Bread bread : breadList) {
+            BreadInfoDto breadInfoDto = BreadInfoDto.builder()
+                    .breadId(bread.getId())
+                    .breadName(bread.getBreadName())
+                    .storeName(bread.getStore().getStoreName())
+                    .tingTime(bread.getTingTime()).build();
+
+            breadInfoDtoList.add(breadInfoDto);
+        }
+
+        return breadInfoDtoList;
     }
 }
