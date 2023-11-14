@@ -1,7 +1,6 @@
 package com.khu.bbangting.controller;
 
 import com.khu.bbangting.dto.MyStoreInfoDto;
-import com.khu.bbangting.dto.StoreFormDto;
 import com.khu.bbangting.service.MyStoreService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +30,7 @@ public class MyStoreController {
             return "myStore/";
         }
 
-        return "/myStore";
+        return "myStore/";
     }
-
-    //
 
 }

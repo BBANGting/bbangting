@@ -81,9 +81,13 @@ public class MyStoreService {
 
         List<Bread> breadList = breadRepository.findByStoreId(store.getId());
 
+        List<Bread> tingList = breadRepository.findByTingStatusAndAndStoreId('Y', store.getId());
+
         return MyStoreInfoDto.builder()
                 .storeName(store.getStoreName())
                 .followerNum(store.getFollowerNum())
-                .breadList(breadList).build();
+                .breadList(breadList)
+                .tingList(tingList).build();
     }
+
 }

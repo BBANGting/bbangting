@@ -4,11 +4,13 @@ import com.khu.bbangting.model.Bread;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
+@ToString
 public class MyStoreInfoDto {
 
     private String storeName;
@@ -17,7 +19,7 @@ public class MyStoreInfoDto {
 
     private List<Bread> breadList;
 
-//    private List<Bread> tingList;
+    private List<Bread> tingList;
 
 
     @Builder
@@ -25,7 +27,7 @@ public class MyStoreInfoDto {
         this.storeName = storeName;
         this.followerNum = followerNum;
         this.breadList = breadList;
-//        this.tingList = tingList;
+        this.tingList = tingList;
     }
 
 }
