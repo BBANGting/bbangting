@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -28,11 +29,24 @@ public class StoreController {
         List<StoreInfoDto> storeRankingList = storeService.getTopRank();
         log.info(storeRankingList.toString());
 
-        model.addAttribute(storeInfoDtoList);
-        model.addAttribute(storeRankingList);
+        model.addAttribute("storeInfoDtoList", storeInfoDtoList);
+        model.addAttribute("storeRankingList", storeRankingList);
 
-        return "/storePage";
+        return "store/storePage";
     }
 
+    @GetMapping("/store/search")
+    public String searchStore(Model model, @RequestParam("storeName") String storeName) {
+        List<StoreInfoDto> searchResult = storeService.searchBy(storeName);
+        log.info(searchResult.toString());
+
+        if (searchResult.size() == 0) {
+            model.addAttribute("searchResultList", "검색 결과 없음");
+        } else {
+            model.addAttribute("searchResultList", searchResult);
+        }
+
+        return "store/searchList";
+    }
 
 }

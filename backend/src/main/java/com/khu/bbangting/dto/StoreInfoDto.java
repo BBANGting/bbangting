@@ -14,15 +14,18 @@ public class StoreInfoDto {
 
     private String storeName;
 
+    private String location;
+
     private int followerNum;
 
     private double rating;
 
 
     @Builder
-    public StoreInfoDto(Long storeId, String storeName, int followerNum, double rating) {
+    public StoreInfoDto(Long storeId, String storeName, String location, int followerNum, double rating) {
         this.storeId = storeId;
         this.storeName = storeName;
+        this.location = location;
         this.followerNum = followerNum;
         this.rating = rating;
     }

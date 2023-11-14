@@ -66,4 +66,22 @@ public class StoreService {
     }
 
 
+    public List<StoreInfoDto> searchBy(String storeName) {
+        List<Store> storeList = storeRepository.findAllByStoreName(storeName);
+
+        List<StoreInfoDto> searchResultList = new ArrayList<>();
+
+        for (Store store : storeList) {
+            StoreInfoDto storeInfoDto = StoreInfoDto.builder()
+                    .storeId(store.getId())
+                    .storeName(store.getStoreName())
+                    .location(store.getLocation())
+                    .followerNum(store.getFollowerNum())
+                    .rating(store.getRating()).build();
+
+            searchResultList.add(storeInfoDto);
+        }
+
+        return searchResultList;
+    }
 }
