@@ -2,7 +2,9 @@ package com.khu.bbangting.controller;
 
 import com.khu.bbangting.dto.BreadFormDto;
 import com.khu.bbangting.dto.BreadInfoDto;
+import com.khu.bbangting.dto.StoreInfoDto;
 import com.khu.bbangting.service.BreadService;
+import com.khu.bbangting.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,7 @@ public class MainController {
         log.info(breadInfoDtoList.toString());
         model.addAttribute(breadInfoDtoList);
 
-        return "/comingSoon";
+        return "/comingSoonPage";
     }
 
 }
