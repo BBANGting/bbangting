@@ -23,27 +23,27 @@ public class MyStoreApiController {
     private MyStoreService myStoreService;
 
     @PostMapping("myStore/new")
-    public String 마이스토어등록(@Valid @RequestBody StoreFormDto requestDto, BindingResult bindingResult){
+    public String createMyStore(@Valid @RequestBody StoreFormDto requestDto, BindingResult bindingResult){
 
         if (bindingResult.hasErrors()) {
             log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());
         }
 
-        myStoreService.saveBread(requestDto);
+        myStoreService.saveStore(requestDto);
 
         return "redirect:/myStore";    // 마이스토어 페이지로 리다이렉트
     }
 
     @DeleteMapping("myStore/{userId}")
-    public String 마이스토어삭제(@PathVariable Long userId) {
+    public String deleteMyStore(@PathVariable Long userId) {
 
-        myStoreService.deleteBread(userId);
+        myStoreService.deleteStore(userId);
 
         return "redirect:myStore/none";      // 마이스토어 등록 안된 상태의 페이지
     }
 
     @GetMapping("myStore/edit/{userId}")
-    public String 마이스토어수정페이지(@PathVariable Long userId, Model model) {
+    public String updateMyStorePage(@PathVariable Long userId, Model model) {
 
         try {
             StoreFormDto storeFormDto = myStoreService.getStoreForm(userId);
@@ -58,7 +58,7 @@ public class MyStoreApiController {
     }
 
     @PutMapping("myStore/edit/{userId}")
-    public String 마이스토어수정(@Valid @RequestBody StoreUpdateFormDto requestDto, BindingResult bindingResult, @PathVariable Long userId) {
+    public String updateMyStore(@Valid @RequestBody StoreUpdateFormDto requestDto, BindingResult bindingResult, @PathVariable Long userId) {
 
         if (bindingResult.hasErrors()) {
             log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());

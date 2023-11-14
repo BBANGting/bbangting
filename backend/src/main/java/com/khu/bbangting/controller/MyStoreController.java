@@ -17,9 +17,9 @@ public class MyStoreController {
     @Autowired
     private MyStoreService myStoreService;
 
-    // 1. 마이스토어 페이지 호출
+    // 마이스토어 페이지 호출
     @GetMapping("/myStore/{userId}")
-    public String 마이스토어페이지(@PathVariable Long userId, Model model){
+    public String myStorePage(@PathVariable Long userId, Model model){
 
         try {
             MyStoreInfoDto myStoreInfoDto = myStoreService.getMyStoreInfo(userId);
