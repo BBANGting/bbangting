@@ -1,8 +1,13 @@
 package com.khu.bbangting.service;
 
+import com.khu.bbangting.dto.BreadInfoDto;
+import com.khu.bbangting.dto.StoreFormDto;
 import com.khu.bbangting.dto.StoreInfoDto;
+import com.khu.bbangting.model.Bread;
 import com.khu.bbangting.model.Store;
+import com.khu.bbangting.repository.BreadRepository;
 import com.khu.bbangting.repository.StoreRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +27,7 @@ import java.util.List;
 public class StoreService {
 
     private final StoreRepository storeRepository;
+    private final BreadRepository breadRepository;
 
 
     // 스토어 목록
@@ -83,5 +89,36 @@ public class StoreService {
         }
 
         return searchResultList;
+    }
+
+    public StoreFormDto getStoreInfo(Long storeId) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 빵이 존재하지 않습니다. id = " + storeId));
+
+        return StoreFormDto.builder()
+                .storeName(store.getStoreName())
+                .description(store.getDescription())
+                .location(store.getLocation())
+                .followerNum(store.getFollowerNum())
+                .rating(store.getRating()).build();
+    }
+
+    public List<BreadInfoDto> getBreadList(Long storeId) {
+        List<Bread> breadList = breadRepository.findByStoreId(storeId);
+
+        List<BreadInfoDto> breadDtoList = new ArrayList<>();
+
+        for (Bread bread : breadList) {
+            BreadInfoDto breadInfoDto = BreadInfoDto.builder()
+                    .breadId(bread.getId())
+                    .breadName(bread.getBreadName())
+                    .storeName(bread.getStore().getStoreName())
+                    .tingTime(bread.getTingTime())
+                    .stock(bread.getStock()).build();
+
+            breadDtoList.add(breadInfoDto);
+        }
+
+        return breadDtoList;
     }
 }
