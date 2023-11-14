@@ -45,7 +45,7 @@ public class MyStoreService {
 
     }
 
-    public void saveBread(StoreFormDto requestDto) {
+    public void saveStore(StoreFormDto requestDto) {
 
         // 예외처리) 유저 존재하지 않을 경우
         User user = userRepository.findById(requestDto.getUserId())
@@ -55,7 +55,7 @@ public class MyStoreService {
 
     }
 
-    public void deleteBread(Long userId) {
+    public void deleteStore(Long userId) {
 
         Store store = storeRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 마이스토어가 존재하지 않습니다. userId = " + userId));
