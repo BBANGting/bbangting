@@ -1,5 +1,6 @@
 package com.khu.bbangting.service;
 
+import com.khu.bbangting.dto.BreadDetailDto;
 import com.khu.bbangting.dto.BreadFormDto;
 import com.khu.bbangting.dto.BreadInfoDto;
 import com.khu.bbangting.dto.BreadUpdateFormDto;
@@ -30,11 +31,11 @@ public class BreadService {
 //    private ImageService imageService;
 
 
-    // 등록된 상품 정보 불러오기
+    // 등록된 빵 정보 불러오기
     public BreadFormDto getBreadForm(Long breadId) {
 
         Bread bread = breadRepository.findById(breadId)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(() -> new EntityNotFoundException("해당 스토어가 존재하지 않습니다. id = " + breadId));
 
         return BreadFormDto.builder()
                 .storeId(bread.getStore().getId())
@@ -47,6 +48,63 @@ public class BreadService {
 
     }
 
+    // 오늘의 빵팅 목록 불러오기
+    public List<BreadInfoDto> getTodayTing() {
+        List<Bread> breadList = breadRepository.findByTingStatusOrderByStore('Y');
+
+        List<BreadInfoDto> breadInfoDtoList = new ArrayList<>();
+
+        for (Bread bread : breadList) {
+            BreadInfoDto breadInfoDto = BreadInfoDto.builder()
+                    .breadId(bread.getId())
+                    .breadName(bread.getBreadName())
+                    .storeName(bread.getStore().getStoreName())
+                    .tingTime(bread.getTingTime())
+                    .stock(bread.getStock()).build();
+
+            breadInfoDtoList.add(breadInfoDto);
+        }
+
+        return breadInfoDtoList;
+    }
+
+    // 오픈 예정 빵 목록 불러오기
+    public List<BreadInfoDto> getOpenLineUp() {
+        List<Bread> breadList = breadRepository.findAll();
+
+        List<BreadInfoDto> breadInfoDtoList = new ArrayList<>();
+
+        for (Bread bread : breadList) {
+            BreadInfoDto breadInfoDto = BreadInfoDto.builder()
+                    .breadId(bread.getId())
+                    .breadName(bread.getBreadName())
+                    .storeName(bread.getStore().getStoreName())
+                    .tingTime(bread.getTingTime()).build();
+
+            breadInfoDtoList.add(breadInfoDto);
+        }
+
+        return breadInfoDtoList;
+    }
+
+    // 빵 상세 정보 불러오기
+    public BreadDetailDto getBreadDetail(Long breadId) {
+        Bread bread = breadRepository.findById(breadId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 빵이 존재하지 않습니다. id = " + breadId));
+
+        return BreadDetailDto.builder()
+                .breadId(bread.getId())
+                .breadName(bread.getBreadName())
+                .price(bread.getPrice())
+                .tingTime(bread.getTingTime())
+                .stock(bread.getStock())
+                .tingStatus(bread.getTingStatus())
+                .storeName(bread.getStore().getStoreName())
+                .location(bread.getStore().getLocation()).build();
+    }
+
+
+    /* 빵 등록, 수정, 삭제*/
     public void saveBread(BreadFormDto requestDto) {
 
         Store store = storeRepository.findById(requestDto.getStoreId())
@@ -80,40 +138,4 @@ public class BreadService {
         log.info(bread.toString());
     }
 
-    public List<BreadInfoDto> getTodayTing() {
-        List<Bread> breadList = breadRepository.findByTingStatusOrderByStore('Y');
-
-        List<BreadInfoDto> breadInfoDtoList = new ArrayList<>();
-
-        for (Bread bread : breadList) {
-            BreadInfoDto breadInfoDto = BreadInfoDto.builder()
-                    .breadId(bread.getId())
-                    .breadName(bread.getBreadName())
-                    .storeName(bread.getStore().getStoreName())
-                    .tingTime(bread.getTingTime())
-                    .stock(bread.getStock()).build();
-
-            breadInfoDtoList.add(breadInfoDto);
-        }
-
-        return breadInfoDtoList;
-    }
-
-    public List<BreadInfoDto> getOpenLineUp() {
-        List<Bread> breadList = breadRepository.findAll();
-
-        List<BreadInfoDto> breadInfoDtoList = new ArrayList<>();
-
-        for (Bread bread : breadList) {
-            BreadInfoDto breadInfoDto = BreadInfoDto.builder()
-                    .breadId(bread.getId())
-                    .breadName(bread.getBreadName())
-                    .storeName(bread.getStore().getStoreName())
-                    .tingTime(bread.getTingTime()).build();
-
-            breadInfoDtoList.add(breadInfoDto);
-        }
-
-        return breadInfoDtoList;
-    }
 }
