@@ -5,14 +5,17 @@ import com.khu.bbangting.dto.BreadFormDto;
 import com.khu.bbangting.dto.BreadInfoDto;
 import com.khu.bbangting.dto.BreadUpdateFormDto;
 import com.khu.bbangting.model.Bread;
+import com.khu.bbangting.model.Image;
 import com.khu.bbangting.model.Store;
 import com.khu.bbangting.repository.BreadRepository;
+import com.khu.bbangting.repository.ImageRepository;
 import com.khu.bbangting.repository.StoreRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +27,9 @@ import java.util.List;
 public class BreadService {
 
     private final BreadRepository breadRepository;
-
     private final StoreRepository storeRepository;
-
-//    @Autowired
-//    private ImageService imageService;
+    private final ImageRepository imageRepository;
+    private final ImageService imageService;
 
 
     // 등록된 빵 정보 불러오기
@@ -105,20 +106,26 @@ public class BreadService {
 
 
     /* 빵 등록, 수정, 삭제*/
-    public void saveBread(BreadFormDto requestDto) {
+    public void saveBread(BreadFormDto requestDto, List<MultipartFile> imageFileList) {
 
         Store store = storeRepository.findById(requestDto.getStoreId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 스토어가 존재하지 않습니다. id = " + requestDto.getStoreId()));
 
-//        // 이미지 등록
-//        for (int i = 0; i < imageFileList.size(); i++) {
-//            Image image = new Image();
-//            image.setBread(bread);
-//
-//            imageService.saveImage(image, imageFileList.get(i));
-//        }
+        Bread bread = requestDto.toEntity(store);
+        breadRepository.save(bread);
 
-        breadRepository.save(requestDto.toEntity(store));
+        // 이미지 등록
+        for (int i = 0; i < imageFileList.size(); i++) {
+            Image image = new Image();
+            image.setBread(bread);
+
+            if(i == 0)
+                image.setRepimgYn("Y");     // 첫번째 사진 -> 대표 이미지
+            else
+                image.setRepimgYn("N");     // 나머지 사진
+
+            imageService.saveImage(image, imageFileList.get(i));
+        }
     }
 
     public void deleteBread(Long breadId) {
