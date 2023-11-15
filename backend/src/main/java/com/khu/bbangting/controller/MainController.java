@@ -22,9 +22,9 @@ public class MainController {
     // 메인페이지 호출
     @GetMapping("/")
     public String main(Model model) {
-        List<BreadInfoDto> breadInfoDtoList = breadService.getTodayTing();
-        log.info(breadInfoDtoList.toString());
-        model.addAttribute(breadInfoDtoList);
+        List<BreadInfoDto> todayTingBreadList = breadService.getTodayTing();
+        log.info(todayTingBreadList.toString());
+        model.addAttribute("todayTingBread", todayTingBreadList);
 
         return "/";
     }
@@ -32,9 +32,9 @@ public class MainController {
     // 오픈예정페이지 호출
     @GetMapping("/comingSoon")
     public String openLineUp(Model model) {
-        List<BreadInfoDto> breadInfoDtoList = breadService.getOpenLineUp();
-        log.info(breadInfoDtoList.toString());
-        model.addAttribute(breadInfoDtoList);
+        List<BreadInfoDto> breadOpenLineUpList = breadService.getOpenLineUp();
+        log.info(breadOpenLineUpList.toString());
+        model.addAttribute("openLineUp",breadOpenLineUpList);
 
         return "/comingSoonPage";
     }
