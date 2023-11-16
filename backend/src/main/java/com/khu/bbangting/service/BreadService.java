@@ -133,6 +133,13 @@ public class BreadService {
         Bread bread = breadRepository.findById(breadId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 빵이 존재하지 않습니다. id = " + breadId));
 
+        // 빵 삭제 시, 빵 이미지 또한 삭제
+        List<Image> imageList = imageRepository.findAllByBreadId(bread.getId());
+
+        for (Image image : imageList) {
+            imageRepository.delete(image);
+        }
+
         breadRepository.delete(bread);
 
     }
