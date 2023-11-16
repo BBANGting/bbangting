@@ -12,6 +12,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -22,22 +25,23 @@ public class BreadApiController {
     private BreadService breadService;
 
     @PostMapping("myStore/bread/new")
-    public String 빵등록(@Valid @RequestBody BreadFormDto requestDto, BindingResult bindingResult) {
+    public String createBread(Model model, @Valid @RequestPart BreadFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
+    List<MultipartFile> imageFileList) {
 
         if (bindingResult.hasErrors()) {
             log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());
         }
 
         // 대표이미지 등록 안할 시, errorMessage 담기
-//        if(itemImgFileList.get(0).isEmpty() && myStoreFormDto.getId() == null){
-//            model.addAttribute("errorMessage", "대표이미지는 필수 입력 값 입니다.");
-//            return "myStore/myStoreForm";
-//        }
+        if(imageFileList.get(0).isEmpty()){
+            model.addAttribute("errorMessage", "대표이미지는 필수 입력 값 입니다.");
+            return "myStore/bread/breadForm";
+        }
 
         try {
-            breadService.saveBread(requestDto);
+            breadService.saveBread(requestDto, imageFileList);
         } catch (Exception e) {
-            bindingResult.reject("빵 등록 실패", e.getMessage());
+            model.addAttribute("errorMessage", "상품 등록 중 에러가 발생하였습니다.");
             return "myStore/bread/breadForm";
         }
 
@@ -45,7 +49,7 @@ public class BreadApiController {
     }
 
     @DeleteMapping("myStore/bread/{breadId}")
-    public String 빵삭제(@PathVariable Long breadId) {
+    public String deleteBread(@PathVariable Long breadId) {
 
         breadService.deleteBread(breadId);
 
@@ -53,7 +57,7 @@ public class BreadApiController {
     }
 
     @GetMapping("myStore/bread/edit/{breadId}")
-    public String 빵수정페이지(@PathVariable Long breadId, Model model) {
+    public String updateBreadPage(@PathVariable Long breadId, Model model) {
 
         try {
             BreadFormDto breadFormDto = breadService.getBreadForm(breadId);
@@ -68,7 +72,7 @@ public class BreadApiController {
     }
 
     @PutMapping("myStore/bread/edit/{breadId}")
-    public String 빵수정(@Valid @RequestBody BreadUpdateFormDto requestDto, BindingResult bindingResult, @PathVariable Long breadId) {
+    public String updateBread(@Valid @RequestBody BreadUpdateFormDto requestDto, BindingResult bindingResult, @PathVariable Long breadId) {
 
         if (bindingResult.hasErrors()) {
             log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());

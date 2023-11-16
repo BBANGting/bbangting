@@ -4,8 +4,8 @@ import com.khu.bbangting.model.Image;
 import com.khu.bbangting.repository.ImageRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,27 +13,25 @@ import org.thymeleaf.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ImageService {
 
     @Value("${imageLocation}")
-    private String ImageLocation;
+    private String imageLocation;
 
-    @Autowired
-    private ImageRepository imageRepository;
+    private final ImageRepository imageRepository;
 
-    @Autowired
-    private FileService fileService;
+    private final FileService fileService;
 
-    @Transactional
-    public void saveImage(Image image, MultipartFile ImageFile) throws Exception {
-        String oriImageName = ImageFile.getOriginalFilename();
+    public void saveImage(Image image, MultipartFile imageFile) throws Exception {
+        String oriImageName = imageFile.getOriginalFilename();
         String imageName = "";
         String imageUrl = "";
 
         // 파일 업로드
         if (!StringUtils.isEmpty(oriImageName)) {
-            imageName = fileService.uploadFile(ImageLocation, oriImageName, ImageFile.getBytes());
-            imageUrl = "images/bbang/" + imageName;
+            imageName = fileService.uploadFile(imageLocation, oriImageName, imageFile.getBytes());
+            imageUrl = "/images/bbang/" + imageName;
         }
 
         // 상품 이미지 정보 저장
@@ -41,7 +39,6 @@ public class ImageService {
         imageRepository.save(image);
     }
 
-    @Transactional
     public void updateImage(Long imageId, MultipartFile imageFile) throws Exception {
         if (!imageFile.isEmpty()) {
             Image savedImage = imageRepository.findById(imageId)
@@ -49,11 +46,11 @@ public class ImageService {
 
             // 기존 이미지 파일 삭제
             if (!StringUtils.isEmpty(savedImage.getImageName())) {
-                fileService.deleteFile(ImageLocation+"/"+savedImage.getImageName());
+                fileService.deleteFile(imageLocation+"/"+savedImage.getImageName());
             }
 
             String oriImageName = imageFile.getOriginalFilename();
-            String imageName = fileService.uploadFile(ImageLocation, oriImageName, imageFile.getBytes());
+            String imageName = fileService.uploadFile(imageLocation, oriImageName, imageFile.getBytes());
             String imageUrl = "/images/bbang/" + imageName;
             savedImage.updateImage(oriImageName, imageName, imageUrl);
         }

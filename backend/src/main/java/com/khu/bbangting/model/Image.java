@@ -15,10 +15,9 @@ public class Image {
     private Long id;
 
     private String imageName;            // 이미지 파일명
-
     private String oriImageName;         // 원본 이미지 파일명
-
     private String imageUrl;             // 이미지 조회 경로
+    private char repImgYn;             // 대표 이미지 여부
 
     @ManyToOne(fetch = FetchType.LAZY)   // 빵 정보가 필요할 경우, 데이터 조회
     @JoinColumn(name = "breadId")

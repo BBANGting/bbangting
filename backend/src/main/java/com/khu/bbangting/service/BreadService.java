@@ -106,7 +106,7 @@ public class BreadService {
 
 
     /* 빵 등록, 수정, 삭제*/
-    public void saveBread(BreadFormDto requestDto, List<MultipartFile> imageFileList) {
+    public void saveBread(BreadFormDto requestDto, List<MultipartFile> imageFileList) throws Exception {
 
         Store store = storeRepository.findById(requestDto.getStoreId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 스토어가 존재하지 않습니다. id = " + requestDto.getStoreId()));
@@ -120,9 +120,9 @@ public class BreadService {
             image.setBread(bread);
 
             if(i == 0)
-                image.setRepimgYn("Y");     // 첫번째 사진 -> 대표 이미지
+                image.setRepImgYn('Y');     // 첫번째 사진 -> 대표 이미지
             else
-                image.setRepimgYn("N");     // 나머지 사진
+                image.setRepImgYn('N');     // 나머지 사진
 
             imageService.saveImage(image, imageFileList.get(i));
         }
