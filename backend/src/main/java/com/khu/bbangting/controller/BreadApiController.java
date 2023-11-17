@@ -1,7 +1,6 @@
 package com.khu.bbangting.controller;
 
 import com.khu.bbangting.dto.BreadFormDto;
-import com.khu.bbangting.dto.BreadUpdateFormDto;
 import com.khu.bbangting.service.BreadService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -71,22 +70,23 @@ public class BreadApiController {
         return "myStore/bread/breadFrom";
     }
 
-    @PutMapping("myStore/bread/edit/{breadId}")
-    public String updateBread(@Valid @RequestPart BreadUpdateFormDto requestDto, BindingResult bindingResult, @PathVariable Long breadId) {
+    @PostMapping("myStore/bread/edit/{breadId}")
+    public String updateBread(@PathVariable Long breadId, @Valid @RequestPart BreadFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
+    List<MultipartFile> imageFileList) {
 
         if (bindingResult.hasErrors()) {
             log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());
-            return "myStore/bread/breadFrom";
+            return "myStore/bread/breadFrom/binding";
         }
 
         try {
-            breadService.updateBread(breadId, requestDto);
+            breadService.updateBread(breadId, requestDto, imageFileList);
         } catch (DataIntegrityViolationException e) {
             bindingResult.reject("빵 수정 실패", "이미 등록된 제품명입니다.");
-            return "myStore/bread/breadForm";
+            return "myStore/bread/breadForm/data";
         } catch (Exception e) {
             bindingResult.reject("빵 수정 실패", e.getMessage());
-            return "myStore/bread/breadForm";
+            return "myStore/bread/breadForm/ex";
         }
 
         return "redirect:myStore/";

@@ -4,7 +4,6 @@ import com.khu.bbangting.model.Image;
 import com.khu.bbangting.repository.ImageRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +30,7 @@ public class ImageService {
         // 파일 업로드
         if (!StringUtils.isEmpty(oriImageName)) {
             imageName = fileService.uploadFile(imageLocation, oriImageName, imageFile.getBytes());
-            imageUrl = "/images/bbang/" + imageName;
+            imageUrl = "/images/bread/" + imageName;
         }
 
         // 상품 이미지 정보 저장
@@ -51,7 +50,7 @@ public class ImageService {
 
             String oriImageName = imageFile.getOriginalFilename();
             String imageName = fileService.uploadFile(imageLocation, oriImageName, imageFile.getBytes());
-            String imageUrl = "/images/bbang/" + imageName;
+            String imageUrl = "/images/bread/" + imageName;
             savedImage.updateImage(oriImageName, imageName, imageUrl);
         }
     }

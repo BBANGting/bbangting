@@ -34,10 +34,12 @@ public class BreadService {
     public BreadFormDto getBreadForm(Long breadId) {
         List<Image> breadImgList = imageRepository.findByBreadIdOrderByIdAsc(breadId);
         List<ImageDto> breadImgDtoList = new ArrayList<>();
+        List<Long> imageIds = new ArrayList<>();
 
         for (Image image : breadImgList) {
             ImageDto imageDto = ImageDto.of(image);
             breadImgDtoList.add(imageDto);
+            imageIds.add(image.getId());
         }
 
         Bread bread = breadRepository.findById(breadId)
@@ -51,7 +53,9 @@ public class BreadService {
                 .tingTime(bread.getTingTime())
                 .maxTingNum(bread.getMaxTingNum())
                 .tingStatus(bread.getTingStatus()).build();
+
         breadFormDto.setImageDtoList(breadImgDtoList);
+        breadFormDto.setImageIds(imageIds);
 
         return breadFormDto;
 
@@ -152,12 +156,21 @@ public class BreadService {
 
     }
 
-    public void updateBread(Long breadId, BreadUpdateFormDto requestDto) {
+    public void updateBread(Long breadId, BreadFormDto requestDto, List<MultipartFile> imageFileList) throws Exception {
+
+        // 상품 정보 수정
         Bread bread = breadRepository.findById(breadId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 빵이 존재하지 않습니다. id = " + breadId));
 
         bread.update(requestDto);
-        log.info(bread.toString());
+        breadRepository.save(bread);
+
+        // 이미지 등록
+        for (int i = 0; i < imageFileList.size(); i++) {
+            System.out.println(imageFileList.size());
+            System.out.println(requestDto.getImageIds().get(i));
+            imageService.updateImage(requestDto.getImageIds().get(i), imageFileList.get(i));
+        }
     }
 
 }

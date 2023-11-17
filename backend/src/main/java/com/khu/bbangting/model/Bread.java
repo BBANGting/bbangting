@@ -1,12 +1,8 @@
 package com.khu.bbangting.model;
 
-import com.khu.bbangting.dto.BreadUpdateFormDto;
+import com.khu.bbangting.dto.BreadFormDto;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
-
-import java.sql.Timestamp;
 
 @Entity
 @Table(name = "breads")
@@ -60,7 +56,7 @@ public class Bread {
         this.tingStatus = tingStatus;
     }
 
-    public void update(BreadUpdateFormDto requestDto) {
+    public void update(BreadFormDto requestDto) {
         this.breadName = requestDto.getBreadName();
         this.description = requestDto.getDescription();
         this.price = requestDto.getPrice();
