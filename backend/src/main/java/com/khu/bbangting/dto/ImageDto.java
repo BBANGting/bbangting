@@ -3,17 +3,19 @@ package com.khu.bbangting.dto;
 import com.khu.bbangting.model.Image;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.modelmapper.ModelMapper;
 
 @Getter
 @Setter
+@ToString
 public class ImageDto{
 
     private Long id;
-
-    private String imgName;       // 이미지 파일명
-
-    private String imageUrl;      // 이미지 조회 경로
+    private String imageName;
+    private String oriImageName;
+    private String imageUrl;
+    private String repImgYn;
 
     private static ModelMapper modelMapper = new ModelMapper();
 

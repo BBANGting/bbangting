@@ -1,9 +1,6 @@
 package com.khu.bbangting.service;
 
-import com.khu.bbangting.dto.BreadDetailDto;
-import com.khu.bbangting.dto.BreadFormDto;
-import com.khu.bbangting.dto.BreadInfoDto;
-import com.khu.bbangting.dto.BreadUpdateFormDto;
+import com.khu.bbangting.dto.*;
 import com.khu.bbangting.model.Bread;
 import com.khu.bbangting.model.Image;
 import com.khu.bbangting.model.Store;
@@ -32,13 +29,21 @@ public class BreadService {
     private final ImageService imageService;
 
 
+    @Transactional(readOnly = true)
     // 등록된 빵 정보 불러오기
     public BreadFormDto getBreadForm(Long breadId) {
+        List<Image> breadImgList = imageRepository.findByBreadIdOrderByIdAsc(breadId);
+        List<ImageDto> breadImgDtoList = new ArrayList<>();
+
+        for (Image image : breadImgList) {
+            ImageDto imageDto = ImageDto.of(image);
+            breadImgDtoList.add(imageDto);
+        }
 
         Bread bread = breadRepository.findById(breadId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 스토어가 존재하지 않습니다. id = " + breadId));
 
-        return BreadFormDto.builder()
+        BreadFormDto breadFormDto = BreadFormDto.builder()
                 .storeId(bread.getStore().getId())
                 .breadName(bread.getBreadName())
                 .description(bread.getDescription())
@@ -46,6 +51,9 @@ public class BreadService {
                 .tingTime(bread.getTingTime())
                 .maxTingNum(bread.getMaxTingNum())
                 .tingStatus(bread.getTingStatus()).build();
+        breadFormDto.setImageDtoList(breadImgDtoList);
+
+        return breadFormDto;
 
     }
 

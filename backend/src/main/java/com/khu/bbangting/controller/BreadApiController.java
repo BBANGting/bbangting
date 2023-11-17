@@ -72,7 +72,7 @@ public class BreadApiController {
     }
 
     @PutMapping("myStore/bread/edit/{breadId}")
-    public String updateBread(@Valid @RequestBody BreadUpdateFormDto requestDto, BindingResult bindingResult, @PathVariable Long breadId) {
+    public String updateBread(@Valid @RequestPart BreadUpdateFormDto requestDto, BindingResult bindingResult, @PathVariable Long breadId) {
 
         if (bindingResult.hasErrors()) {
             log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());
