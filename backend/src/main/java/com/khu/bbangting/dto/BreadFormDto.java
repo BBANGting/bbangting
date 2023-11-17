@@ -33,6 +33,7 @@ public class BreadFormDto {
     @Min(value = 1)
     private int maxTingNum;
 
+    @NotNull
     private char tingStatus;
 
     private List<ImageDto> imageDtoList = new ArrayList<>(); // 상품 저장 후, 수정할 때 상품 이미지 정보를 저장하는 리스트
