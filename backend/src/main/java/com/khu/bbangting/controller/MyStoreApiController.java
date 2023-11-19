@@ -12,6 +12,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -23,13 +26,25 @@ public class MyStoreApiController {
     private MyStoreService myStoreService;
 
     @PostMapping("myStore/new")
-    public String createMyStore(@Valid @RequestBody StoreFormDto requestDto, BindingResult bindingResult){
+    public String createMyStore(Model model, @Valid @RequestPart StoreFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
+    List<MultipartFile> imageFileList){
 
         if (bindingResult.hasErrors()) {
             log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());
         }
 
-        myStoreService.saveStore(requestDto);
+        // 스토어 로고 등록 안할 시, errorMessage 담기
+        if(imageFileList.get(0).isEmpty()){
+            model.addAttribute("errorMessage", "스토어 로고는 필수 입력 값 입니다.");
+            return "myStore/storeForm";
+        }
+
+        try {
+            myStoreService.saveStore(requestDto, imageFileList);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "스토어 등록 중 에러가 발생하였습니다.");
+            return "myStore/storeForm";
+        }
 
         return "redirect:/myStore";    // 마이스토어 페이지로 리다이렉트
     }
@@ -39,7 +54,7 @@ public class MyStoreApiController {
 
         myStoreService.deleteStore(userId);
 
-        return "redirect:myStore/none";      // 마이스토어 등록 안된 상태의 페이지
+        return "redirect:/myStore/none";      // 마이스토어 등록 안된 상태의 페이지
     }
 
     @GetMapping("myStore/edit/{userId}")
@@ -51,7 +66,7 @@ public class MyStoreApiController {
             model.addAttribute("storeFormDto", storeFormDto);
         } catch (EntityNotFoundException e) {
             model.addAttribute("errorMessage", "해당 제품을 찾을 수 없습니다.");
-            return "myStore/";
+            return "/myStore";
         }
 
         return "myStore/storeForm";

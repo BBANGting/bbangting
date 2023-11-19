@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.UUID;
 
 @Service
@@ -15,10 +16,26 @@ public class FileService {
         UUID uuid = UUID.randomUUID();
         String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
         String savedFileName = uuid.toString() + extension;
+
+        // 디렉토리 경로 생성
+        File directory = new File(uploadPath);
+
+        // 디렉토리가 없으면 생성
+        if (!directory.exists()) {
+            if (directory.mkdirs()) {
+                System.out.println("디렉토리 생성 성공");
+            } else {
+                System.out.println("디렉토리 생성 실패");
+            }
+        }
+
         String fileUploadFullUrl = uploadPath + "/" + savedFileName;
-        FileOutputStream fos = new FileOutputStream(fileUploadFullUrl);
-        fos.write(fileData);
-        fos.close();
+        try (FileOutputStream fos = new FileOutputStream(fileUploadFullUrl)) {
+            fos.write(fileData);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return savedFileName;
     }
 

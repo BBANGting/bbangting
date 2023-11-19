@@ -1,7 +1,9 @@
 package com.khu.bbangting.service;
 
 import com.khu.bbangting.model.Image;
+import com.khu.bbangting.model.StoreImage;
 import com.khu.bbangting.repository.ImageRepository;
+import com.khu.bbangting.repository.StoreImageRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,9 +19,10 @@ public class ImageService {
 
     @Value("${imageLocation}")
     private String imageLocation;
-
+    @Value("${storeImageLocation}")
+    private String storeImageLocation;
     private final ImageRepository imageRepository;
-
+    private final StoreImageRepository storeImageRepository;
     private final FileService fileService;
 
     public void saveImage(Image image, MultipartFile imageFile) throws Exception {
@@ -55,4 +58,19 @@ public class ImageService {
         }
     }
 
+    public void saveStoreImage(StoreImage storeImage, MultipartFile imageFile) throws Exception {
+        String oriImageName = imageFile.getOriginalFilename();
+        String imageName = "";
+        String imageUrl = "";
+
+        // 파일 업로드
+        if (!StringUtils.isEmpty(oriImageName)) {
+            imageName = fileService.uploadFile(storeImageLocation, oriImageName, imageFile.getBytes());
+            imageUrl = "/images/store/" + imageName;
+        }
+
+        // 스토어 이미지 정보 저장
+        storeImage.updateImage(oriImageName, imageName, imageUrl);
+        storeImageRepository.save(storeImage);
+    }
 }
