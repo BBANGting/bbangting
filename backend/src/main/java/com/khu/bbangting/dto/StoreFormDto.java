@@ -4,10 +4,12 @@ import com.khu.bbangting.model.Store;
 import com.khu.bbangting.model.User;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import org.modelmapper.ModelMapper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @ToString
-@Getter
+@Getter @Setter
 @NoArgsConstructor
 public class StoreFormDto {
 
@@ -15,10 +17,6 @@ public class StoreFormDto {
 
     @NotBlank(message = "스토어명은 필수 입력 값입니다.")
     private String storeName;
-
-//    private String storeLogo;
-//
-//    private String storeImage;
 
     private String description;
 
@@ -28,6 +26,9 @@ public class StoreFormDto {
     private int followerNum;
 
     private double rating;
+
+    private List<StoreImageDto> storeImageDtoList = new ArrayList<>();
+    private List<Long> storeImageIds = new ArrayList<>();
 
     @Builder
     public StoreFormDto(Long userId, String storeName, String description, String location, int followerNum, double rating) {

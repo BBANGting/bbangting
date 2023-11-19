@@ -8,4 +8,6 @@ import java.util.List;
 public interface StoreImageRepository extends JpaRepository<StoreImage, Long> {
 
     List<StoreImage> findAllByStoreId(Long id);
+
+    List<StoreImage> findByStoreIdOrderByIdAsc(Long storeId);
 }

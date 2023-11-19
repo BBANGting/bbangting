@@ -2,6 +2,7 @@ package com.khu.bbangting.service;
 
 import com.khu.bbangting.dto.MyStoreInfoDto;
 import com.khu.bbangting.dto.StoreFormDto;
+import com.khu.bbangting.dto.StoreImageDto;
 import com.khu.bbangting.dto.StoreUpdateFormDto;
 import com.khu.bbangting.model.*;
 import com.khu.bbangting.repository.*;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -29,18 +31,33 @@ public class MyStoreService {
     private final StoreImageRepository storeImageRepository;
 
 
+    @Transactional(readOnly = true)
     public StoreFormDto getStoreForm(Long userId) {
 
         Store store = storeRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 마이스토어가 존재하지 않습니다. userId = " + userId));
 
-        return StoreFormDto.builder()
+        List<StoreImage> storeImgList = storeImageRepository.findByStoreIdOrderByIdAsc(store.getId());
+        List<StoreImageDto> storeImgDtoList = new ArrayList<>();
+        List<Long> storeImageIds = new ArrayList<>();
+
+        for (StoreImage storeImage : storeImgList) {
+            StoreImageDto storeImageDto = StoreImageDto.of(storeImage);
+            storeImgDtoList.add(storeImageDto);
+            storeImageIds.add(storeImage.getId());
+        }
+
+        StoreFormDto storeFormDto = StoreFormDto.builder()
                 .userId(store.getId())
                 .storeName(store.getStoreName())
                 .description(store.getDescription())
                 .location(store.getLocation())
                 .followerNum(store.getFollowerNum()).build();
 
+        storeFormDto.setStoreImageDtoList(storeImgDtoList);
+        storeFormDto.setStoreImageIds(storeImageIds);
+
+        return storeFormDto;
     }
 
     public void saveStore(StoreFormDto requestDto, List<MultipartFile> imageFileList) throws Exception{
