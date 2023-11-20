@@ -34,7 +34,7 @@ public class MyStoreService {
     @Transactional(readOnly = true)
     public StoreFormDto getStoreForm(Long userId) {
 
-        Store store = storeRepository.findById(userId)
+        Store store = storeRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 마이스토어가 존재하지 않습니다. userId = " + userId));
 
         List<StoreImage> storeImgList = storeImageRepository.findByStoreIdOrderByIdAsc(store.getId());
@@ -48,7 +48,7 @@ public class MyStoreService {
         }
 
         StoreFormDto storeFormDto = StoreFormDto.builder()
-                .userId(store.getId())
+                .userId(store.getUser().getId())
                 .storeName(store.getStoreName())
                 .description(store.getDescription())
                 .location(store.getLocation())
@@ -100,13 +100,29 @@ public class MyStoreService {
     }
 
 
-    public void updateStore(Long userId, StoreUpdateFormDto requestDto) {
+    public void updateStore(Long userId, StoreFormDto requestDto, List<MultipartFile> imageFileList) throws Exception {
 
-        Store store = storeRepository.findById(userId)
+        Store store = storeRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 마이스토어가 존재하지 않습니다. userId = " + userId));
 
         store.update(requestDto);
-        log.info(store.toString());
+        storeRepository.save(store);
+
+        // 이미지 등록
+        int num = 0;
+        for (int i = 0; i < imageFileList.size(); i++) { // imageFileList = 2
+            if (num < requestDto.getStoreImageIds().size()) { // num, i = 2, ids = 3
+                num ++;
+                imageService.updateStoreImage(store, requestDto.getStoreImageIds().get(i), imageFileList.get(i));
+            } else {
+                imageService.updateStoreImage(store,0L, imageFileList.get(i));
+            }
+        }
+
+        // 남은 등록된 이미지 삭제하기
+        for (int i = num; i < requestDto.getStoreImageIds().size(); i++) {
+            imageService.deleteStoreImage(requestDto.getStoreImageIds().get(i));
+        }
     }
 
     public MyStoreInfoDto getMyStoreInfo(Long userId) {

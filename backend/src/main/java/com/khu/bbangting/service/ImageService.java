@@ -1,6 +1,7 @@
 package com.khu.bbangting.service;
 
 import com.khu.bbangting.model.Image;
+import com.khu.bbangting.model.Store;
 import com.khu.bbangting.model.StoreImage;
 import com.khu.bbangting.repository.ImageRepository;
 import com.khu.bbangting.repository.StoreImageRepository;
@@ -72,5 +73,44 @@ public class ImageService {
         // 스토어 이미지 정보 저장
         storeImage.updateImage(oriImageName, imageName, imageUrl);
         storeImageRepository.save(storeImage);
+    }
+
+    public void updateStoreImage(Store store, Long storeImageId, MultipartFile imageFile) throws Exception {
+        if (!imageFile.isEmpty()) {
+
+            // 기존 이미지 파일 삭제
+            if (storeImageId != 0L) {
+                StoreImage savedStoreImage = storeImageRepository.findById(storeImageId)
+                        .orElseThrow(EntityNotFoundException::new);
+
+                if (!StringUtils.isEmpty(savedStoreImage.getImageName())) {
+                    fileService.deleteFile(storeImageLocation + "/" + savedStoreImage.getImageName());
+                }
+
+                String oriImageName = imageFile.getOriginalFilename();
+                String imageName = fileService.uploadFile(storeImageLocation, oriImageName, imageFile.getBytes());
+                String imageUrl = "/images/store/" + imageName;
+                savedStoreImage.updateImage(oriImageName, imageName, imageUrl);
+
+            // 새로운 이미지 등록
+            } else {
+                StoreImage storeImage = new StoreImage();
+                storeImage.setStore(store);
+                storeImage.setLogoImgYn('N');     // 나머지 사진
+
+                saveStoreImage(storeImage, imageFile);
+            }
+        }
+    }
+
+    public void deleteStoreImage(Long storeImageId) throws Exception {
+        StoreImage savedStoreImage = storeImageRepository.findById(storeImageId)
+                .orElseThrow(EntityNotFoundException::new);
+
+        if (!StringUtils.isEmpty(savedStoreImage.getImageName())) {
+            fileService.deleteFile(storeImageLocation + "/" + savedStoreImage.getImageName());
+        }
+
+        storeImageRepository.delete(savedStoreImage);
     }
 }

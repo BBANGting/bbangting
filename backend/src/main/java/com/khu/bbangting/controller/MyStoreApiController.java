@@ -72,8 +72,9 @@ public class MyStoreApiController {
         return "myStore/storeForm";
     }
 
-    @PutMapping("myStore/edit/{userId}")
-    public String updateMyStore(@Valid @RequestBody StoreUpdateFormDto requestDto, BindingResult bindingResult, @PathVariable Long userId) {
+    @PostMapping("myStore/edit/{userId}")
+    public String updateMyStore(@PathVariable Long userId, @Valid @RequestPart StoreFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
+    List<MultipartFile> imageFileList) {
 
         if (bindingResult.hasErrors()) {
             log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());
@@ -81,10 +82,10 @@ public class MyStoreApiController {
         }
 
         try {
-            myStoreService.updateStore(userId, requestDto);
+            myStoreService.updateStore(userId, requestDto, imageFileList);
         } catch (DataIntegrityViolationException e) {
             bindingResult.reject("스토어 수정 실패", "이미 존재하는 스토어입니다.");
-            return "myStore/bread/breadForm";
+            return "myStore/storeForm";
         } catch (Exception e) {
             bindingResult.reject("스토어 수정 실패", e.getMessage());
             return "myStore/storeForm";

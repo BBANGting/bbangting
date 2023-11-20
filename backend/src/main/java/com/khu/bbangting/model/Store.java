@@ -1,6 +1,6 @@
 package com.khu.bbangting.model;
 
-import com.khu.bbangting.dto.StoreUpdateFormDto;
+import com.khu.bbangting.dto.StoreFormDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,7 +46,7 @@ public class Store {
         this.location = location;
     }
 
-    public void update(StoreUpdateFormDto requestDto) {
+    public void update(StoreFormDto requestDto) {
         this.storeName = requestDto.getStoreName();
         this.description = requestDto.getDescription();
         this.location = requestDto.getLocation();
