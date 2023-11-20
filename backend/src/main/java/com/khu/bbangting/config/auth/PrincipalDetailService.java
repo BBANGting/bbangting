@@ -1,7 +1,7 @@
 package com.khu.bbangting.config.auth;
 
-import com.khu.bbangting.model.User;
-import com.khu.bbangting.repository.UserRepository;
+import com.khu.bbangting.domain.user.model.User;
+import com.khu.bbangting.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

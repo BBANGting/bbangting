@@ -1,6 +1,6 @@
 package com.khu.bbangting.config.auth;
 
-import com.khu.bbangting.model.User;
+import com.khu.bbangting.domain.user.model.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

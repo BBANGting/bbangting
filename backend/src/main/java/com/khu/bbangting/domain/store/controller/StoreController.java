@@ -1,0 +1,66 @@
+package com.khu.bbangting.domain.store.controller;
+import com.khu.bbangting.domain.bread.dto.BreadInfoDto;
+import com.khu.bbangting.domain.store.dto.StoreFormDto;
+import com.khu.bbangting.domain.store.dto.StoreInfoDto;
+import com.khu.bbangting.domain.store.service.StoreService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@Slf4j
+@RequiredArgsConstructor
+public class StoreController {
+
+    @Autowired
+    private StoreService storeService;
+    @GetMapping("/store")
+    public String storePage(Model model) {
+        List<StoreInfoDto> storeInfoDtoList = storeService.getStoreList();
+        log.info(storeInfoDtoList.toString());
+        List<StoreInfoDto> storeRankingList = storeService.getTopRank();
+        log.info(storeRankingList.toString());
+
+        model.addAttribute("storeInfoDtoList", storeInfoDtoList);
+        model.addAttribute("storeRankingList", storeRankingList);
+
+        return "store/storePage";
+    }
+
+    @GetMapping("/store/{storeId}")
+    public String storeDetailPage(Model model, @PathVariable Long storeId) {
+        StoreFormDto storeFormDto = storeService.getStoreInfo(storeId);
+        log.info(storeFormDto.toString());
+
+        model.addAttribute("storeInfo", storeFormDto);
+
+        List<BreadInfoDto> breadList = storeService.getBreadList(storeId);
+        log.info(breadList.toString());
+
+        model.addAttribute("breadList", breadList);
+
+        return "store/storeDetailPage";
+    }
+
+    @GetMapping("/store/search")
+    public String searchStore(Model model, @RequestParam("storeName") String storeName) {
+        List<StoreInfoDto> searchResult = storeService.searchBy(storeName);
+        log.info(searchResult.toString());
+
+        if (searchResult.size() == 0) {
+            model.addAttribute("searchResultList", "검색 결과 없음");
+        } else {
+            model.addAttribute("searchResultList", searchResult);
+        }
+
+        return "store/searchList";
+    }
+
+}

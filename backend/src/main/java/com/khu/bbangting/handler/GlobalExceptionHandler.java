@@ -1,6 +1,6 @@
 package com.khu.bbangting.handler;
 
-import com.khu.bbangting.dto.ResponseDto;
+import com.khu.bbangting.domain.user.dto.ResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
