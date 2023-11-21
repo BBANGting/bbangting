@@ -76,17 +76,17 @@ public class BreadApiController {
 
         if (bindingResult.hasErrors()) {
             log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());
-            return "myStore/bread/breadFrom/binding";
+            return "myStore/bread/breadFrom";
         }
 
         try {
             breadService.updateBread(breadId, requestDto, imageFileList);
         } catch (DataIntegrityViolationException e) {
             bindingResult.reject("빵 수정 실패", "이미 등록된 제품명입니다.");
-            return "myStore/bread/breadForm/data";
+            return "myStore/bread/breadForm";
         } catch (Exception e) {
             bindingResult.reject("빵 수정 실패", e.getMessage());
-            return "myStore/bread/breadForm/ex";
+            return "myStore/bread/breadForm";
         }
 
         return "redirect:myStore/";

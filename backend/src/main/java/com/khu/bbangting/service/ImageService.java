@@ -1,5 +1,6 @@
 package com.khu.bbangting.service;
 
+import com.khu.bbangting.model.Bread;
 import com.khu.bbangting.model.Image;
 import com.khu.bbangting.model.Store;
 import com.khu.bbangting.model.StoreImage;
@@ -26,6 +27,8 @@ public class ImageService {
     private final StoreImageRepository storeImageRepository;
     private final FileService fileService;
 
+
+    /* Bread image service*/
     public void saveImage(Image image, MultipartFile imageFile) throws Exception {
         String oriImageName = imageFile.getOriginalFilename();
         String imageName = "";
@@ -42,23 +45,47 @@ public class ImageService {
         imageRepository.save(image);
     }
 
-    public void updateImage(Long imageId, MultipartFile imageFile) throws Exception {
+    public void updateImage(Bread bread, Long imageId, MultipartFile imageFile) throws Exception {
         if (!imageFile.isEmpty()) {
-            Image savedImage = imageRepository.findById(imageId)
-                    .orElseThrow(EntityNotFoundException::new);
 
             // 기존 이미지 파일 삭제
-            if (!StringUtils.isEmpty(savedImage.getImageName())) {
-                fileService.deleteFile(imageLocation+"/"+savedImage.getImageName());
-            }
+            if (imageId != 0L) {
+                Image savedImage = imageRepository.findById(imageId)
+                        .orElseThrow(EntityNotFoundException::new);
 
-            String oriImageName = imageFile.getOriginalFilename();
-            String imageName = fileService.uploadFile(imageLocation, oriImageName, imageFile.getBytes());
-            String imageUrl = "/images/bread/" + imageName;
-            savedImage.updateImage(oriImageName, imageName, imageUrl);
+                if (!StringUtils.isEmpty(savedImage.getImageName())) {
+                    fileService.deleteFile(imageLocation + "/" + savedImage.getImageName());
+                }
+
+                String oriImageName = imageFile.getOriginalFilename();
+                String imageName = fileService.uploadFile(imageLocation, oriImageName, imageFile.getBytes());
+                String imageUrl = "/images/bread/" + imageName;
+                savedImage.updateImage(oriImageName, imageName, imageUrl);
+
+            // 새로운 이미지 등록
+            } else {
+                Image image = new Image();
+                image.setBread(bread);
+                image.setRepImgYn('N');
+
+                saveImage(image, imageFile);
+            }
         }
     }
 
+    public void deleteImage(Long imageId) throws Exception {
+        Image savedImage = imageRepository.findById(imageId)
+                .orElseThrow(EntityNotFoundException::new);
+
+        if (!StringUtils.isEmpty(savedImage.getImageName())) {
+            fileService.deleteFile(imageLocation + "/" + savedImage.getImageName());
+        }
+
+        imageRepository.delete(savedImage);
+    }
+
+
+    /* Store image service*/
     public void saveStoreImage(StoreImage storeImage, MultipartFile imageFile) throws Exception {
         String oriImageName = imageFile.getOriginalFilename();
         String imageName = "";

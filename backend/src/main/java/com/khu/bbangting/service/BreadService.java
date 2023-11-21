@@ -1,6 +1,9 @@
 package com.khu.bbangting.service;
 
 import com.khu.bbangting.dto.*;
+import com.khu.bbangting.dto.BreadDetailDto;
+import com.khu.bbangting.dto.BreadFormDto;
+import com.khu.bbangting.dto.BreadInfoDto;
 import com.khu.bbangting.model.Bread;
 import com.khu.bbangting.model.Image;
 import com.khu.bbangting.model.Store;
@@ -166,10 +169,19 @@ public class BreadService {
         breadRepository.save(bread);
 
         // 이미지 등록
+        int num = 0;
         for (int i = 0; i < imageFileList.size(); i++) {
-            System.out.println(imageFileList.size());
-            System.out.println(requestDto.getImageIds().get(i));
-            imageService.updateImage(requestDto.getImageIds().get(i), imageFileList.get(i));
+            if (num < requestDto.getImageIds().size()) {
+                num ++;
+                imageService.updateImage(bread, requestDto.getImageIds().get(i), imageFileList.get(i));
+            } else {
+                imageService.updateImage(bread, 0L, imageFileList.get(i));
+            }
+        }
+
+        // 남은 등록된 이미지 삭제하기
+        for (int i = num; i < requestDto.getImageIds().size(); i++) {
+            imageService.deleteImage(requestDto.getImageIds().get(i));
         }
     }
 
