@@ -3,7 +3,6 @@ package com.khu.bbangting.service;
 import com.khu.bbangting.dto.MyStoreInfoDto;
 import com.khu.bbangting.dto.StoreFormDto;
 import com.khu.bbangting.dto.StoreImageDto;
-import com.khu.bbangting.dto.StoreUpdateFormDto;
 import com.khu.bbangting.model.*;
 import com.khu.bbangting.repository.*;
 import jakarta.persistence.EntityNotFoundException;

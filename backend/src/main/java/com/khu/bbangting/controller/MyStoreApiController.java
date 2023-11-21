@@ -1,7 +1,6 @@
 package com.khu.bbangting.controller;
 
 import com.khu.bbangting.dto.StoreFormDto;
-import com.khu.bbangting.dto.StoreUpdateFormDto;
 import com.khu.bbangting.service.MyStoreService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
