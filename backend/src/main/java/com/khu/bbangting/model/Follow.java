@@ -1,12 +1,14 @@
 package com.khu.bbangting.model;
 
 import jakarta.persistence.*;
-import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @Entity
 @Table(name = "follows")
+@Getter @Setter
 public class Follow {
 
     @Id

@@ -1,12 +1,17 @@
 package com.khu.bbangting.service;
 
 import com.khu.bbangting.dto.BreadInfoDto;
+import com.khu.bbangting.dto.FollowDto;
 import com.khu.bbangting.dto.StoreFormDto;
 import com.khu.bbangting.dto.StoreInfoDto;
 import com.khu.bbangting.model.Bread;
+import com.khu.bbangting.model.Follow;
 import com.khu.bbangting.model.Store;
+import com.khu.bbangting.model.User;
 import com.khu.bbangting.repository.BreadRepository;
+import com.khu.bbangting.repository.FollowRepository;
 import com.khu.bbangting.repository.StoreRepository;
+import com.khu.bbangting.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -14,10 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Transactional
@@ -28,6 +30,8 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final BreadRepository breadRepository;
+    private final UserRepository userRepository;
+    private final FollowRepository followRepository;
 
 
     // 스토어 목록
@@ -93,7 +97,7 @@ public class StoreService {
 
     public StoreFormDto getStoreInfo(Long storeId) {
         Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 빵이 존재하지 않습니다. id = " + storeId));
+                .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 스토어가 존재하지 않습니다. id = " + storeId));
 
         return StoreFormDto.builder()
                 .storeName(store.getStoreName())
@@ -120,5 +124,30 @@ public class StoreService {
         }
 
         return breadDtoList;
+    }
+
+    public String follows(FollowDto followDto) {
+
+        Store store = storeRepository.findById(followDto.getStoreId())
+                .orElseThrow(() -> new EntityNotFoundException("해당 id의 스토어가 존재하지 않습니다."));
+
+        User user = userRepository.findById(followDto.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("해당 id의 유저가 존재하지 않습니다."));
+
+
+        // 유저의 해당 가게 follow 여부 판단
+        Optional<Follow> followOptional = followRepository.findByStoreIdAndUserId(store.getId(), user.getId());
+
+        if (followOptional.isPresent()) {
+            followRepository.delete(followOptional.get());
+            return "팔로우 취소";
+        } else {
+            Follow follow = new Follow();
+            follow.setStore(store);
+            follow.setUser(user);
+
+            followRepository.save(follow);
+            return "팔로우 완료";
+        }
     }
 }
