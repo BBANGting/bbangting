@@ -1,6 +1,7 @@
 package com.khu.bbangting.controller;
 
 import com.khu.bbangting.dto.*;
+import com.khu.bbangting.service.FollowService;
 import com.khu.bbangting.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,9 @@ public class StoreController {
 
     @Autowired
     private StoreService storeService;
+
+    @Autowired
+    private FollowService followService;
 
 
     @GetMapping("/store")
@@ -68,7 +72,7 @@ public class StoreController {
     public ResponseDto<String> followStore(@RequestBody FollowDto followDto) {
 
         try {
-            String message = storeService.follows(followDto);
+            String message = followService.follows(followDto);
             return new ResponseDto<String>(HttpStatus.OK.value(), message);
         } catch (Exception e) {
             e.printStackTrace();

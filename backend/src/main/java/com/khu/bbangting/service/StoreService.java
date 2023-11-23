@@ -30,8 +30,7 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final BreadRepository breadRepository;
-    private final UserRepository userRepository;
-    private final FollowRepository followRepository;
+
 
 
     // 스토어 목록
@@ -126,38 +125,4 @@ public class StoreService {
         return breadDtoList;
     }
 
-    public String follows(FollowDto followDto) {
-
-        Store store = storeRepository.findById(followDto.getStoreId())
-                .orElseThrow(() -> new EntityNotFoundException("해당 id의 스토어가 존재하지 않습니다."));
-
-        User user = userRepository.findById(followDto.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("해당 id의 유저가 존재하지 않습니다."));
-
-
-        // 유저의 해당 가게 follow 여부 판단
-        Optional<Follow> followOptional = followRepository.findByStoreIdAndUserId(store.getId(), user.getId());
-
-        if (followOptional.isPresent()) {
-            followRepository.delete(followOptional.get());
-
-            // 팔로우 수 update (감소)
-            int num = store.getFollowerNum();
-            store.setFollowerNum(--num);
-
-            return "팔로우 취소";
-        } else {
-            Follow follow = new Follow();
-            follow.setStore(store);
-            follow.setUser(user);
-
-            followRepository.save(follow);
-
-            // 팔로우 수 update (증가)
-            int num = store.getFollowerNum();
-            store.setFollowerNum(++num);
-
-            return "팔로우 완료";
-        }
-    }
 }
