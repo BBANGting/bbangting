@@ -1,13 +1,7 @@
-import {
-  Box,
-  Container,
-  Grid,
-  IconButton,
-  Input,
-  Typography,
-} from '@mui/material';
+import { Container, Grid, Typography } from '@mui/material';
 import StarsIcon from '@mui/icons-material/Stars';
-import SearchIcon from '@mui/icons-material/Search';
+import StoreContainer from '../components/Store/StoreContainer';
+import Search from '../components/Store/Search';
 
 export const Store = () => {
   return (
@@ -22,36 +16,9 @@ export const Store = () => {
             RANK
           </Typography>
         </Grid>
-        <Grid flexGrow={0}>
-          <Box position="relative">
-            <Input
-              sx={{
-                border: 2,
-                borderRadius: 2,
-                width: 350,
-                height: 50,
-                borderColor: '#a1a1a1',
-                paddingLeft: 2,
-                paddingRight: 5,
-              }}
-              placeholder="스토어를 검색하세요"
-              disableUnderline
-            />
-            <IconButton
-              type="button"
-              aria-label="search"
-              sx={{ position: 'absolute', right: 0, top: 5 }}
-            >
-              <SearchIcon />
-            </IconButton>
-          </Box>
-        </Grid>
+        <Search />
       </Grid>
-      <Box mt={4} border={2} height={300} borderRadius={3} color="#DB9662">
-        <Grid>
-          <img src="/imgs/bbangzip.png" alt="..." />
-        </Grid>
-      </Box>
+      <StoreContainer />
     </Container>
   );
 };
