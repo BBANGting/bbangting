@@ -1,5 +1,6 @@
-import { Box, Container } from '@mui/material';
+import { Box, Container, Grid } from '@mui/material';
 import Profile from '../components/Mypage/Profile';
+import Information from '../components/Mypage/Information';
 
 export const MyPage = () => {
   return (
@@ -11,13 +12,16 @@ export const MyPage = () => {
           height: 70,
         }}
       />
-      <Container>
-        <Profile
-          nickname="비누"
-          name="김진우"
-          email="rlawlsdn316@gmail.com"
-          warning={2}
-        />
+      <Container disableGutters>
+        <Grid container mt={10} direction={'row'}>
+          <Profile
+            nickname="비누"
+            name="김진우"
+            email="rlawlsdn316@gmail.com"
+            warning={2}
+          />
+          <Information />
+        </Grid>
       </Container>
     </>
   );
