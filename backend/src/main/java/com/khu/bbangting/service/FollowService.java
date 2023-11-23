@@ -73,7 +73,7 @@ public class FollowService {
 
         List<StoreInfoDto> followingList = new ArrayList<>();
         for (Follow follow : followList) {
-            Store store = storeRepository.findByUserId(follow.getUser().getId())
+            Store store = storeRepository.findById(follow.getStore().getId())
                     .orElseThrow(() -> new EntityNotFoundException("해당 id의 유저가 존재하지 않습니다."));
 
             StoreInfoDto storeInfoDto = StoreInfoDto.builder()
