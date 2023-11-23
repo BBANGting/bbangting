@@ -140,6 +140,11 @@ public class StoreService {
 
         if (followOptional.isPresent()) {
             followRepository.delete(followOptional.get());
+
+            // 팔로우 수 update (감소)
+            int num = store.getFollowerNum();
+            store.setFollowerNum(--num);
+
             return "팔로우 취소";
         } else {
             Follow follow = new Follow();
@@ -147,6 +152,11 @@ public class StoreService {
             follow.setUser(user);
 
             followRepository.save(follow);
+
+            // 팔로우 수 update (증가)
+            int num = store.getFollowerNum();
+            store.setFollowerNum(++num);
+
             return "팔로우 완료";
         }
     }

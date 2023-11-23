@@ -52,4 +52,7 @@ public class Store {
         this.location = requestDto.getLocation();
     }
 
+    public void setFollowerNum(int followerNum) {
+        this.followerNum = followerNum;
+    }
 }
