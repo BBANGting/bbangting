@@ -1,10 +1,11 @@
 import { Box, Grid } from '@mui/material';
 import BannerButton from './BannerButton';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const StoreBanner: React.FC = () => {
-  const [isClick, setIsClick] = useState<boolean>(true);
+  const location = useLocation();
+  const isStorePage = location.pathname === '/mystorepage';
+  console.log(isStorePage);
 
   return (
     <Box
@@ -17,10 +18,10 @@ const StoreBanner: React.FC = () => {
       <Grid width={1200} height={'100%'} container margin={'0 auto'}>
         <Grid sx={{ display: 'flex' }} marginTop="auto" marginLeft="auto">
           <Link to={`/mypage`}>
-            <BannerButton isClick={isClick} text="고객" />
+            <BannerButton isStorePage={!isStorePage} text="고객" />
           </Link>
           <Link to={`/mystorepage`}>
-            <BannerButton isClick={!isClick} text="빵집" />
+            <BannerButton isStorePage={isStorePage} text="빵집" />
           </Link>
         </Grid>
       </Grid>

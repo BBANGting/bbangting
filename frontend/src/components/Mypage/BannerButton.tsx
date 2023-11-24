@@ -2,10 +2,10 @@ import { Grid, Typography } from '@mui/material';
 
 type BannerButtonProps = {
   text: string;
-  isClick: boolean;
+  isStorePage: boolean;
 };
 
-const BannerButton: React.FC<BannerButtonProps> = ({ text, isClick }) => {
+const BannerButton: React.FC<BannerButtonProps> = ({ text, isStorePage }) => {
   return (
     <Grid
       container
@@ -15,8 +15,8 @@ const BannerButton: React.FC<BannerButtonProps> = ({ text, isClick }) => {
       height={34}
       borderRadius="10px 10px 0 0"
       sx={{
-        background: isClick ? '#ffffff' : '#e3e3e3',
-        color: isClick ? '#DB9662' : '#727272',
+        background: isStorePage ? '#ffffff' : '#e3e3e3',
+        color: isStorePage ? '#DB9662' : '#727272',
         transition: '0.2s ease-in-out',
         cursor: 'pointer',
         '&:hover': {
