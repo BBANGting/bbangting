@@ -1,17 +1,12 @@
-import { Box, Container, Grid } from '@mui/material';
+import { Container, Grid } from '@mui/material';
 import Profile from '../components/Mypage/Profile';
 import Information from '../components/Mypage/Information';
+import StoreBanner from '../components/Mypage/StoreBanner';
 
 export const MyPage = () => {
   return (
     <>
-      <Box
-        sx={{
-          width: '100%',
-          background: '#DB9662',
-          height: 70,
-        }}
-      />
+      <StoreBanner />
       <Container disableGutters>
         <Grid container mt={10} direction={'row'}>
           <Profile
