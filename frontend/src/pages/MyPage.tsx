@@ -10,6 +10,7 @@ export const MyPage = () => {
       <Container disableGutters>
         <Grid container mt={10} direction={'row'}>
           <Profile
+            img="/imgs/profile.JPG"
             nickname="비누"
             name="김진우"
             email="rlawlsdn316@gmail.com"
