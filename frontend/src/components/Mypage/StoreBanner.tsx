@@ -5,7 +5,6 @@ import { Link, useLocation } from 'react-router-dom';
 const StoreBanner: React.FC = () => {
   const location = useLocation();
   const isStorePage = location.pathname === '/mystorepage';
-  console.log(isStorePage);
 
   return (
     <Box
@@ -15,7 +14,7 @@ const StoreBanner: React.FC = () => {
         height: 70,
       }}
     >
-      <Grid width={1200} height={'100%'} container margin={'0 auto'}>
+      <Grid maxWidth={1200} height={'100%'} container margin={'0 auto'}>
         <Grid sx={{ display: 'flex' }} marginTop="auto" marginLeft="auto">
           <Link to={`/mypage`}>
             <BannerButton isStorePage={!isStorePage} text="고객" />
