@@ -10,4 +10,6 @@ public interface StoreImageRepository extends JpaRepository<StoreImage, Long> {
     List<StoreImage> findAllByStoreId(Long id);
 
     List<StoreImage> findByStoreIdOrderByIdAsc(Long storeId);
+
+    StoreImage findByStoreIdAndLogoImgYn(Long storeId, char logoImgYn);
 }

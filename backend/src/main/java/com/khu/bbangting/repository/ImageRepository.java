@@ -9,4 +9,6 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     List<Image> findByBreadIdOrderByIdAsc(Long breadId);
 
     List<Image> findAllByBreadId(Long breadId);
+
+    Image findByBreadIdAndRepImgYn(Long breadId, char repImgYn);
 }

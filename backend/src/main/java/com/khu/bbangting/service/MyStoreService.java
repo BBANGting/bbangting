@@ -1,5 +1,6 @@
 package com.khu.bbangting.service;
 
+import com.khu.bbangting.dto.BreadInfoDto;
 import com.khu.bbangting.dto.MyStoreInfoDto;
 import com.khu.bbangting.dto.StoreFormDto;
 import com.khu.bbangting.dto.StoreImageDto;
@@ -109,8 +110,8 @@ public class MyStoreService {
 
         // 이미지 등록
         int num = 0;
-        for (int i = 0; i < imageFileList.size(); i++) { // imageFileList = 2
-            if (num < requestDto.getStoreImageIds().size()) { // num, i = 2, ids = 3
+        for (int i = 0; i < imageFileList.size(); i++) {
+            if (num < requestDto.getStoreImageIds().size()) {
                 num ++;
                 imageService.updateStoreImage(store, requestDto.getStoreImageIds().get(i), imageFileList.get(i));
             } else {
@@ -124,20 +125,49 @@ public class MyStoreService {
         }
     }
 
+    @Transactional(readOnly = true)
     public MyStoreInfoDto getMyStoreInfo(Long userId) {
 
-        Store store = storeRepository.findById(userId)
+        Store store = storeRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 마이스토어가 존재하지 않습니다. userId = " + userId));
 
+        StoreImage storeImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'Y');
         List<Bread> breadList = breadRepository.findByStoreId(store.getId());
+
+        List<BreadInfoDto> breadInfoList = new ArrayList<>();
+        for (Bread bread : breadList) {
+            Image image = imageRepository.findByBreadIdAndRepImgYn(bread.getId(), 'Y');
+
+            BreadInfoDto breadInfoDto = BreadInfoDto.builder()
+                    .breadId(bread.getId())
+                    .breadName(bread.getBreadName())
+                    .imgUrl(image.getImageUrl()).build();
+
+            breadInfoList.add(breadInfoDto);
+        }
 
         List<Bread> tingList = breadRepository.findByTingStatusAndAndStoreId('Y', store.getId());
 
+        List<BreadInfoDto> todayTingList = new ArrayList<>();
+        for (Bread bread : tingList) {
+            Image image = imageRepository.findByBreadIdAndRepImgYn(bread.getId(), 'Y');
+
+            BreadInfoDto breadInfoDto = BreadInfoDto.builder()
+                    .breadId(bread.getId())
+                    .breadName(bread.getBreadName())
+                    .imgUrl(image.getImageUrl())
+                    .maxTingNum(bread.getMaxTingNum())
+                    .stock(bread.getStock()).build();
+
+            todayTingList.add(breadInfoDto);
+        }
+
         return MyStoreInfoDto.builder()
                 .storeName(store.getStoreName())
+                .imgUrl(storeImage.getImageUrl())
                 .followerNum(store.getFollowerNum())
-                .breadList(breadList)
-                .tingList(tingList).build();
+                .breadInfoList(breadInfoList)
+                .todayTingList(todayTingList).build();
     }
 
 }
