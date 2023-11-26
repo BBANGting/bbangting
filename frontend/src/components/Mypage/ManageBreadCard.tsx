@@ -1,4 +1,5 @@
-import { Grid, Typography } from '@mui/material';
+import { Grid, IconButton, Typography } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 
 type ManageBreadCardProps = {
   img: string;
@@ -30,6 +31,9 @@ const ManageBreadCard: React.FC<ManageBreadCardProps> = ({ img, name }) => {
       >
         <img src={img} alt=" hi" width={160} height={160} />
         <Typography fontWeight={'bold'}>{name}</Typography>
+        <IconButton sx={{ color: '#dddddd', padding: 0.5 }}>
+          <EditIcon fontSize="small" sx={{ width: '16px', height: '16px' }} />
+        </IconButton>
       </Grid>
     </Grid>
   );
