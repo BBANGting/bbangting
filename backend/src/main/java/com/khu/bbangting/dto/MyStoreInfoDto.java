@@ -13,20 +13,18 @@ import java.util.List;
 @ToString
 public class MyStoreInfoDto {
 
+    private Long storeId;
     private String storeName;
     private String imgUrl;
     private int followerNum;
-    private List<BreadInfoDto> breadInfoList;
-    private List<BreadInfoDto> todayTingList;
 
 
     @Builder
-    public MyStoreInfoDto(String storeName, String imgUrl, int followerNum, List<BreadInfoDto> breadInfoList, List<BreadInfoDto> todayTingList) {
+    public MyStoreInfoDto(Long storeId, String storeName, String imgUrl, int followerNum) {
+        this.storeId = storeId;
         this.storeName = storeName;
         this.imgUrl = imgUrl;
         this.followerNum = followerNum;
-        this.breadInfoList = breadInfoList;
-        this.todayTingList = todayTingList;
     }
 
 }

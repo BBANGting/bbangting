@@ -132,7 +132,17 @@ public class MyStoreService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 마이스토어가 존재하지 않습니다. userId = " + userId));
 
         StoreImage storeImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'Y');
-        List<Bread> breadList = breadRepository.findByStoreId(store.getId());
+
+        return MyStoreInfoDto.builder()
+                .storeId(store.getId())
+                .storeName(store.getStoreName())
+                .imgUrl(storeImage.getImageUrl())
+                .followerNum(store.getFollowerNum()).build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<BreadInfoDto> getBreadList(Long storeId) {
+        List<Bread> breadList = breadRepository.findByStoreId(storeId);
 
         List<BreadInfoDto> breadInfoList = new ArrayList<>();
         for (Bread bread : breadList) {
@@ -146,7 +156,12 @@ public class MyStoreService {
             breadInfoList.add(breadInfoDto);
         }
 
-        List<Bread> tingList = breadRepository.findByTingStatusAndAndStoreId('Y', store.getId());
+        return breadInfoList;
+    }
+
+    @Transactional(readOnly = true)
+    public List<BreadInfoDto> getTodayTingList(Long storeId) {
+        List<Bread> tingList = breadRepository.findByTingStatusAndAndStoreId('Y', storeId);
 
         List<BreadInfoDto> todayTingList = new ArrayList<>();
         for (Bread bread : tingList) {
@@ -162,12 +177,6 @@ public class MyStoreService {
             todayTingList.add(breadInfoDto);
         }
 
-        return MyStoreInfoDto.builder()
-                .storeName(store.getStoreName())
-                .imgUrl(storeImage.getImageUrl())
-                .followerNum(store.getFollowerNum())
-                .breadInfoList(breadInfoList)
-                .todayTingList(todayTingList).build();
+        return todayTingList;
     }
-
 }

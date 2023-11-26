@@ -1,5 +1,6 @@
 package com.khu.bbangting.controller;
 
+import com.khu.bbangting.dto.BreadInfoDto;
 import com.khu.bbangting.dto.MyStoreInfoDto;
 import com.khu.bbangting.dto.StoreInfoDto;
 import com.khu.bbangting.service.FollowService;
@@ -29,9 +30,20 @@ public class MyStoreController {
     public String myStorePage(@PathVariable Long userId, Model model){
 
         try {
+            // 스토어 정보 호출
             MyStoreInfoDto myStoreInfoDto = myStoreService.getMyStoreInfo(userId);
             log.info(myStoreInfoDto.toString());
-            model.addAttribute("myStoreInfoDto", myStoreInfoDto);
+            model.addAttribute("myStoreInfo", myStoreInfoDto);
+
+            // 빵 목록 호출
+            List<BreadInfoDto> breadInfoList = myStoreService.getBreadList(myStoreInfoDto.getStoreId());
+            log.info(breadInfoList.toString());
+            model.addAttribute("breadList", breadInfoList);
+
+            // 오늘의 빵팅 목록 호출
+            List<BreadInfoDto> todayTingList = myStoreService.getTodayTingList(myStoreInfoDto.getStoreId());
+            log.info(todayTingList.toString());
+            model.addAttribute("todayTingList", todayTingList);
 
             // 마이페이지 -> 팔로잉 목록 호출
             List<StoreInfoDto> followingList = followService.getFollowingList(userId);
