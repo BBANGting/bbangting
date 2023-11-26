@@ -20,8 +20,6 @@ public class Bread {
     @Column(nullable = false, length = 20)
     private String breadName;
 
-//    private String breadImage;
-
     @Column(length = 1000)
     private String description;
 

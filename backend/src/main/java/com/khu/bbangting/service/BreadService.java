@@ -71,9 +71,12 @@ public class BreadService {
         List<BreadInfoDto> breadInfoDtoList = new ArrayList<>();
 
         for (Bread bread : breadList) {
+            Image image = imageRepository.findByBreadIdAndRepImgYn(bread.getId(), 'Y');
+
             BreadInfoDto breadInfoDto = BreadInfoDto.builder()
                     .breadId(bread.getId())
                     .breadName(bread.getBreadName())
+                    .imgUrl(image.getImageUrl())
                     .storeName(bread.getStore().getStoreName())
                     .tingTime(bread.getTingTime())
                     .stock(bread.getStock()).build();
@@ -91,9 +94,12 @@ public class BreadService {
         List<BreadInfoDto> breadInfoDtoList = new ArrayList<>();
 
         for (Bread bread : breadList) {
+            Image image = imageRepository.findByBreadIdAndRepImgYn(bread.getId(), 'Y');
+
             BreadInfoDto breadInfoDto = BreadInfoDto.builder()
                     .breadId(bread.getId())
                     .breadName(bread.getBreadName())
+                    .imgUrl(image.getImageUrl())
                     .storeName(bread.getStore().getStoreName())
                     .tingTime(bread.getTingTime()).build();
 
@@ -108,15 +114,17 @@ public class BreadService {
         Bread bread = breadRepository.findById(breadId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 빵이 존재하지 않습니다. id = " + breadId));
 
+        Image image = imageRepository.findByBreadIdAndRepImgYn(bread.getId(), 'Y');
+
         return BreadDetailDto.builder()
                 .breadId(bread.getId())
                 .breadName(bread.getBreadName())
+                .imgUrl(image.getImageUrl())
                 .price(bread.getPrice())
                 .tingTime(bread.getTingTime())
                 .stock(bread.getStock())
                 .tingStatus(bread.getTingStatus())
-                .storeName(bread.getStore().getStoreName())
-                .location(bread.getStore().getLocation()).build();
+                .storeName(bread.getStore().getStoreName()).build();
     }
 
 
@@ -185,4 +193,24 @@ public class BreadService {
         }
     }
 
+    public List<String> getInfo(Long breadId) {
+
+        Bread bread = breadRepository.findById(breadId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 빵이 존재하지 않습니다. id = " + breadId));
+
+        List<Image> imageList = imageRepository.findAllByBreadIdAndRepImgYn(bread.getId(), 'N');
+
+        List<String> infoList = new ArrayList<>();
+
+        // 스토어 오프라인 위치
+        infoList.add(bread.getStore().getLocation());
+        // 빵 설명
+        infoList.add(bread.getDescription());
+        // 빵 이미지 삽입
+        for (Image image : imageList) {
+            infoList.add(image.getImageUrl());
+        }
+
+        return infoList;
+    }
 }
