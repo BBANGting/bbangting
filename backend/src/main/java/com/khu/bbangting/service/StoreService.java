@@ -4,14 +4,8 @@ import com.khu.bbangting.dto.BreadInfoDto;
 import com.khu.bbangting.dto.FollowDto;
 import com.khu.bbangting.dto.StoreFormDto;
 import com.khu.bbangting.dto.StoreInfoDto;
-import com.khu.bbangting.model.Bread;
-import com.khu.bbangting.model.Follow;
-import com.khu.bbangting.model.Store;
-import com.khu.bbangting.model.User;
-import com.khu.bbangting.repository.BreadRepository;
-import com.khu.bbangting.repository.FollowRepository;
-import com.khu.bbangting.repository.StoreRepository;
-import com.khu.bbangting.repository.UserRepository;
+import com.khu.bbangting.model.*;
+import com.khu.bbangting.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -29,28 +23,31 @@ import java.util.*;
 public class StoreService {
 
     private final StoreRepository storeRepository;
+    private final StoreImageRepository storeImageRepository;
     private final BreadRepository breadRepository;
-
+    private final ImageRepository imageRepository;
 
 
     // 스토어 목록
     public List<StoreInfoDto> getStoreList() {
         List<Store> storeList = storeRepository.findAll();
 
-        List<StoreInfoDto> storeInfoDtoList = new ArrayList<>();
-
+        List<StoreInfoDto> storeInfoList = new ArrayList<>();
         for (Store store : storeList) {
+            StoreImage storeImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'Y');
+
             StoreInfoDto storeInfoDto = StoreInfoDto.builder()
                     .storeId(store.getId())
                     .storeName(store.getStoreName())
+                    .imgUrl(storeImage.getImageUrl())
                     .rating(store.getRating()).build();
 
-            storeInfoDtoList.add(storeInfoDto);
+            storeInfoList.add(storeInfoDto);
         }
 
-        Collections.sort(storeInfoDtoList, Comparator.comparing(StoreInfoDto::getStoreName));
+        Collections.sort(storeInfoList, Comparator.comparing(StoreInfoDto::getStoreName));
 
-        return storeInfoDtoList;
+        return storeInfoList;
     }
 
     // 스토어 top 랭킹 목록
@@ -59,11 +56,13 @@ public class StoreService {
         Collections.sort(storeList, Comparator.comparing(Store::getRating).reversed());
 
         List<StoreInfoDto> storeRankingList = new ArrayList<>();
-
         for (Store store : storeList) {
+            StoreImage storeImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'Y');
+
             StoreInfoDto storeInfoDto = StoreInfoDto.builder()
                     .storeId(store.getId())
                     .storeName(store.getStoreName())
+                    .imgUrl(storeImage.getImageUrl())
                     .rating(store.getRating()).build();
 
             storeRankingList.add(storeInfoDto);
@@ -74,16 +73,18 @@ public class StoreService {
         return storeRankingList;
     }
 
-
+    // 스토어 검색
     public List<StoreInfoDto> searchBy(String storeName) {
         List<Store> storeList = storeRepository.findAllByStoreName(storeName);
 
         List<StoreInfoDto> searchResultList = new ArrayList<>();
-
         for (Store store : storeList) {
+            StoreImage storeImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'Y');
+
             StoreInfoDto storeInfoDto = StoreInfoDto.builder()
                     .storeId(store.getId())
                     .storeName(store.getStoreName())
+                    .imgUrl(storeImage.getImageUrl())
                     .location(store.getLocation())
                     .followerNum(store.getFollowerNum())
                     .rating(store.getRating()).build();
@@ -94,12 +95,17 @@ public class StoreService {
         return searchResultList;
     }
 
-    public StoreFormDto getStoreInfo(Long storeId) {
+    public StoreInfoDto getStoreInfo(Long storeId) {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 스토어가 존재하지 않습니다. id = " + storeId));
 
-        return StoreFormDto.builder()
+        StoreImage logoImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'Y');
+        StoreImage storeImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'N');
+
+        return StoreInfoDto.builder()
                 .storeName(store.getStoreName())
+                .imgUrl(logoImage.getImageUrl())
+                .imgUrl2(storeImage.getImageUrl())
                 .description(store.getDescription())
                 .location(store.getLocation())
                 .followerNum(store.getFollowerNum())
@@ -110,12 +116,13 @@ public class StoreService {
         List<Bread> breadList = breadRepository.findByStoreId(storeId);
 
         List<BreadInfoDto> breadDtoList = new ArrayList<>();
-
         for (Bread bread : breadList) {
+            Image image = imageRepository.findByBreadIdAndRepImgYn(bread.getId(), 'Y');
+
             BreadInfoDto breadInfoDto = BreadInfoDto.builder()
                     .breadId(bread.getId())
                     .breadName(bread.getBreadName())
-                    .storeName(bread.getStore().getStoreName())
+                    .imgUrl(image.getImageUrl())
                     .tingTime(bread.getTingTime())
                     .stock(bread.getStock()).build();
 

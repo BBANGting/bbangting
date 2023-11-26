@@ -19,20 +19,19 @@ public class StoreController {
 
     @Autowired
     private StoreService storeService;
-
     @Autowired
     private FollowService followService;
 
 
     @GetMapping("/store")
     public String storePage(Model model) {
-        List<StoreInfoDto> storeInfoDtoList = storeService.getStoreList();
-        log.info(storeInfoDtoList.toString());
+        List<StoreInfoDto> storeInfoList = storeService.getStoreList();
+        log.info(storeInfoList.toString());
 
         List<StoreInfoDto> storeRankingList = storeService.getTopRank();
         log.info(storeRankingList.toString());
 
-        model.addAttribute("storeInfoDtoList", storeInfoDtoList);
+        model.addAttribute("storeInfoList", storeInfoList);
         model.addAttribute("storeRankingList", storeRankingList);
 
         return "store/storePage";
@@ -40,10 +39,10 @@ public class StoreController {
 
     @GetMapping("/store/{storeId}")
     public String storeDetailPage(Model model, @PathVariable Long storeId) {
-        StoreFormDto storeFormDto = storeService.getStoreInfo(storeId);
-        log.info(storeFormDto.toString());
+        StoreInfoDto storeInfoDto = storeService.getStoreInfo(storeId);
+        log.info(storeInfoDto.toString());
 
-        model.addAttribute("storeInfo", storeFormDto);
+        model.addAttribute("storeInfo", storeInfoDto);
 
         List<BreadInfoDto> breadList = storeService.getBreadList(storeId);
         log.info(breadList.toString());
