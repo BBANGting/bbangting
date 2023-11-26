@@ -48,7 +48,8 @@ const theme = createTheme({
 });
 
 export const Header = (): ReactElement => {
-  const [isLogin, setIsLogin] = useState<boolean>(false);
+  // eslint-disable-next-line
+  const [isLogin, setIsLogin] = useState<boolean>(true);
 
   const width = useMediaQuery('(max-width:1440px)');
 
@@ -91,18 +92,17 @@ export const Header = (): ReactElement => {
               </>
             ) : (
               <>
-                <IconButton
-                  size="large"
-                  aria-label="menu"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={() => {
-                    setIsLogin(false);
-                  }}
-                  color="accountIcon"
-                >
-                  <AccountCircle />
-                </IconButton>
+                <Link to={`/mypage`}>
+                  <IconButton
+                    size="large"
+                    aria-label="menu"
+                    aria-controls="menu-appbar"
+                    aria-haspopup="true"
+                    color="accountIcon"
+                  >
+                    <AccountCircle />
+                  </IconButton>
+                </Link>
               </>
             )}
           </Toolbar>
