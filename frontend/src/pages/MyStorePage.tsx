@@ -8,7 +8,7 @@ export const MyStorePage = () => {
     <>
       <StoreBanner />
       <Container disableGutters>
-        <Grid container mt={10} direction={'row'}>
+        <Grid container mt={10}>
           <Profile
             nickname={`뚜레쥬르 성수점`}
             follower={6}
