@@ -1,5 +1,7 @@
-import { Grid, Typography } from '@mui/material';
+import { Grid, IconButton, Typography } from '@mui/material';
 import InfoTitle from './InfoTitle';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import EditIcon from '@mui/icons-material/Edit';
 
 type ProfileProps = {
   img: string;
@@ -23,8 +25,15 @@ const Profile: React.FC<ProfileProps> = ({
     <Grid container width={350} mr={3}>
       <Grid container direction="column" alignItems="center">
         <img src={img} alt="" width="300" style={{ borderRadius: 99999 }} />
-        <InfoTitle sx={{ mt: 6 }}>{nickname} 님</InfoTitle>
-        {!follower && (
+        <Grid sx={{ display: 'flex', alignItems: 'center' }} mt={6}>
+          <InfoTitle>{nickname} 님</InfoTitle>
+          {follower && (
+            <IconButton sx={{ p: 1, color: '#dddddd' }}>
+              <EditIcon />
+            </IconButton>
+          )}
+        </Grid>
+        {!follower ? (
           <Grid sx={{ width: '100%', mt: 5 }} container>
             <div>
               <Typography sx={{ lineHeight: '3' }}>이름</Typography>
@@ -44,6 +53,20 @@ const Profile: React.FC<ProfileProps> = ({
                 {warning} 회
               </Typography>
             </div>
+          </Grid>
+        ) : (
+          <Grid
+            sx={{ width: '100%', mt: 2 }}
+            container
+            justifyContent="center"
+            alignItems={'center'}
+          >
+            <Typography>
+              팔로워 <strong>{follower}</strong>
+            </Typography>
+            <IconButton sx={{ padding: 0.5 }}>
+              <ChevronRightIcon sx={{ height: '18px', width: '18px' }} />
+            </IconButton>
           </Grid>
         )}
       </Grid>
