@@ -1,7 +1,7 @@
 import { Grid } from '@mui/material';
 import StoreBreadCard from './StoreBreadCard';
 
-type BreadType = {
+export type BreadType = {
   breadId: number;
   storeId: number;
   breadName: string;
