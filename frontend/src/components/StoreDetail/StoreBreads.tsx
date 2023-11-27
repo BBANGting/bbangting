@@ -20,9 +20,10 @@ type StoreBreadsProps = {
 
 const StoreBreads: React.FC<StoreBreadsProps> = ({ bread }) => {
   return (
-    <Grid container>
+    <Grid container mt={5}>
       {bread.map(item => (
         <StoreBreadCard
+          breadId={item.breadId}
           breadImage={item.breadImage}
           breadName={item.breadName}
           tingTime={item.tingTime}
