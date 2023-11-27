@@ -6,10 +6,10 @@
     "breadImage": "/imgs/soboro.png",
     "content": "튀김 소보로 짱!",
     "price": "4,500",
-    "tingTime": "2023-11-28 14:00",
+    "tingTime": "2023-05-30T12:30:45",
     "maxTingNum": 40,
     "stock": 8,
-    "tingStauts": "Y"
+    "tingStatus": "Y"
   },
   {
     "breadId": 1,
@@ -18,10 +18,10 @@
     "breadImage": "/imgs/bagel.jpeg",
     "content": "쪽파 크림치즈 베이글 짱!",
     "price": "4,500",
-    "tingTime": "2023-11-28 14:00",
+    "tingTime": "2023-05-30T12:30:45",
     "maxTingNum": 40,
     "stock": 8,
-    "tingStauts": "Y"
+    "tingStatus": "Y"
   },
   {
     "breadId": 2,
@@ -30,10 +30,10 @@
     "breadImage": "/imgs/soboro.png",
     "content": "튀김 소보로 짱!",
     "price": "4,500",
-    "tingTime": "2023-11-28 14:00",
+    "tingTime": "2023-05-30T12:30:45",
     "maxTingNum": 40,
     "stock": 8,
-    "tingStauts": "Y"
+    "tingStatus": "Y"
   },
   {
     "breadId": 3,
@@ -42,9 +42,9 @@
     "breadImage": "/imgs/bagel.jpeg",
     "content": "블루베리 베이글 짱!",
     "price": "4,500",
-    "tingTime": "2023-11-28 14:00",
+    "tingTime": "2023-05-30T12:30:45",
     "maxTingNum": 40,
     "stock": 8,
-    "tingStauts": "Y"
+    "tingStatus": "N"
   }
 ]
