@@ -1,0 +1,50 @@
+[
+  {
+    "breadId": 0,
+    "storeId": 0,
+    "breadName": "튀김 소보로",
+    "breadImage": "/imgs/soboro.png",
+    "content": "튀김 소보로 짱!",
+    "price": "4,500",
+    "tingTime": "2023-11-28 14:00",
+    "maxTingNum": 40,
+    "stock": 8,
+    "tingStauts": "Y"
+  },
+  {
+    "breadId": 1,
+    "storeId": 0,
+    "breadName": "쪽파 크림치즈 베이글",
+    "breadImage": "/imgs/bagel.jpeg",
+    "content": "쪽파 크림치즈 베이글 짱!",
+    "price": "4,500",
+    "tingTime": "2023-11-28 14:00",
+    "maxTingNum": 40,
+    "stock": 8,
+    "tingStauts": "Y"
+  },
+  {
+    "breadId": 2,
+    "storeId": 1,
+    "breadName": "튀김 소보로",
+    "breadImage": "/imgs/soboro.png",
+    "content": "튀김 소보로 짱!",
+    "price": "4,500",
+    "tingTime": "2023-11-28 14:00",
+    "maxTingNum": 40,
+    "stock": 8,
+    "tingStauts": "Y"
+  },
+  {
+    "breadId": 3,
+    "storeId": 1,
+    "breadName": "블루베리 베이글",
+    "breadImage": "/imgs/bagel.jpeg",
+    "content": "블루베리 베이글 짱!",
+    "price": "4,500",
+    "tingTime": "2023-11-28 14:00",
+    "maxTingNum": 40,
+    "stock": 8,
+    "tingStauts": "Y"
+  }
+]
