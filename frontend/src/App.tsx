@@ -8,7 +8,7 @@ import { CommingSoon } from './pages/CommingSoon';
 import { Store } from './pages/Store';
 import { MyPage } from './pages/MyPage';
 import { MyStorePage } from './pages/MyStorePage';
-import StoreDetail from './components/StoreDetail/StoreDetail';
+import StoreDetail from './pages/StoreDetail';
 
 function App() {
   return (
