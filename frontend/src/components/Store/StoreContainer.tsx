@@ -4,9 +4,13 @@ import store from '../json/store.json';
 
 const StoreContainer = () => {
   return (
-    <Grid container alignItems="center" height={'100%'}>
+    <Grid container alignItems="center" height={'100%'} mt={5}>
       {store.map(store => (
-        <StoreCard img={store.storeLogo} name={store.storeName} />
+        <StoreCard
+          storeId={store.storeId}
+          img={store.storeLogo}
+          name={store.storeName}
+        />
       ))}
     </Grid>
   );
