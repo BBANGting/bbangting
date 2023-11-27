@@ -1,7 +1,7 @@
 import { Container, Grid } from '@mui/material';
-import StoreBanner from '../components/Mypage/StoreBanner';
+import StoreBanner from '../components/Mypage/MyStoreBanner';
 import Profile from '../components/Mypage/Profile';
-import StoreInformation from '../components/Mypage/StoreInformation';
+import MyStoreInfo from '../components/Mypage/MyStoreInfo';
 
 export const MyStorePage = () => {
   return (
@@ -14,7 +14,7 @@ export const MyStorePage = () => {
             follower={6}
             img={`/imgs/touslesjours.png`}
           />
-          <StoreInformation />
+          <MyStoreInfo />
         </Grid>
       </Container>
     </>
