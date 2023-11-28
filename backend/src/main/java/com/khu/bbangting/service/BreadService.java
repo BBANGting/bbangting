@@ -1,7 +1,7 @@
 package com.khu.bbangting.service;
 
 import com.khu.bbangting.dto.*;
-import com.khu.bbangting.dto.BreadDetailDto;
+import com.khu.bbangting.dto.BreadSaleDto;
 import com.khu.bbangting.dto.BreadFormDto;
 import com.khu.bbangting.dto.BreadInfoDto;
 import com.khu.bbangting.model.Bread;
@@ -110,13 +110,13 @@ public class BreadService {
     }
 
     // 빵 상세 정보 불러오기
-    public BreadDetailDto getBreadDetail(Long breadId) {
+    public BreadSaleDto getBreadSaleInfo(Long breadId) {
         Bread bread = breadRepository.findById(breadId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 빵이 존재하지 않습니다. id = " + breadId));
 
         Image image = imageRepository.findByBreadIdAndRepImgYn(bread.getId(), 'Y');
 
-        return BreadDetailDto.builder()
+        return BreadSaleDto.builder()
                 .breadId(bread.getId())
                 .breadName(bread.getBreadName())
                 .imgUrl(image.getImageUrl())

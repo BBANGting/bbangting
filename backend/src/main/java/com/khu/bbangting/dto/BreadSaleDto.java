@@ -8,7 +8,7 @@ import lombok.ToString;
 @Getter
 @RequiredArgsConstructor
 @ToString
-public class BreadDetailDto {
+public class BreadSaleDto {
 
     private Long breadId;
     private String breadName;
@@ -20,7 +20,7 @@ public class BreadDetailDto {
     private String storeName;
 
     @Builder
-    BreadDetailDto(Long breadId, String breadName, String imgUrl, int price, String tingTime, int stock, char tingStatus, String storeName) {
+    BreadSaleDto(Long breadId, String breadName, String imgUrl, int price, String tingTime, int stock, char tingStatus, String storeName) {
         this.breadId = breadId;
         this.breadName = breadName;
         this.imgUrl = imgUrl;
