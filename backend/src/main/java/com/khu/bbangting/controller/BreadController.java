@@ -53,11 +53,13 @@ public class BreadController {
         return ResponseEntity.ok().body(detailInfo);
     }
 
-/*    // 리뷰 페이지 호출
+    // 리뷰 페이지 호출
     @GetMapping("/bread/review/{breadId}")
     public String reviewPage(@PathVariable Long breadId) {
-        return "/bread/reviewPage";
-    }*/
+        List<ReviewFormDto> reviewListDto = reviewService.getListOfBread(breadId);
+
+        return ResponseEntity.ok(reviewListDto);
+    }
 
     // 문의페이지 호출
     @GetMapping("/bread/inquiry/{breadId}")
