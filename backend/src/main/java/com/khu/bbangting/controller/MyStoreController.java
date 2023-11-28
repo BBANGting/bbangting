@@ -6,13 +6,18 @@ import com.khu.bbangting.dto.StoreInfoDto;
 import com.khu.bbangting.service.FollowService;
 import com.khu.bbangting.service.MyStoreService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -22,35 +27,30 @@ public class MyStoreController {
     @Autowired
     private MyStoreService myStoreService;
 
-    @Autowired
-    private FollowService followService;
 
     // 마이스토어 페이지 호출
     @GetMapping("/myStore/{userId}")
-    public String myStorePage(@PathVariable Long userId, Model model){
+    public ResponseEntity<Map<String, Object>> myStorePage(@PathVariable Long userId){
+        Map<String, Object> result = new HashMap<>();
 
         try {
             // 스토어 정보 호출
             MyStoreInfoDto myStoreInfoDto = myStoreService.getMyStoreInfo(userId);
-            log.info(myStoreInfoDto.toString());
-            model.addAttribute("myStoreInfo", myStoreInfoDto);
+            result.put("myStoreInfo", myStoreInfoDto);
 
             // 빵 목록 호출
             List<BreadInfoDto> breadInfoList = myStoreService.getBreadList(myStoreInfoDto.getStoreId());
-            log.info(breadInfoList.toString());
-            model.addAttribute("breadList", breadInfoList);
+            result.put("breadList", breadInfoList);
 
             // 오늘의 빵팅 목록 호출
             List<BreadInfoDto> todayTingList = myStoreService.getTodayTingList(myStoreInfoDto.getStoreId());
-            log.info(todayTingList.toString());
-            model.addAttribute("todayTingList", todayTingList);
+            result.put("todayTingList", todayTingList);
 
         } catch (EntityNotFoundException e) {
-            model.addAttribute("errorMessage", "해당 제품을 찾을 수 없습니다.");
-            return "myStore/";
+            result.put("errorMessage", HttpStatus.NOT_FOUND);
         }
 
-        return "myStore/";
+        return ResponseEntity.ok().body(result);
     }
 
 }

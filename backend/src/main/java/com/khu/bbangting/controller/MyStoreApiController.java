@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -24,72 +26,67 @@ public class MyStoreApiController {
     @Autowired
     private MyStoreService myStoreService;
 
+    @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("myStore/new")
-    public String createMyStore(Model model, @Valid @RequestPart StoreFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
+    public ResponseEntity<String> createMyStore(@Valid @RequestPart StoreFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
     List<MultipartFile> imageFileList){
 
         if (bindingResult.hasErrors()) {
             log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getAllErrors().toString());
         }
 
-        // 스토어 로고 등록 안할 시, errorMessage 담기
+        // 스토어 로고 등록 안할 시, errorMessage
         if(imageFileList.get(0).isEmpty()){
-            model.addAttribute("errorMessage", "스토어 로고는 필수 입력 값 입니다.");
-            return "myStore/storeForm";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("스토어 로고는 필수 입력 값 입니다.");
         }
 
         try {
             myStoreService.saveStore(requestDto, imageFileList);
+            return ResponseEntity.status(HttpStatus.CREATED).body("마이스토어 등록 성공");
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "스토어 등록 중 에러가 발생하였습니다.");
-            return "myStore/storeForm";
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("스토어 등록 중 에러가 발생하였습니다.");
         }
 
-        return "redirect:/myStore";    // 마이스토어 페이지로 리다이렉트
     }
 
     @DeleteMapping("myStore/{userId}")
-    public String deleteMyStore(@PathVariable Long userId) {
+    public ResponseEntity<String> deleteMyStore(@PathVariable Long userId) {
 
         myStoreService.deleteStore(userId);
 
-        return "redirect:/myStore/none";      // 마이스토어 등록 안된 상태의 페이지
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("마이스토어 삭제 성공");
     }
 
     @GetMapping("myStore/edit/{userId}")
-    public String updateMyStorePage(@PathVariable Long userId, Model model) {
+    public ResponseEntity<?> updateMyStorePage(@PathVariable Long userId) {
 
         try {
             StoreFormDto storeFormDto = myStoreService.getStoreForm(userId);
-            log.info(storeFormDto.toString());
-            model.addAttribute("storeFormDto", storeFormDto);
+            return ResponseEntity.ok(storeFormDto);
         } catch (EntityNotFoundException e) {
-            model.addAttribute("errorMessage", "해당 제품을 찾을 수 없습니다.");
-            return "/myStore";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 제품을 찾을 수 없습니다.");
         }
 
-        return "myStore/storeForm";
     }
 
     @PostMapping("myStore/edit/{userId}")
-    public String updateMyStore(@PathVariable Long userId, @Valid @RequestPart StoreFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
+    public ResponseEntity<?> updateMyStore(@PathVariable Long userId, @Valid @RequestPart StoreFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
     List<MultipartFile> imageFileList) {
 
         if (bindingResult.hasErrors()) {
             log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());
-            return "myStore/storeForm";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("스토어 수정 실패 : " + bindingResult.getAllErrors().toString());
         }
 
         try {
             myStoreService.updateStore(userId, requestDto, imageFileList);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("마이스토어 수정 성공");
         } catch (DataIntegrityViolationException e) {
-            bindingResult.reject("스토어 수정 실패", "이미 존재하는 스토어입니다.");
-            return "myStore/storeForm";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("스토어 수정 실패 : 이미 존재하는 스토어 입니다.");
         } catch (Exception e) {
-            bindingResult.reject("스토어 수정 실패", e.getMessage());
-            return "myStore/storeForm";
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("스토어 수정 실패 : " + e.getMessage());
         }
 
-        return "redirect:myStore/";
     }
 }

@@ -7,10 +7,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -24,58 +27,61 @@ public class StoreController {
 
 
     @GetMapping("/store")
-    public String storePage(Model model) {
-        List<StoreInfoDto> storeInfoList = storeService.getStoreList();
-        log.info(storeInfoList.toString());
+    public ResponseEntity<Map<String, Object>> storePage() {
+        Map<String, Object> result = new HashMap<>();
 
-        List<StoreInfoDto> storeRankingList = storeService.getTopRank();
-        log.info(storeRankingList.toString());
+        try {
+            List<StoreInfoDto> storeInfoList = storeService.getStoreList();
+            result.put("storeInfoList", storeInfoList);
 
-        model.addAttribute("storeInfoList", storeInfoList);
-        model.addAttribute("storeRankingList", storeRankingList);
+            List<StoreInfoDto> storeRankingList = storeService.getTopRank();
+            result.put("storeRankingList", storeRankingList);
+        } catch (Exception e) {
+            result.put("errorMessage", HttpStatus.EXPECTATION_FAILED);
+        }
 
-        return "store/storePage";
+        return ResponseEntity.ok().body(result);
     }
 
     @GetMapping("/store/{storeId}")
-    public String storeDetailPage(Model model, @PathVariable Long storeId) {
-        StoreInfoDto storeInfoDto = storeService.getStoreInfo(storeId);
-        log.info(storeInfoDto.toString());
+    public ResponseEntity<Map<String, Object>> storeDetailPage(@PathVariable Long storeId) {
+        Map<String, Object> result = new HashMap<>();
 
-        model.addAttribute("storeInfo", storeInfoDto);
+        try {
+            StoreInfoDto storeInfoDto = storeService.getStoreInfo(storeId);
+            result.put("storeInfo", storeInfoDto);
 
-        List<BreadInfoDto> breadList = storeService.getBreadList(storeId);
-        log.info(breadList.toString());
+            List<BreadInfoDto> breadList = storeService.getBreadList(storeId);
+            result.put("breadList", breadList);
+        } catch (Exception e) {
+            result.put("errorMessage", HttpStatus.EXPECTATION_FAILED);
+        }
 
-        model.addAttribute("breadList", breadList);
-
-        return "store/storeDetailPage";
+        return ResponseEntity.ok().body(result);
     }
 
     @GetMapping("/store/search")
-    public String searchStore(Model model, @RequestParam("storeName") String storeName) {
+    public ResponseEntity<?> searchStore(@RequestParam("storeName") String storeName) {
         List<StoreInfoDto> searchResult = storeService.searchBy(storeName);
-        log.info(searchResult.toString());
 
         if (searchResult.size() == 0) {
-            model.addAttribute("searchResultList", "검색 결과 없음");
+            return ResponseEntity.ok().body("검색 결과 없음");
         } else {
-            model.addAttribute("searchResultList", searchResult);
+            return ResponseEntity.ok().body(searchResult);
         }
 
-        return "store/searchList";
     }
 
     // 상품 상세 페이지 - 팔로우 기능
     @PostMapping("/store/follow")
-    public ResponseDto<String> followStore(@RequestBody FollowDto followDto) {
+    public ResponseEntity<String> followStore(@RequestBody FollowDto followDto) {
 
         try {
             String message = followService.follows(followDto);
-            return new ResponseDto<String>(HttpStatus.OK.value(), message);
+            return ResponseEntity.ok().body(message);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseDto<String>(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("errorMessage : " + e.getMessage());
         }
     }
 
