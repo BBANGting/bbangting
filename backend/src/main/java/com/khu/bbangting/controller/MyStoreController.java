@@ -45,11 +45,6 @@ public class MyStoreController {
             log.info(todayTingList.toString());
             model.addAttribute("todayTingList", todayTingList);
 
-            // 마이페이지 -> 팔로잉 목록 호출
-            List<StoreInfoDto> followingList = followService.getFollowingList(userId);
-            log.info(followingList.toString());
-            model.addAttribute("followingList", followingList);
-
         } catch (EntityNotFoundException e) {
             model.addAttribute("errorMessage", "해당 제품을 찾을 수 없습니다.");
             return "myStore/";
