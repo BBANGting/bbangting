@@ -1,12 +1,12 @@
 import { Container, Grid } from '@mui/material';
 import Profile from '../components/Mypage/Profile';
 import Information from '../components/Mypage/Information';
-import StoreBanner from '../components/Mypage/StoreBanner';
+import MyStoreBanner from '../components/Mypage/MyStoreBanner';
 
 export const MyPage = () => {
   return (
     <>
-      <StoreBanner />
+      <MyStoreBanner />
       <Container disableGutters>
         <Grid container mt={10} direction={'row'}>
           <Profile

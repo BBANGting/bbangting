@@ -2,7 +2,7 @@ import { Box, Grid } from '@mui/material';
 import BannerButton from './BannerButton';
 import { Link, useLocation } from 'react-router-dom';
 
-const StoreBanner: React.FC = () => {
+const MyStoreBanner: React.FC = () => {
   const location = useLocation();
   const isStorePage = location.pathname === '/mystorepage';
 
@@ -28,4 +28,4 @@ const StoreBanner: React.FC = () => {
   );
 };
 
-export default StoreBanner;
+export default MyStoreBanner;

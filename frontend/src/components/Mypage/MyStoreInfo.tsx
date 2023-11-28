@@ -2,7 +2,7 @@ import { Grid } from '@mui/material';
 import TodayBread from './TodayBread';
 import ManageBread from './ManageBread';
 
-const StoreInformation: React.FC = () => {
+const MyStoreInfo: React.FC = () => {
   return (
     <Grid flex={1} ml={3}>
       <TodayBread />
@@ -11,4 +11,4 @@ const StoreInformation: React.FC = () => {
   );
 };
 
-export default StoreInformation;
+export default MyStoreInfo;
