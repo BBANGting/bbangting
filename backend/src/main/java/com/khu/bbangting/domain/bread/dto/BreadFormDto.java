@@ -1,6 +1,5 @@
 package com.khu.bbangting.domain.bread.dto;
 
-import com.khu.bbangting.domain.image.dto.ImageDto;
 import com.khu.bbangting.domain.bread.model.Bread;
 import com.khu.bbangting.domain.store.model.Store;
 import jakarta.validation.constraints.Min;
@@ -28,8 +27,7 @@ public class BreadFormDto {
     @Min(value = 1)
     private int price;
 
-    @NotBlank
-    private String tingDateTime;
+    private LocalDateTime tingDateTime;
 
     @NotNull(message = "최대 빵팅 개수는 필수 입력 값입니다.")
     @Min(value = 1)
@@ -38,8 +36,8 @@ public class BreadFormDto {
     @NotNull
     private char tingStatus;
 
-    private List<ImageDto> imageDtoList = new ArrayList<>(); // 상품 저장 후, 수정할 때 상품 이미지 정보를 저장하는 리스트
-    private List<Long> imageIds = new ArrayList<>();         // 상품의 이미지 id를 저장하는 리스트 (수정 시, 이미지 id 담아둘 용도)
+//    private List<ImageDto> imageDtoList = new ArrayList<>(); // 상품 저장 후, 수정할 때 상품 이미지 정보를 저장하는 리스트
+//    private List<Long> imageIds = new ArrayList<>();         // 상품의 이미지 id를 저장하는 리스트 (수정 시, 이미지 id 담아둘 용도)
 
     @Builder
     public BreadFormDto(Long storeId, String breadName, String description, int price, int maxTingNum, char tingStatus, LocalDateTime tingDateTime) {
@@ -49,7 +47,7 @@ public class BreadFormDto {
         this.price = price;
         this.maxTingNum = maxTingNum;
         this.tingStatus = tingStatus;
-        this.tingDateTime = String.valueOf(tingDateTime);
+        this.tingDateTime = tingDateTime;
     }
 
     public Bread toEntity(Store store) {
@@ -58,7 +56,7 @@ public class BreadFormDto {
                 .breadName(breadName)
                 .description(description)
                 .price(price)
-                .tingDateTime(LocalDateTime.parse(tingDateTime))
+                .tingDateTime(tingDateTime)
                 .maxTingNum(maxTingNum)
                 .stock(maxTingNum)
                 .tingStatus(tingStatus).build();
@@ -66,7 +64,6 @@ public class BreadFormDto {
 
     public static BreadFormDto fromBread(Bread bread) {
         return BreadFormDto.builder()
-//                .storeId(bread.getStore().getId())
                 .breadName(bread.getBreadName())
                 .description(bread.getDescription())
                 .price(bread.getPrice())

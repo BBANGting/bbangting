@@ -21,19 +21,24 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User joinUser(UserJoinFormDto userJoinFormDto) {
+        System.out.println("joinUser 진입");
+
         User newUser = saveNewUser(userJoinFormDto);
 
         return newUser;
     }
 
     private User saveNewUser(UserJoinFormDto userJoinFormDto) {
+        System.out.println("saveNewUser 진입");
+
+        String rawPassword = userJoinFormDto.getPassword(); // encoding 전 비밀번호
+        String encPassword = passwordEncoder.encode(rawPassword);
+
         User user = User.builder()
                 .email(userJoinFormDto.getEmail())
-                .password(passwordEncoder.encode(userJoinFormDto.getPassword()))
+                .password(encPassword)
                 .username(userJoinFormDto.getUsername())
                 .nickname(userJoinFormDto.getNickname())
-                .role(Role.USER)
-                .type(Type.GENERAL)
                 .build();
 
         return userRepository.save(user);

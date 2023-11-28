@@ -2,6 +2,8 @@ package com.khu.bbangting.domain.bread.event;
 
 
 import com.khu.bbangting.domain.bread.model.Bread;
+import com.khu.bbangting.domain.follow.model.Follow;
+import com.khu.bbangting.domain.follow.repository.FollowRepository;
 import com.khu.bbangting.domain.notification.model.Notification;
 import com.khu.bbangting.domain.notification.model.NotificationType;
 import com.khu.bbangting.domain.user.model.User;
@@ -29,7 +31,6 @@ public class TingEventListener {
 
 
     private final BreadRepository breadRepository;
-    private final UserRepository userRepository;
     private final NotificationRepository notificationRepository;
 
     @EventListener
@@ -39,10 +40,10 @@ public class TingEventListener {
         Bread bread = breadRepository.findTingWithFollowById(tingCreatedEvent.getBread().getId());
 
         // 해당 빵팅 스토어를 팔로우한 유저 조회
-        Set<User> users = new HashSet<>();
-//        users.addAll(bread.getStore().getfollowers()); // 팔로워들 추가
+        Set<User> followerList = new HashSet<>();
+        followerList.addAll(bread.getStore().getFollowerList());
 
-        for (User user : users) {
+        for (User user : followerList) {
             saveNotification(bread, user, NotificationType.TING_CREATED,
                     "[" + bread.getStore().getStoreName() + "] 새로운 빵팅이 등록되었습니다.");
         }
@@ -56,10 +57,10 @@ public class TingEventListener {
         Bread bread = breadRepository.findTingWithFollowById(tingUpdatedEvent.getBread().getId());
 
         // 해당 빵팅 스토어를 팔로우한 유저 조회
-        Set<User> users = new HashSet<>();
-//        users.addAll(bread.getStore().getFollowers()); // 팔로워들 추가
+        Set<User> followerList = new HashSet<>();
+        followerList.addAll(bread.getStore().getFollowerList());
 
-        for (User user : users) {
+        for (User user : followerList) {
             saveNotification(bread, user, NotificationType.TING_UPDATED, tingUpdatedEvent.getMessage());
         }
 

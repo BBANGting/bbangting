@@ -15,7 +15,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @EntityGraph(attributePaths = {"user"}, type = EntityGraph.EntityGraphType.FETCH)
     List<Review> findByBread(Bread bread);
 
-    @Modifying
-    @Query("delete from Review pr where pr.user = :user")
-    void deleteByUser(User user);
+    boolean existsByUserIdAndBreadId(Long userId, Long breadId);
 }

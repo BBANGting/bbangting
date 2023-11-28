@@ -10,12 +10,11 @@ public interface BreadRepository extends JpaRepository<Bread, Long> {
 
     List<Bread> findByStoreId(Long storeId);
 
-    List<Bread> findByTingStatusAndAndStoreId(char tingStatus, Long storeId);
+    List<Bread> findByTingStatusAndStoreId(char tingStatus, Long storeId);
 
     List<Bread> findByTingStatusOrderByStore(char tingStatus);
 
     // 알림 기능
     @EntityGraph(attributePaths = {"followers"})
     Bread findTingWithFollowById(Long id);
-
 }

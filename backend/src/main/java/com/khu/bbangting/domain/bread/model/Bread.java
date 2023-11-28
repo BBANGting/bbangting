@@ -1,20 +1,25 @@
 package com.khu.bbangting.domain.bread.model;
 
 import com.khu.bbangting.domain.bread.dto.BreadFormDto;
+import com.khu.bbangting.domain.order.model.Order;
 import com.khu.bbangting.domain.store.model.Store;
+import com.khu.bbangting.domain.user.model.User;
 import com.khu.bbangting.error.CustomException;
 import com.khu.bbangting.error.ErrorCode;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "breads")
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Getter @Setter
 @Builder
 @ToString
 public class Bread {
@@ -48,8 +53,12 @@ public class Bread {
     private char tingStatus;    // 'Y', 'N'
 
     // 알림 기능
-    private LocalDateTime publishedDateTime;
+    @CreationTimestamp
+    private Timestamp publishedDateTime;
+
+    @Column(nullable = false)
     private LocalDateTime tingDateTime;
+
     private boolean publishTing;
     private boolean startTing;
 
@@ -57,9 +66,13 @@ public class Bread {
     @JoinColumn(name = "storeId")
     private Store store;
 
+    @OneToMany(mappedBy = "bread") @ToString.Exclude
+    @OrderBy("orderDate")
+    private List<Order> orders = new ArrayList<>();
+
     @Builder
     private Bread(Store store, String breadName, String description, int price, int maxTingNum, int stock, char tingStatus,
-                    LocalDateTime publishedDateTime, LocalDateTime tingDateTime, boolean publishTing, boolean startTing) {
+                  Timestamp publishedDateTime, LocalDateTime tingDateTime, boolean publishTing, boolean startTing) {
         this.store = store;
         this.breadName = breadName;
         this.description = description;
@@ -79,8 +92,7 @@ public class Bread {
         this.price = requestDto.getPrice();
         this.maxTingNum = requestDto.getMaxTingNum();
         this.tingStatus = requestDto.getTingStatus();
-        this.publishedDateTime = LocalDateTime.now();
-        this.tingDateTime = LocalDateTime.parse(requestDto.getTingDateTime());
+        this.tingDateTime = requestDto.getTingDateTime();
     }
 
     public boolean isTingTime() {
@@ -105,16 +117,71 @@ public class Bread {
 
     public void publishTing() {
         this.publishTing = true;
-        this.publishedDateTime = LocalDateTime.now();
+        this.publishedDateTime = Timestamp.valueOf(LocalDateTime.now());
     }
 
     public void startTing() {
-        if (isTingTime() && publishTing) {
+        if (isTingTime() && !isSoldOut() && publishTing) {
+            this.startTing = true;
+        } else {
+            this.startTing = false;
+        }
+    }
+
+    public void restartTing() {
+        if (!isSoldOut() && publishTing) {
+            this.startTing = true;
+        } else {
+            this.startTing = false;
+        }
+    }
+
+    public void closeTing() {
+        if (isSoldOut()) {
+            this.startTing = false;
+        } else {
             this.startTing = true;
         }
-        if (stock > 0 && publishTing) {
-            this.startTing = true;
+    }
+
+    public void addOrder(Order order) {
+        this.orders.add(order);
+        order.attach(this);
+    }
+
+    public void removeOrder(Order order) {
+        this.orders.remove(order);
+        order.detach();
+    }
+
+    // 빵팅 열리지 않은 상태 -> react 오픈예정 버튼 <button th:if="${bread.isNotTingTime(#authentication.principal)}"
+    public boolean isNotTingTimeFor(User user) {
+        return !isTingTime();
+    }
+
+    // 빵팅 주문 가능 상태 -> react 구매 버튼 <button th:if="${bread.isOrderFor(#authentication.principal)}"
+    public boolean isOrderFor(User user) {
+        return isTingTime() && !isSoldOut() && !isAlreadyOrdered(user);
+    }
+
+    // 빵팅 주문 완료 상태 -> react 구매 완료 버튼 <button th:if="${bread.isNotOrderFor(#authentication.principal)}"
+    public boolean isAlreadyOrderFor(User user) {
+        return isAlreadyOrdered(user);
+    }
+
+    // 빵팅 품절 상태 -> react 품절 버튼 <button th:if="${bread.usNotTingTime(#authentication.principal)}"
+    public boolean isNotStock(User user) {
+        return isNotStock(user);
+    }
+
+    public boolean isAlreadyOrdered(User user) {
+
+        for (Order order : this.orders) {
+            if (order.getUser().equals(user)) {
+                return true;
+            }
         }
+        return false;
     }
 
 }

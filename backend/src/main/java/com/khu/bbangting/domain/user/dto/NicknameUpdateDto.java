@@ -1,21 +1,16 @@
 package com.khu.bbangting.domain.user.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.AccessLevel;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 @Data
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class NicknameUpdateDto {
+@NoArgsConstructor
+public class NicknameUpdateDto { //회원 수정
 
-    @NotBlank
-    @Length(max = 10)
-    private String nickname;
-
-    public NicknameUpdateDto(String nickname) {
-        this.nickname = nickname;
-    }
+    @Size(min = 2, max = 10, message = "닉네임은 2자 이상 10자 이하로 입력해주세요.")
+    private String newNickname;
 
 }

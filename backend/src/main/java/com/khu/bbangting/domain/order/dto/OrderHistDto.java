@@ -5,6 +5,7 @@ import com.khu.bbangting.domain.order.model.OrderStatus;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ public class OrderHistDto { //주문 목록 불러오기
 
     private int quantity;
 
-    private LocalDateTime orderDate;
+    private Timestamp orderDate;
 
     private OrderStatus orderStatus;
 

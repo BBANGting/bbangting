@@ -1,6 +1,8 @@
 package com.khu.bbangting.domain.store.model;
 
+import com.khu.bbangting.domain.follow.model.Follow;
 import com.khu.bbangting.domain.store.dto.StoreFormDto;
+import com.khu.bbangting.domain.user.dto.UserResponseDto;
 import com.khu.bbangting.domain.user.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,6 +10,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "stores")
@@ -39,6 +46,9 @@ public class Store {
     @ColumnDefault("0")
     private double rating;
 
+    @OneToMany
+    private Set<User> followerList = new HashSet<>();
+
     @Builder
     private Store(User user, String storeName, String description, String location) {
         this.user = user;
@@ -53,4 +63,19 @@ public class Store {
         this.location = requestDto.getLocation();
     }
 
+    public void setFollowerNum(int followerNum) {
+        this.followerNum = followerNum;
+    }
+
+    public void addFollower(User user) {
+        this.followerList.add(user);
+    }
+
+    public void removeFollower(User user) {
+        this.followerList.remove(user);
+    }
+
+    public boolean isManagedBy(User user) {
+        return this.getUser().getId() == user.getId();
+    }
 }

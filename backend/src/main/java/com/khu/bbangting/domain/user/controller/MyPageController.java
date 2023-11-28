@@ -1,6 +1,10 @@
 package com.khu.bbangting.domain.user.controller;
 
+import com.khu.bbangting.domain.follow.service.FollowService;
 import com.khu.bbangting.domain.order.dto.OrderHistDto;
+import com.khu.bbangting.domain.store.dto.StoreInfoDto;
+import com.khu.bbangting.domain.user.dto.NicknameUpdateDto;
+import com.khu.bbangting.domain.user.dto.PasswordUpdateDto;
 import com.khu.bbangting.error.CustomException;
 import com.khu.bbangting.error.ErrorCode;
 import com.khu.bbangting.domain.user.repository.UserRepository;
@@ -8,16 +12,13 @@ import com.khu.bbangting.domain.user.model.User;
 import com.khu.bbangting.domain.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -26,40 +27,74 @@ public class MyPageController {
 
     private final UserRepository userRepository;
     private final OrderService orderService;
+    private final FollowService followService;
 
     // 마이페이지 호출 (유저 정보 포함)
     @GetMapping("/myPage/{userId}")
-    public String myPageForm(@PathVariable String email, Model model, @AuthenticationPrincipal User userInfo) {
+    public String myPageForm(@PathVariable Long userId,  Model model) {
 
-        User byEmail = userRepository.findByEmail(email)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        model.addAttribute(byEmail);
-        model.addAttribute("userInfo", byEmail.equals(userInfo));   //전달된 객체와 DB에서 조회한 객체가 같으면 -> 인증된 사용자
+        // 마이페이지 -> 팔로잉 목록 호출
+        List<StoreInfoDto> followingList = followService.getFollowingList(userId);
+        log.info(followingList.toString());
+        model.addAttribute("followingList", followingList);
 
-        return "/myPageForm";
+        // 마이페이지 -> 유저 정보 호출
+        model.addAttribute(user);
+
+        return "myPage";
     }
 
-    // 2. 회원정보 수정
+    // 2. 회원정보 수정 (비밀번호 & 닉네임)
+    @GetMapping("/myPage/{userId}/password")
+    public String passwordUpdateForm(@PathVariable Long userId, Model model) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        model.addAttribute(user);
+        model.addAttribute(new PasswordUpdateDto());
+
+        return "myPage/setting/password";
+    }
+
+    @GetMapping("/myPage/{userId}/nickname")
+    public String nicknameUpdateForm(@PathVariable Long userId, Model model) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        model.addAttribute(user);
+        model.addAttribute(new NicknameUpdateDto());
+        return "myPage/setting/nickname";
+    }
+
 
     // 3. 주문내역 페이지 (주문내역 정보 포함)
-    @GetMapping({"/myPage/order", "/myPage/order/{page}"})
-    public String userOrderHistForm(@PathVariable("page") Optional<Integer> page, String email) {
+    @GetMapping("/myPage/{userId}/order")
+    public String userOrderHistForm(@PathVariable Long userId, Model model) {
 
-        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5);
-        Page<OrderHistDto> orderHistDtoList = orderService.getOrderList(email, pageable);
+        List<OrderHistDto> orderList = orderService.getOrderList(userId);
+        log.info(orderList.toString());
+        model.addAttribute("orderList", orderList);
 
-        return "order/orderHistForm";
+        return "myPage/order";
     }
 
     // 4. 결제수단 -> 보류
-    @GetMapping("/myPage/payment")
+    @GetMapping("/myPage/{userId}/payment")
     public String paymentForm() {
 
         return "myPage/paymentForm";
     }
 
     // 5. 리뷰관리 -> 보류
+    @GetMapping("/myPage/{userId}/review")
+    public String reviewForm() {
 
-    // 6. 팔로잉
+        return "myPage/review";
+    }
+
 }

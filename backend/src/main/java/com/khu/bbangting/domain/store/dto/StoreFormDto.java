@@ -1,6 +1,5 @@
 package com.khu.bbangting.domain.store.dto;
 
-import com.khu.bbangting.domain.image.dto.StoreImageDto;
 import com.khu.bbangting.domain.store.model.Store;
 import com.khu.bbangting.domain.user.model.User;
 import jakarta.validation.constraints.NotBlank;
@@ -29,8 +28,8 @@ public class StoreFormDto {
 
     private double rating;
 
-    private List<StoreImageDto> storeImageDtoList = new ArrayList<>();
-    private List<Long> storeImageIds = new ArrayList<>();
+//    private List<StoreImageDto> storeImageDtoList = new ArrayList<>();
+//    private List<Long> storeImageIds = new ArrayList<>();
 
     @Builder
     public StoreFormDto(Long userId, String storeName, String description, String location, int followerNum, double rating) {

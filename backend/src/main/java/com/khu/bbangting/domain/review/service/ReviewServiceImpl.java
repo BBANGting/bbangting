@@ -2,8 +2,12 @@ package com.khu.bbangting.domain.review.service;
 
 import com.khu.bbangting.domain.review.dto.ReviewFormDto;
 import com.khu.bbangting.domain.bread.model.Bread;
+import com.khu.bbangting.domain.review.dto.ReviewUpdateFormDto;
 import com.khu.bbangting.domain.review.model.Review;
 import com.khu.bbangting.domain.review.repository.ReviewRepository;
+import com.khu.bbangting.domain.user.model.User;
+import com.khu.bbangting.error.CustomException;
+import com.khu.bbangting.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -30,9 +34,12 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Long register(ReviewFormDto reviewFormDto) {
+    public Long register(User user, ReviewFormDto reviewFormDto) {
 
-        Review breadReview = toEntity(reviewFormDto);
+        if (reviewRepository.existsByUserIdAndBreadId(user.getId(), reviewFormDto.getBreadId())) {
+            throw new CustomException(ErrorCode.REVIEW_IS_EXIST);}
+
+        Review breadReview = toEntity(user, reviewFormDto);
 
         reviewRepository.save(breadReview);
 
@@ -40,15 +47,15 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public void modify(ReviewFormDto reviewFormDto) {
+    public void modify(User user, Long reviewId, ReviewUpdateFormDto reviewUpdateFormDto) {
 
-        Optional<Review> result = reviewRepository.findById(reviewFormDto.getReviewId());
+        Optional<Review> result = reviewRepository.findById(reviewId);
 
         if (result.isPresent()) {
 
             Review breadReview = result.get();
-            breadReview.changeRating(reviewFormDto.getRating());
-            breadReview.changeContent(reviewFormDto.getContent());
+            breadReview.changeRating(reviewUpdateFormDto.getRating());
+            breadReview.changeContent(reviewUpdateFormDto.getContent());
 
             reviewRepository.save(breadReview);
         }

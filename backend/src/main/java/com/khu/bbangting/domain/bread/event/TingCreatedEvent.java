@@ -1,6 +1,7 @@
 package com.khu.bbangting.domain.bread.event;
 
 import com.khu.bbangting.domain.bread.model.Bread;
+import com.khu.bbangting.domain.store.model.Store;
 import lombok.Getter;
 
 @Getter

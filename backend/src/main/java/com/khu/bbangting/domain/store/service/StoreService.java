@@ -1,21 +1,24 @@
 package com.khu.bbangting.domain.store.service;
 import com.khu.bbangting.domain.bread.dto.BreadInfoDto;
+import com.khu.bbangting.domain.follow.dto.FollowDto;
+import com.khu.bbangting.domain.follow.model.Follow;
+import com.khu.bbangting.domain.follow.repository.FollowRepository;
 import com.khu.bbangting.domain.store.dto.StoreFormDto;
 import com.khu.bbangting.domain.store.dto.StoreInfoDto;
 import com.khu.bbangting.domain.bread.repository.BreadRepository;
 import com.khu.bbangting.domain.store.repository.StoreRepository;
 import com.khu.bbangting.domain.bread.model.Bread;
 import com.khu.bbangting.domain.store.model.Store;
+import com.khu.bbangting.domain.user.model.User;
+import com.khu.bbangting.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+
+import java.util.*;
 
 @Service
 @Transactional
@@ -26,7 +29,6 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final BreadRepository breadRepository;
-
 
     // 스토어 목록
     public List<StoreInfoDto> getStoreList() {
@@ -91,7 +93,7 @@ public class StoreService {
 
     public StoreFormDto getStoreInfo(Long storeId) {
         Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 빵이 존재하지 않습니다. id = " + storeId));
+                .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 스토어가 존재하지 않습니다. id = " + storeId));
 
         return StoreFormDto.builder()
                 .storeName(store.getStoreName())
@@ -119,4 +121,5 @@ public class StoreService {
 
         return breadDtoList;
     }
+
 }

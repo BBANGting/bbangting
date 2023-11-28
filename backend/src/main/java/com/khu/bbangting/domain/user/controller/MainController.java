@@ -1,8 +1,8 @@
 package com.khu.bbangting.domain.user.controller;
 
 import com.khu.bbangting.domain.bread.dto.BreadInfoDto;
-import com.khu.bbangting.domain.user.dto.UserJoinFormDto;
 import com.khu.bbangting.domain.bread.service.BreadService;
+import com.khu.bbangting.domain.user.dto.UserJoinFormDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @Slf4j
 @RequiredArgsConstructor
 public class MainController {
@@ -21,9 +21,9 @@ public class MainController {
     // 메인페이지 호출
     @GetMapping("/")
     public String main(Model model) {
-        List<BreadInfoDto> todayTingBreadList = breadService.getTodayTing();
-        log.info(todayTingBreadList.toString());
-        model.addAttribute("todayTingBread", todayTingBreadList);
+//        List<BreadInfoDto> todayTingBreadList = breadService.getTodayTing();
+//        log.info(todayTingBreadList.toString());
+//        model.addAttribute("todayTingBread", todayTingBreadList);
 
         return "index";
     }

@@ -2,6 +2,10 @@ package com.khu.bbangting.domain.bread.controller;
 
 import com.khu.bbangting.domain.bread.dto.BreadFormDto;
 import com.khu.bbangting.domain.bread.service.BreadService;
+import com.khu.bbangting.domain.store.model.Store;
+import com.khu.bbangting.domain.store.repository.StoreRepository;
+import com.khu.bbangting.error.CustomException;
+import com.khu.bbangting.error.ErrorCode;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,23 +26,31 @@ public class BreadApiController {
 
     @Autowired
     private BreadService breadService;
+    @Autowired
+    private StoreRepository storeRepository;
 
     @PostMapping("myStore/bread/new")
-    public String createBread(Model model, @Valid @RequestPart BreadFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
-    List<MultipartFile> imageFileList) {
+    public String createBread(Model model, @Valid @RequestBody BreadFormDto requestDto, BindingResult bindingResult) {
+//            , @RequestPart("imageFile") List<MultipartFile> imageFileList) {
 
         if (bindingResult.hasErrors()) {
             log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());
         }
 
-        // 대표이미지 등록 안할 시, errorMessage 담기
-        if(imageFileList.get(0).isEmpty()){
-            model.addAttribute("errorMessage", "대표이미지는 필수 입력 값 입니다.");
-            return "myStore/bread/breadForm";
-        }
+//        // 대표이미지 등록 안할 시, errorMessage 담기
+//        if(imageFileList.get(0).isEmpty()){
+//            model.addAttribute("errorMessage", "대표이미지는 필수 입력 값 입니다.");
+//            return "myStore/bread/breadForm";
+//        }
 
         try {
-            breadService.saveBread(requestDto, imageFileList);
+            breadService.saveBread(requestDto);
+
+            // Ting 등록시 이벤트 발생
+            Store store = storeRepository.findById(requestDto.getStoreId())
+                    .orElseThrow(() -> new CustomException(ErrorCode.STORE_NOT_FOUND));
+            breadService.publishTing(requestDto.toEntity(store));
+
         } catch (Exception e) {
             model.addAttribute("errorMessage", "상품 등록 중 에러가 발생하였습니다.");
             return "myStore/bread/breadForm";

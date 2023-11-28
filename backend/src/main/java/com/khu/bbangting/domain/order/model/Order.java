@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -26,7 +27,7 @@ public class Order {
     private int quantity;
 
     @CreationTimestamp
-    private LocalDateTime orderDate;
+    private Timestamp orderDate;
 
 //    @Column(nullable = false)
 //    private char paymentStatus;
@@ -38,29 +39,35 @@ public class Order {
     @JoinColumn(name="userId")
     private User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="breadId")
     private Bread bread;
 
     @Builder
-    private Order(User user, Bread bread, int quantity, LocalDateTime orderDate, OrderStatus orderStatus) {
+    private Order(User user, Bread bread, int quantity, OrderStatus orderStatus) {
         this.user = user;
         this.bread = bread;
         this.quantity = quantity;
-        this.orderDate = LocalDateTime.now();
         this.orderStatus = OrderStatus.ORDER;
-        bread.removeStock(quantity);
     }
 
-    public static Order from(int quantity, LocalDateTime orderDate, OrderStatus orderStatus, User user, Bread bread) {
+    public static Order from(int quantity, OrderStatus orderStatus, User user, Bread bread) {
         Order order = new Order();
         order.quantity = quantity;
-        order.orderDate = orderDate;
         order.orderStatus = orderStatus;
         order.user = user;
         order.bread = bread;
 
         return order;
+    }
+
+    public void attach(Bread bread) {
+        this.bread = bread;
+    }
+
+
+    public void detach() {
+        this.bread = null;
     }
 
 }

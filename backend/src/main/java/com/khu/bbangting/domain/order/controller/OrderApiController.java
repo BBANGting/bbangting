@@ -2,6 +2,11 @@ package com.khu.bbangting.domain.order.controller;
 
 import com.khu.bbangting.domain.order.dto.OrderFormDto;
 import com.khu.bbangting.domain.order.service.OrderService;
+import com.khu.bbangting.domain.user.model.Type;
+import com.khu.bbangting.domain.user.model.User;
+import com.khu.bbangting.domain.user.repository.UserRepository;
+import com.khu.bbangting.error.CustomException;
+import com.khu.bbangting.error.ErrorCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,28 +16,33 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class OrderApiController {
 
+    private final UserRepository userRepository;
     private final OrderService orderService;
 
-    /**
-     * 주문
-     */
-    @PostMapping("/order")
-    public ResponseEntity<?> addOrder(@RequestBody @Valid OrderFormDto requestDto) {
+    // 주문하기
+    @PostMapping("/order/{userId}/{breadId}")
+    public String addOrder(@PathVariable Long userId, @RequestBody @Valid OrderFormDto requestDto) {
 
-        orderService.addOrder(requestDto);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        return ResponseEntity.ok().build();
+        if (user.isBanUser(user)) {
+            user.setType(Type.RESTRICTED);
+            throw new CustomException(ErrorCode.BAN_USER);
+        }
+
+        orderService.addOrder(user, requestDto);
+
+        return "redirect:/bread/{breadId}";
     }
 
-    /**
-     * 주문 취소
-     */
-    @DeleteMapping("/{orderId}")
-    public ResponseEntity<?> cancelOrder(@PathVariable Long orderId) {
+    // 주문 취소하기
+    @DeleteMapping("/cancel/{orderId}")
+    public String cancelOrder(@PathVariable Long orderId) {
 
         orderService.cancelOrder(orderId);
 
-        return ResponseEntity.ok().build();
+        return "redirect:/myPage/{userId}/order";
     }
 
 }

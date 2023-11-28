@@ -26,7 +26,7 @@ public class NotificationInterceptor implements HandlerInterceptor {
                 && authentication != null && isTypeOfUserAccount(authentication)) {
             User user = ((UserAccount) authentication.getPrincipal()).getUser();
 
-            long count = notificationRepository.countChecked(user, false);
+            long count = notificationRepository.countByUserAndChecked(user, false);
             modelAndView.addObject("hasNotification", count > 0);
         }
     }

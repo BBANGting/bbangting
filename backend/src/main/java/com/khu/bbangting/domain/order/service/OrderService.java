@@ -34,24 +34,22 @@ public class OrderService {
     private final BreadRepository breadRepository;
 
     // 주문하기
-    public Long addOrder(OrderFormDto requestDto) {
+    public Long addOrder(User user, OrderFormDto requestDto) {
 
-        // 엔티티 조회 (유저 & 빵팅)
-        User user = userRepository.findById(requestDto.getUserId())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        // 엔티티 조회 (빵팅)
         Bread bread = breadRepository.findById(requestDto.getBreadId())
                 .orElseThrow(() -> new CustomException(ErrorCode.BREAD_SOLD_OUT));
 
+        // 이미 예약한 빵팅인지 확인
+        if (orderRepository.existsByBreadIdAndUserId(bread, user)) {
+            throw new CustomException(ErrorCode.ORDER_IS_EXIST);}
         //빵 재고 확인
-        if (bread.isSoldOut()) {
-            throw new CustomException(ErrorCode.BREAD_SOLD_OUT);
-        }
-        //빵팅 시간 확인
-        if (!bread.isTingTime()) {
-            throw new CustomException(ErrorCode.NOT_BBANGTING_TIME);
-        }
+        if (bread.getStock() < requestDto.getQuantity()) {
+            throw new CustomException(ErrorCode.BREAD_SOLD_OUT);}
         //주문 저장
         Order savedOrder = orderRepository.save(requestDto.toEntity(user, bread));
+        bread.addOrder(requestDto.toEntity(user, bread));
+        bread.removeStock(requestDto.getQuantity());
 
         return savedOrder.getId();
     }
@@ -63,26 +61,21 @@ public class OrderService {
                 .ifPresentOrElse(order -> {
                     // 재고 추가
                     order.getBread().addStock(order.getQuantity());
+                    // Bread Entity의 orders 리스트에서 삭제
+                    order.getBread().removeOrder(order);
                     // 주문상태 취소로 전환
                     order.setOrderStatus(OrderStatus.CANCEL);
-                    // 주문 취소
-                    orderRepository.delete(order);
                 }, () -> {
                     throw new CustomException(ErrorCode.ORDER_NOT_FOUND);
                 });
     }
 
-    /**
-     * 유저 구매내역
-     **/
+    // 유저 구매내역
     @Transactional(readOnly = true)
-    public Page<OrderHistDto> getOrderList(String email, Pageable pageable) {
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    public List<OrderHistDto> getOrderList(Long userId) {
 
         //전체 주문내역에서 유저 주문만 리스트로
-        List<Order> orderList = orderRepository.findOrders(email, pageable);
+        List<Order> orderList = orderRepository.findAllByUserId(userId);
 
         //유저 주문리스트에서 주문내역 정보 가져오기
         List<OrderHistDto> orderHistDtoList = new ArrayList<>();
@@ -92,7 +85,7 @@ public class OrderService {
             orderHistDtoList.add(orderHistDto);
         }
 
-        return new PageImpl<OrderHistDto>(orderHistDtoList);
+        return orderHistDtoList;
     }
 
 }

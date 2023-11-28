@@ -90,4 +90,8 @@ public class User {
         return getClass().hashCode();
     }
 
+    public boolean isBanUser(User user) {
+        return this.banCount == 5;
+    }
+
 }

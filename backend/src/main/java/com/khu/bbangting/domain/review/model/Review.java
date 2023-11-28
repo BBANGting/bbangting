@@ -19,7 +19,7 @@ public class Review {
 
     @Id
     @Column(name = "reviewId")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(nullable = true)
@@ -39,12 +39,10 @@ public class Review {
     @JoinColumn(name = "userId")
     private User user;
 
-    // 별점 수정
     public void changeRating(int rating) {
         this.rating = rating;
     }
 
-    // 리뷰내용 수정
     public void changeContent(String content) {
         this.content = content;
     }

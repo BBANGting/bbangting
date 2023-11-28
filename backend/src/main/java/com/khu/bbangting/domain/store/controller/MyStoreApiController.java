@@ -25,21 +25,21 @@ public class MyStoreApiController {
     private MyStoreService myStoreService;
 
     @PostMapping("myStore/new")
-    public String createMyStore(Model model, @Valid @RequestPart StoreFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
-    List<MultipartFile> imageFileList){
+    public String createMyStore(Model model, @Valid @RequestBody StoreFormDto requestDto, BindingResult bindingResult) {
+//            , @RequestPart("imageFile") List<MultipartFile> imageFileList){
 
         if (bindingResult.hasErrors()) {
             log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());
         }
 
-        // 스토어 로고 등록 안할 시, errorMessage 담기
-        if(imageFileList.get(0).isEmpty()){
-            model.addAttribute("errorMessage", "스토어 로고는 필수 입력 값 입니다.");
-            return "myStore/storeForm";
-        }
+//        // 스토어 로고 등록 안할 시, errorMessage 담기
+//        if(imageFileList.get(0).isEmpty()){
+//            model.addAttribute("errorMessage", "스토어 로고는 필수 입력 값 입니다.");
+//            return "myStore/storeForm";
+//        }
 
         try {
-            myStoreService.saveStore(requestDto, imageFileList);
+            myStoreService.saveStore(requestDto);
         } catch (Exception e) {
             model.addAttribute("errorMessage", "스토어 등록 중 에러가 발생하였습니다.");
             return "myStore/storeForm";
@@ -72,8 +72,8 @@ public class MyStoreApiController {
     }
 
     @PostMapping("myStore/edit/{userId}")
-    public String updateMyStore(@PathVariable Long userId, @Valid @RequestPart StoreFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
-    List<MultipartFile> imageFileList) {
+    public String updateMyStore(@PathVariable Long userId, @Valid @RequestPart StoreFormDto requestDto, BindingResult bindingResult) {
+//            , @RequestPart("imageFile") List<MultipartFile> imageFileList) {
 
         if (bindingResult.hasErrors()) {
             log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());
@@ -81,7 +81,7 @@ public class MyStoreApiController {
         }
 
         try {
-            myStoreService.updateStore(userId, requestDto, imageFileList);
+            myStoreService.updateStore(userId, requestDto);
         } catch (DataIntegrityViolationException e) {
             bindingResult.reject("스토어 수정 실패", "이미 존재하는 스토어입니다.");
             return "myStore/storeForm";
