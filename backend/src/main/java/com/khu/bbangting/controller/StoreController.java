@@ -22,8 +22,6 @@ public class StoreController {
 
     @Autowired
     private StoreService storeService;
-    @Autowired
-    private FollowService followService;
 
 
     @GetMapping("/store")
@@ -70,19 +68,6 @@ public class StoreController {
             return ResponseEntity.ok().body(searchResult);
         }
 
-    }
-
-    // 상품 상세 페이지 - 팔로우 기능
-    @PostMapping("/store/follow")
-    public ResponseEntity<String> followStore(@RequestBody FollowDto followDto) {
-
-        try {
-            String message = followService.follows(followDto);
-            return ResponseEntity.ok().body(message);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("errorMessage : " + e.getMessage());
-        }
     }
 
 }
