@@ -32,16 +32,11 @@ public class Bread {
     @Column(nullable = false, length = 20)
     private String breadName;
 
-//    private String breadImage;
-
     @Column(length = 1000)
     private String description;
 
     @Column(nullable = false)
     private int price;
-
-//    @Column(nullable = false)
-//    private LocalDateTime tingTime;
 
     @Column(nullable = false)
     private int maxTingNum;

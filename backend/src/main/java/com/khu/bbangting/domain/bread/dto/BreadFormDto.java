@@ -1,6 +1,7 @@
 package com.khu.bbangting.domain.bread.dto;
 
 import com.khu.bbangting.domain.bread.model.Bread;
+import com.khu.bbangting.domain.image.dto.ImageDto;
 import com.khu.bbangting.domain.store.model.Store;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -36,8 +37,8 @@ public class BreadFormDto {
     @NotNull
     private char tingStatus;
 
-//    private List<ImageDto> imageDtoList = new ArrayList<>(); // 상품 저장 후, 수정할 때 상품 이미지 정보를 저장하는 리스트
-//    private List<Long> imageIds = new ArrayList<>();         // 상품의 이미지 id를 저장하는 리스트 (수정 시, 이미지 id 담아둘 용도)
+    private List<ImageDto> imageDtoList = new ArrayList<>(); // 상품 저장 후, 수정할 때 상품 이미지 정보를 저장하는 리스트
+    private List<Long> imageIds = new ArrayList<>();         // 상품의 이미지 id를 저장하는 리스트 (수정 시, 이미지 id 담아둘 용도)
 
     @Builder
     public BreadFormDto(Long storeId, String breadName, String description, int price, int maxTingNum, char tingStatus, LocalDateTime tingDateTime) {
@@ -56,10 +57,10 @@ public class BreadFormDto {
                 .breadName(breadName)
                 .description(description)
                 .price(price)
-                .tingDateTime(tingDateTime)
                 .maxTingNum(maxTingNum)
                 .stock(maxTingNum)
-                .tingStatus(tingStatus).build();
+                .tingStatus(tingStatus)
+                .tingDateTime(tingDateTime).build();
     }
 
     public static BreadFormDto fromBread(Bread bread) {

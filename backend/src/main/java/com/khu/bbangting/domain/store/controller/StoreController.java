@@ -28,12 +28,13 @@ public class StoreController {
 
     @GetMapping("/store")
     public String storePage(Model model) {
-        List<StoreInfoDto> storeInfoDtoList = storeService.getStoreList();
-        log.info(storeInfoDtoList.toString());
+        List<StoreInfoDto> storeInfoList = storeService.getStoreList();
+        log.info(storeInfoList.toString());
+
         List<StoreInfoDto> storeRankingList = storeService.getTopRank();
         log.info(storeRankingList.toString());
 
-        model.addAttribute("storeInfoDtoList", storeInfoDtoList);
+        model.addAttribute("storeInfoDtoList", storeInfoList);
         model.addAttribute("storeRankingList", storeRankingList);
 
         return "store/storePage";
