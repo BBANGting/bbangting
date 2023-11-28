@@ -23,7 +23,7 @@ public class Review {
     private Long id;
 
     @Column(nullable = true)
-    private int rating;
+    private double rating;
 
     @Column(nullable = true)
     private String content;
@@ -39,7 +39,7 @@ public class Review {
     @JoinColumn(name = "userId")
     private User user;
 
-    public void changeRating(int rating) {
+    public void changeRating(double rating) {
         this.rating = rating;
     }
 

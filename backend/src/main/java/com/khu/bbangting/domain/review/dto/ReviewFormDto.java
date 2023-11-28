@@ -1,11 +1,10 @@
 package com.khu.bbangting.domain.review.dto;
 
+import com.khu.bbangting.domain.review.model.Review;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -13,12 +12,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReviewFormDto {
 
-    private Long breadId;
-
-    private String username;
-
-    private int rating;
-
+    private String nickname;
+    private double rating;
     private String content;
+
+    public static ReviewFormDto fromReview(Review review) {
+        return new ReviewFormDto(review.getUser().getNickname(), review.getRating(), review.getContent());
+    }
 
 }

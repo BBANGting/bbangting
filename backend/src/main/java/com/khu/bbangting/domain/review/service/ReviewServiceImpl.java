@@ -5,9 +5,12 @@ import com.khu.bbangting.domain.bread.model.Bread;
 import com.khu.bbangting.domain.review.dto.ReviewUpdateFormDto;
 import com.khu.bbangting.domain.review.model.Review;
 import com.khu.bbangting.domain.review.repository.ReviewRepository;
+import com.khu.bbangting.domain.user.dto.PasswordUpdateDto;
+import com.khu.bbangting.domain.user.dto.UserUpdateDto;
 import com.khu.bbangting.domain.user.model.User;
 import com.khu.bbangting.error.CustomException;
 import com.khu.bbangting.error.ErrorCode;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -34,30 +37,34 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Long register(User user, ReviewFormDto reviewFormDto) {
+    public ReviewFormDto register(User user, Bread bread, @Valid ReviewFormDto request) {
 
-        if (reviewRepository.existsByUserIdAndBreadId(user.getId(), reviewFormDto.getBreadId())) {
+        if (reviewRepository.existsByUserIdAndBreadId(user.getId(), bread.getId())) {
             throw new CustomException(ErrorCode.REVIEW_IS_EXIST);}
 
-        Review breadReview = toEntity(user, reviewFormDto);
-
+        Review breadReview = toEntity(user, bread, request);
         reviewRepository.save(breadReview);
 
-        return breadReview.getId();
+        return ReviewFormDto.fromReview(breadReview);
     }
 
     @Override
-    public void modify(User user, Long reviewId, ReviewUpdateFormDto reviewUpdateFormDto) {
+    public ReviewUpdateFormDto modify(User user, Long reviewId, @Valid ReviewUpdateFormDto request) {
 
         Optional<Review> result = reviewRepository.findById(reviewId);
 
         if (result.isPresent()) {
 
             Review breadReview = result.get();
-            breadReview.changeRating(reviewUpdateFormDto.getRating());
-            breadReview.changeContent(reviewUpdateFormDto.getContent());
+            breadReview.changeRating(request.getRating());
+            breadReview.changeContent(request.getContent());
 
             reviewRepository.save(breadReview);
+
+            return ReviewUpdateFormDto.fromReview(breadReview);
+        }
+        else {
+            throw new CustomException(ErrorCode.REVIEW_IS_EXIST);
         }
 
     }
