@@ -25,9 +25,6 @@ public class QUser extends EntityPathBase<User> {
 
     public final StringPath email = createString("email");
 
-    // custom
-    public final QUser_Follow follow = new QUser_Follow(forProperty("follow"));
-
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath nickname = createString("nickname");

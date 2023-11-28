@@ -69,7 +69,7 @@ public class MyStoreService {
 
     }
 
-    public void saveStore(StoreFormDto requestDto, , List<MultipartFile> imageFileList) throws Exception{
+    public void saveStore(StoreFormDto requestDto, List<MultipartFile> imageFileList) throws Exception{
 
         // 예외처리) 유저 존재하지 않을 경우
         User user = userRepository.findById(requestDto.getUserId())

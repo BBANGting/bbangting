@@ -1,5 +1,6 @@
 package com.khu.bbangting.domain.bread.dto;
 
+import com.khu.bbangting.domain.bread.model.Bread;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +32,17 @@ public class BreadInfoDto {
         this.maxTingNum = maxTingNum;
         this.stock = stock;
     }
+
+    public static BreadInfoDto fromBread(Bread bread) {
+        return BreadInfoDto.builder()
+                .breadId(bread.getId())
+                .breadName(bread.getBreadName())
+                .storeName(bread.getStore().getStoreName())
+                .tingDateTime(bread.getTingDateTime())
+                .maxTingNum(bread.getMaxTingNum())
+                .stock(bread.getStock())
+                .build();
+    }
+
 
 }

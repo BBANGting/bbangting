@@ -1,8 +1,6 @@
 package com.khu.bbangting.domain.store.model;
 
-import com.khu.bbangting.domain.follow.model.Follow;
 import com.khu.bbangting.domain.store.dto.StoreFormDto;
-import com.khu.bbangting.domain.user.dto.UserResponseDto;
 import com.khu.bbangting.domain.user.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,9 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity

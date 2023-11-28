@@ -7,7 +7,7 @@ import com.khu.bbangting.domain.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +26,7 @@ public class BreadController {
     ReviewService reviewService;
 
     @GetMapping("/bread/{breadId}")
-    public String breadPage(Model model, @PathVariable Long breadId) {
+    public ResponseEntity<BreadDetailDto> breadPage(Model model, @PathVariable Long breadId) {
         BreadDetailDto breadDetailDto = breadService.getBreadDetail(breadId);
         log.info(breadDetailDto.toString());
         model.addAttribute("breadDetail", breadDetailDto);
@@ -36,7 +36,7 @@ public class BreadController {
         log.info(detailInfo.toString());
         model.addAttribute("breadDetailPage", detailInfo);
 
-        return "/bread/detailPage";
+        return ResponseEntity.ok(breadService.getBreadDetail(breadId));
     }
 
     // 상세정보페이지 호출
@@ -51,17 +51,15 @@ public class BreadController {
 
      // 리뷰페이지 호출
     @GetMapping("/bread/review/{breadId}")
-    public String reviewPage(Model model, @PathVariable Long breadId) {
+    public ResponseEntity<?> reviewPage(@PathVariable Long breadId) {
         List<ReviewFormDto> reviewListDto = reviewService.getListOfBread(breadId);
-        log.info(reviewListDto.toString());
-        model.addAttribute("reviewDetail", reviewListDto);
 
-        return "/bread/reviewPage";
+        return ResponseEntity.ok(reviewListDto);
     }
 
     // 문의페이지 호출
     @GetMapping("/bread/inquiry/{breadId}")
-    public String inquiryPage(Model model, @PathVariable Long breadId) {
+    public String inquiryPage(@PathVariable Long breadId) {
         return "/bread/inquiryPage";
     }
 }

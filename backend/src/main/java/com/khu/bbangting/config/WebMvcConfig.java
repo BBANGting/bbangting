@@ -9,8 +9,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-//    private final NotificationInterceptor notificationInterceptor;
-
     @Value("${uploadPath}")
     String uploadPath;
 
@@ -19,15 +17,5 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/images/**")
                 .addResourceLocations(uploadPath);
     }
-
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) { // static location 제외
-//        List<String> staticResourcesPath = Stream.of(StaticResourceLocation.values())
-//                .flatMap(StaticResourceLocation::getPatterns)
-//                .collect(Collectors.toList());
-//        staticResourcesPath.add("/node_modules/**");
-//        registry.addInterceptor(notificationInterceptor)
-//                .excludePathPatterns(staticResourcesPath);
-//    }
 
 }
