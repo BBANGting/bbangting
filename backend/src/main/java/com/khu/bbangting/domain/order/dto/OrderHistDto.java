@@ -1,9 +1,10 @@
 package com.khu.bbangting.domain.order.dto;
 
+import com.khu.bbangting.domain.bread.dto.BreadInfoDto;
+import com.khu.bbangting.domain.bread.model.Bread;
 import com.khu.bbangting.domain.order.model.Order;
 import com.khu.bbangting.domain.order.model.OrderStatus;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -11,29 +12,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderHistDto { //주문 목록 불러오기
 
     private Long orderId;
-
+    private BreadInfoDto breadInfoDto;
     private int quantity;
-
     private Timestamp orderDate;
-
     private OrderStatus orderStatus;
 
-    public OrderHistDto(Order order) {
-        this.orderId = order.getId();
-        this.quantity = order.getQuantity();
-        this.orderDate = order.getOrderDate();
-        this.orderStatus = order.getOrderStatus();
-    }
-
-    private List<OrderHistDto> orderList = new ArrayList<>();
-
-    //주문내역 리스트
-    public void addOrderHistDto(OrderHistDto orderHistDto) {
-        orderList.add(orderHistDto);
+    public static OrderHistDto fromOrder(Order order) {
+        return OrderHistDto.builder()
+                .orderId(order.getId())
+                .breadInfoDto(BreadInfoDto.fromBread(order.getBread()))
+                .quantity(order.getQuantity())
+                .orderDate(order.getOrderDate())
+                .orderStatus(order.getOrderStatus())
+                .build();
     }
 
 }

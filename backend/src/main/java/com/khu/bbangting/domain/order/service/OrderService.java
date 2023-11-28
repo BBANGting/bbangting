@@ -1,7 +1,10 @@
 package com.khu.bbangting.domain.order.service;
 
+import com.khu.bbangting.domain.bread.dto.BreadInfoDto;
 import com.khu.bbangting.domain.order.dto.OrderFormDto;
 import com.khu.bbangting.domain.order.dto.OrderHistDto;
+import com.khu.bbangting.domain.review.dto.ReviewFormDto;
+import com.khu.bbangting.domain.review.model.Review;
 import com.khu.bbangting.error.CustomException;
 import com.khu.bbangting.error.ErrorCode;
 import com.khu.bbangting.domain.bread.model.Bread;
@@ -21,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -31,27 +35,21 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
-    private final BreadRepository breadRepository;
 
     // 주문하기
-    public Long addOrder(User user, OrderFormDto requestDto) {
-
-        // 엔티티 조회 (빵팅)
-        Bread bread = breadRepository.findById(requestDto.getBreadId())
-                .orElseThrow(() -> new CustomException(ErrorCode.BREAD_SOLD_OUT));
+    public void addOrder(User user, Bread bread, OrderFormDto request) {
 
         // 이미 예약한 빵팅인지 확인
-        if (orderRepository.existsByBreadIdAndUserId(bread, user)) {
+        if (orderRepository.existsByUserIdAndBreadId(user.getId(), bread.getId())) {
             throw new CustomException(ErrorCode.ORDER_IS_EXIST);}
         //빵 재고 확인
-        if (bread.getStock() < requestDto.getQuantity()) {
+        if (bread.getStock() < request.getQuantity()) {
             throw new CustomException(ErrorCode.BREAD_SOLD_OUT);}
         //주문 저장
-        Order savedOrder = orderRepository.save(requestDto.toEntity(user, bread));
-        bread.addOrder(requestDto.toEntity(user, bread));
-        bread.removeStock(requestDto.getQuantity());
-
-        return savedOrder.getId();
+        Order savedOrder = orderRepository.save(request.toEntity(user, bread));
+        savedOrder.setOrderStatus(OrderStatus.ORDER);
+        bread.addOrder(request.toEntity(user, bread));
+        bread.removeStock(request.getQuantity());
     }
 
     // 주문 취소하기
@@ -74,18 +72,25 @@ public class OrderService {
     @Transactional(readOnly = true)
     public List<OrderHistDto> getOrderList(Long userId) {
 
-        //전체 주문내역에서 유저 주문만 리스트로
-        List<Order> orderList = orderRepository.findAllByUserId(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        //유저 주문리스트에서 주문내역 정보 가져오기
-        List<OrderHistDto> orderHistDtoList = new ArrayList<>();
-        for(Order order : orderList) {
-            OrderHistDto orderHistDto = new OrderHistDto(order);
-            orderHistDto.addOrderHistDto(orderHistDto);
-            orderHistDtoList.add(orderHistDto);
-        }
+        List<Order> result = orderRepository.findAllByUserId(userId);
 
-        return orderHistDtoList;
+        return result.stream().map(orderList -> fromOrder(orderList)).collect(Collectors.toList());
+    }
+
+    public OrderHistDto fromOrder(Order order) {
+
+        OrderHistDto orderHistDto = OrderHistDto.builder()
+                .orderId(order.getId())
+                .breadInfoDto(BreadInfoDto.fromBread(order.getBread()))
+                .quantity(order.getQuantity())
+                .orderDate(order.getOrderDate())
+                .orderStatus(order.getOrderStatus())
+                .build();
+
+        return orderHistDto;
     }
 
 }
