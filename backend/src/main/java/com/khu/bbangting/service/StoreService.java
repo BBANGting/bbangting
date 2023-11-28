@@ -28,6 +28,7 @@ public class StoreService {
     private final ImageRepository imageRepository;
 
 
+    @Transactional(readOnly = true)
     // 스토어 목록
     public List<StoreInfoDto> getStoreList() {
         List<Store> storeList = storeRepository.findAll();
@@ -50,6 +51,7 @@ public class StoreService {
         return storeInfoList;
     }
 
+    @Transactional(readOnly = true)
     // 스토어 top 랭킹 목록
     public List<StoreInfoDto> getTopRank() {
         List<Store> storeList = storeRepository.findAll();
@@ -73,6 +75,7 @@ public class StoreService {
         return storeRankingList;
     }
 
+    @Transactional(readOnly = true)
     // 스토어 검색
     public List<StoreInfoDto> searchBy(String storeName) {
         List<Store> storeList = storeRepository.findAllByStoreName(storeName);
@@ -95,6 +98,7 @@ public class StoreService {
         return searchResultList;
     }
 
+    @Transactional(readOnly = true)
     public StoreInfoDto getStoreInfo(Long storeId) {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 스토어가 존재하지 않습니다. id = " + storeId));
@@ -112,6 +116,7 @@ public class StoreService {
                 .rating(store.getRating()).build();
     }
 
+    @Transactional(readOnly = true)
     public List<BreadInfoDto> getBreadList(Long storeId) {
         List<Bread> breadList = breadRepository.findByStoreId(storeId);
 
