@@ -1,19 +1,18 @@
 package com.khu.bbangting.model;
 
+import com.khu.bbangting.dto.StoreFormDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "stores")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class Store {
 
     @Id
@@ -24,13 +23,9 @@ public class Store {
     @Column(nullable = false, length = 20)
     private String storeName;
 
-    private String storeLogo;
+    private String description;
 
-    private String storeImage;
-
-    private String introduction;
-
-    @Column(nullable = false, length = 256)
+    @Column(nullable = false, length = 256, unique = true)
     private String location;
 
     @ColumnDefault("0")
@@ -40,4 +35,24 @@ public class Store {
     @JoinColumn(name = "userId")
     private User user;
 
+    @ColumnDefault("0")
+    private double rating;
+
+    @Builder
+    private Store(User user, String storeName, String description, String location) {
+        this.user = user;
+        this.storeName = storeName;
+        this.description = description;
+        this.location = location;
+    }
+
+    public void update(StoreFormDto requestDto) {
+        this.storeName = requestDto.getStoreName();
+        this.description = requestDto.getDescription();
+        this.location = requestDto.getLocation();
+    }
+
+    public void setFollowerNum(int followerNum) {
+        this.followerNum = followerNum;
+    }
 }
