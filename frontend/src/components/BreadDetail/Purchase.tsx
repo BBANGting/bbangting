@@ -26,6 +26,7 @@ const theme = createTheme({
   },
 });
 
+//FEAT: 코드 리팩토링 필요
 const Purchase: React.FC<PurchaseProps> = ({ bread }) => {
   const [count, setCount] = useState<number>(0);
 

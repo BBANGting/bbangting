@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import Purchase from '../components/BreadDetail/Purchase';
 import temp_bread from '../components/json/bread.json';
 import { Container } from '@mui/material';
+import ExtraInfo from '../components/BreadDetail/ExtraInfo';
 
 const BreadDetail: React.FC = () => {
   const { breadId } = useParams<string>();
@@ -13,6 +14,7 @@ const BreadDetail: React.FC = () => {
   return (
     <Container disableGutters>
       <Purchase bread={bread} />
+      <ExtraInfo />
     </Container>
   );
 };
