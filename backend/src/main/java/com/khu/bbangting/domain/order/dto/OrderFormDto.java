@@ -15,15 +15,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class OrderFormDto { //주문하기
 
-    private Long breadId;
     private int quantity;
-    private OrderStatus orderStatus;
 
     @Builder
-    public OrderFormDto(Long breadId, int quantity, OrderStatus orderStatus) {
-        this.breadId = breadId;
+    public OrderFormDto(int quantity) {
         this.quantity = quantity;
-        this.orderStatus = OrderStatus.ORDER;
     }
 
     public Order toEntity(User user, Bread bread) {
@@ -37,9 +33,7 @@ public class OrderFormDto { //주문하기
 
     public static OrderFormDto fromOrder(Order order) {
         return OrderFormDto.builder()
-                .breadId(order.getBread().getId())
                 .quantity(order.getQuantity())
-                .orderStatus(order.getOrderStatus())
                 .build();
     }
 
