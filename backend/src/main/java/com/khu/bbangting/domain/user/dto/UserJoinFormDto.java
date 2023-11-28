@@ -9,7 +9,7 @@ import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 @Data
-public class UserJoinFormDto { //회원 가입
+public class UserJoinFormDto {
 
     @NotBlank(message="이름은 필수 입력 값입니다.")
     private String username;

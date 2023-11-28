@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -14,6 +15,7 @@ import java.util.*;
 @Entity
 @Table(name="users")
 @Getter @Setter @Builder
+@DynamicInsert
 public class User {
 
     @Id
@@ -56,20 +58,14 @@ public class User {
         this.nickname = nickname;
     }
 
-    public void updatePassword(String newPassword) {
+    public User updatePassword(String newPassword) {
         this.password = newPassword;
+        return this;
     }
 
-    public void updateNickname(String nickname) {
+    public User updateNickname(String nickname) {
         this.nickname = nickname;
-    }
-
-    // 임의 알림 기능 추가
-    @Embedded
-    private Follow follow = new Follow();
-
-    public static class Follow {
-
+        return this;
     }
 
     // id가 동일하면 같은 객체로 판별
