@@ -29,24 +29,16 @@ public class MyStoreApiController {
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("myStore/new")
     public ResponseEntity<String> createMyStore(@Valid @RequestPart StoreFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
-    List<MultipartFile> imageFileList){
+    List<MultipartFile> imageFileList) throws Exception {
 
+        // 유효성 검사
         if (bindingResult.hasErrors()) {
-            log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getAllErrors().toString());
+            log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("스토어 등록 실패 : " + bindingResult.getFieldError().getDefaultMessage());
         }
 
-        // 스토어 로고 등록 안할 시, errorMessage
-        if(imageFileList.get(0).isEmpty()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("스토어 로고는 필수 입력 값 입니다.");
-        }
-
-        try {
-            myStoreService.saveStore(requestDto, imageFileList);
-            return ResponseEntity.status(HttpStatus.CREATED).body("마이스토어 등록 성공");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("스토어 등록 중 에러가 발생하였습니다.");
-        }
+        myStoreService.saveStore(requestDto, imageFileList);
+        return ResponseEntity.status(HttpStatus.CREATED).body("마이스토어 등록 성공");
 
     }
 
@@ -61,32 +53,22 @@ public class MyStoreApiController {
     @GetMapping("myStore/edit/{userId}")
     public ResponseEntity<?> updateMyStorePage(@PathVariable Long userId) {
 
-        try {
-            StoreFormDto storeFormDto = myStoreService.getStoreForm(userId);
-            return ResponseEntity.ok(storeFormDto);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 제품을 찾을 수 없습니다.");
-        }
+        StoreFormDto storeFormDto = myStoreService.getStoreForm(userId);
+        return ResponseEntity.ok(storeFormDto);
 
     }
 
     @PostMapping("myStore/edit/{userId}")
     public ResponseEntity<?> updateMyStore(@PathVariable Long userId, @Valid @RequestPart StoreFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
-    List<MultipartFile> imageFileList) {
+    List<MultipartFile> imageFileList) throws Exception {
 
         if (bindingResult.hasErrors()) {
-            log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("스토어 수정 실패 : " + bindingResult.getAllErrors().toString());
+            log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("스토어 수정 실패 : " + bindingResult.getFieldError().getDefaultMessage());
         }
 
-        try {
-            myStoreService.updateStore(userId, requestDto, imageFileList);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("마이스토어 수정 성공");
-        } catch (DataIntegrityViolationException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("스토어 수정 실패 : 이미 존재하는 스토어 입니다.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("스토어 수정 실패 : " + e.getMessage());
-        }
+        myStoreService.updateStore(userId, requestDto, imageFileList);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("마이스토어 수정 성공");
 
     }
 }

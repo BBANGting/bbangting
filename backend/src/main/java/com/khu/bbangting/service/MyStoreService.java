@@ -10,6 +10,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,18 +37,20 @@ public class MyStoreService {
     public StoreFormDto getStoreForm(Long userId) {
 
         Store store = storeRepository.findByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 마이스토어가 존재하지 않습니다. userId = " + userId));
+                .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 스토어가 존재하지 않습니다. userId = " + userId));
 
         List<StoreImage> storeImgList = storeImageRepository.findByStoreIdOrderByIdAsc(store.getId());
         List<StoreImageDto> storeImgDtoList = new ArrayList<>();
         List<Long> storeImageIds = new ArrayList<>();
 
+        // 저장된 스토어 이미지 찾아 Dto로 변환
         for (StoreImage storeImage : storeImgList) {
             StoreImageDto storeImageDto = StoreImageDto.of(storeImage);
             storeImgDtoList.add(storeImageDto);
             storeImageIds.add(storeImage.getId());
         }
 
+        // 스토어 Dto 생성
         StoreFormDto storeFormDto = StoreFormDto.builder()
                 .userId(store.getUser().getId())
                 .storeName(store.getStoreName())
@@ -55,10 +59,9 @@ public class MyStoreService {
                 .followerNum(store.getFollowerNum()).build();
 
         storeFormDto.setStoreImageDtoList(storeImgDtoList);
-        storeFormDto.setStoreImageIds(storeImageIds);
+        storeFormDto.setStoreImageIds(storeImageIds);        // 수정 시, 이미지에 빠르게 접근하기 위해 id만 따로 담아 저장
 
-        return storeFormDto;
-    }
+        return storeFormDto;    }
 
     public void saveStore(StoreFormDto requestDto, List<MultipartFile> imageFileList) throws Exception{
 
@@ -66,6 +69,11 @@ public class MyStoreService {
         User user = userRepository.findById(requestDto.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다. id = " + requestDto.getUserId()));
 
+        // 예외처리) 스토어 로고 이미지 업로드 하지 않은 경우
+        if(imageFileList.get(0).isEmpty())
+            throw new IllegalArgumentException("스토어 로고는 필수 입력 값입니다.");
+
+        // 스토어 정보 저장
         Store store = requestDto.toEntity(user);
         storeRepository.save(store);
 
@@ -87,7 +95,7 @@ public class MyStoreService {
     public void deleteStore(Long userId) {
 
         Store store = storeRepository.findByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 마이스토어가 존재하지 않습니다. userId = " + userId));
+                .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 스토어가 존재하지 않습니다. userId = " + userId));
 
         List<StoreImage> storeImageList = storeImageRepository.findAllByStoreId(store.getId());
 
@@ -102,13 +110,19 @@ public class MyStoreService {
 
     public void updateStore(Long userId, StoreFormDto requestDto, List<MultipartFile> imageFileList) throws Exception {
 
+        // 예외처리) 스토어가 존재하지 않을 경우
         Store store = storeRepository.findByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 마이스토어가 존재하지 않습니다. userId = " + userId));
+                .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 스토어가 존재하지 않습니다. userId = " + userId));
 
+        // 예외처리) 스토어 로고 이미지 업로드 하지 않은 경우
+        if(imageFileList.get(0).isEmpty())
+            throw new IllegalArgumentException("스토어 로고는 필수 입력 값입니다.");
+
+        // 스토어 정보 업데이트
         store.update(requestDto);
         storeRepository.save(store);
 
-        // 이미지 등록
+        // 이미지 재등록
         int num = 0;
         for (int i = 0; i < imageFileList.size(); i++) {
             if (num < requestDto.getStoreImageIds().size()) {
