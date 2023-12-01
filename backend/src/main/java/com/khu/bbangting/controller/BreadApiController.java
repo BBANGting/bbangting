@@ -28,24 +28,16 @@ public class BreadApiController {
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("myStore/bread/new")
     public ResponseEntity<String> createBread(@Valid @RequestPart BreadFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
-    List<MultipartFile> imageFileList) {
+    List<MultipartFile> imageFileList) throws Exception {
 
+        // 유효성 검사
         if (bindingResult.hasErrors()) {
-            log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getAllErrors().toString());
+            log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("빵 등록 실패 : " + bindingResult.getFieldError().getDefaultMessage());
         }
 
-        // 대표이미지 등록 안할 시, errorMessage 담기
-        if(imageFileList.get(0).isEmpty()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("대표이미지는 필수 입력 값입니다.");
-        }
-
-        try {
-            breadService.saveBread(requestDto, imageFileList);
-            return ResponseEntity.status(HttpStatus.CREATED).body("빵 등록 성공");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("빵 등록 중 에러가 발생하였습니다.");
-        }
+        breadService.saveBread(requestDto, imageFileList);
+        return ResponseEntity.status(HttpStatus.CREATED).body("빵 등록 성공");
 
     }
 
@@ -58,33 +50,24 @@ public class BreadApiController {
     }
 
     @GetMapping("myStore/bread/edit/{breadId}")
-    public ResponseEntity<?> updateBreadPage(@PathVariable Long breadId, Model model) {
+    public ResponseEntity<?> updateBreadPage(@PathVariable Long breadId) {
 
-        try {
-            BreadFormDto breadFormDto = breadService.getBreadForm(breadId);
-            return ResponseEntity.ok(breadFormDto);
-        } catch(EntityNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 제품을 찾을 수 없습니다.");
-        }
+        BreadFormDto breadFormDto = breadService.getBreadForm(breadId);
+        return ResponseEntity.ok(breadFormDto);
+
     }
 
     @PostMapping("myStore/bread/edit/{breadId}")
     public ResponseEntity<?> updateBread(@PathVariable Long breadId, @Valid @RequestPart BreadFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
-    List<MultipartFile> imageFileList) {
+    List<MultipartFile> imageFileList) throws Exception {
 
         if (bindingResult.hasErrors()) {
-            log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors().toString());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("빵 정보 수정 실패 : " + bindingResult.getAllErrors().toString());
+            log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("빵 정보 수정 실패 : " + bindingResult.getFieldError().getDefaultMessage());
         }
 
-        try {
-            breadService.updateBread(breadId, requestDto, imageFileList);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("빵 정보 수정 성공");
-        } catch (DataIntegrityViolationException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("빵 수정 실패 : 이미 등록된 제품명입니다.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("빵 수정 실패 : " + e.getMessage());
-        }
+        breadService.updateBread(breadId, requestDto, imageFileList);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("빵 정보 수정 성공");
 
     }
 }

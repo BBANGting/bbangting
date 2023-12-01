@@ -23,14 +23,14 @@ public class BreadFormDto {
     private String description;
 
     @NotNull(message = "가격은 필수 입력 값입니다.")
-    @Min(value = 1)
+    @Min(value = 1, message = "가격은 1원 이상이어야 합니다.")
     private int price;
 
     @NotBlank
     private String tingTime;
 
     @NotNull(message = "최대 빵팅 개수는 필수 입력 값입니다.")
-    @Min(value = 1)
+    @Min(value = 1, message = "최대 빵팅 개수는 1개 이상이어야 합니다.")
     private int maxTingNum;
 
     @NotNull
