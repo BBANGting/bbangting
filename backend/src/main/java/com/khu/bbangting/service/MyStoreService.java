@@ -10,8 +10,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -97,8 +95,8 @@ public class MyStoreService {
         Store store = storeRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 스토어가 존재하지 않습니다. userId = " + userId));
 
+        // 스토어 삭제 시, 스토어 이미지 또한 삭제
         List<StoreImage> storeImageList = storeImageRepository.findAllByStoreId(store.getId());
-
         for (StoreImage storeImage : storeImageList) {
             storeImageRepository.delete(storeImage);
         }
@@ -143,7 +141,7 @@ public class MyStoreService {
     public MyStoreInfoDto getMyStoreInfo(Long userId) {
 
         Store store = storeRepository.findByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 마이스토어가 존재하지 않습니다. userId = " + userId));
+                .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 스토어가 존재하지 않습니다. userId = " + userId));
 
         StoreImage storeImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'Y');
 

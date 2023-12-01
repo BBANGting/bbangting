@@ -34,6 +34,7 @@ public class FollowService {
     // 팔로우 등록/취소 기능
     public String follows(FollowDto followDto) {
 
+        // 예외처리) 유저와 스토어가 존재하지 않을 경우
         Store store = storeRepository.findById(followDto.getStoreId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 id의 스토어가 존재하지 않습니다."));
 

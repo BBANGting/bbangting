@@ -2,15 +2,12 @@ package com.khu.bbangting.controller;
 
 import com.khu.bbangting.dto.StoreFormDto;
 import com.khu.bbangting.service.MyStoreService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,7 +17,6 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-// 마이스토어 c,r,u,d api
 public class MyStoreApiController {
 
     @Autowired

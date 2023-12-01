@@ -19,8 +19,7 @@ public class followController {
     @Autowired
     private FollowService followService;
 
-
-    // 상품 상세 페이지 - 팔로우 기능
+    // 스토어 상세 페이지 > 팔로우 기능
     @PostMapping("/store/follow")
     public ResponseEntity<String> followStore(@RequestBody FollowDto followDto) {
 
