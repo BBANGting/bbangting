@@ -17,13 +17,14 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
+@RequestMapping("/myStore")
 public class MyStoreApiController {
 
     @Autowired
     private MyStoreService myStoreService;
 
     @ResponseStatus(value = HttpStatus.CREATED)
-    @PostMapping("myStore/new")
+    @PostMapping("/new")
     public ResponseEntity<String> createMyStore(@Valid @RequestPart StoreFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
     List<MultipartFile> imageFileList) throws Exception {
 
@@ -38,7 +39,7 @@ public class MyStoreApiController {
 
     }
 
-    @DeleteMapping("myStore/{userId}")
+    @DeleteMapping("/{userId}")
     public ResponseEntity<String> deleteMyStore(@PathVariable Long userId) {
 
         myStoreService.deleteStore(userId);
@@ -46,7 +47,7 @@ public class MyStoreApiController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("마이스토어 삭제 성공");
     }
 
-    @GetMapping("myStore/edit/{userId}")
+    @GetMapping("/edit/{userId}")
     public ResponseEntity<?> updateMyStorePage(@PathVariable Long userId) {
 
         StoreFormDto storeFormDto = myStoreService.getStoreForm(userId);
@@ -54,7 +55,7 @@ public class MyStoreApiController {
 
     }
 
-    @PostMapping("myStore/edit/{userId}")
+    @PostMapping("/edit/{userId}")
     public ResponseEntity<?> updateMyStore(@PathVariable Long userId, @Valid @RequestPart StoreFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
     List<MultipartFile> imageFileList) throws Exception {
 

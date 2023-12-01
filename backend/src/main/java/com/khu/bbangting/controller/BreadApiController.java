@@ -2,15 +2,12 @@ package com.khu.bbangting.controller;
 
 import com.khu.bbangting.dto.BreadFormDto;
 import com.khu.bbangting.service.BreadService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,13 +17,14 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
+@RequestMapping("/myStore/bread")
 public class BreadApiController {
 
     @Autowired
     private BreadService breadService;
 
     @ResponseStatus(value = HttpStatus.CREATED)
-    @PostMapping("myStore/bread/new")
+    @PostMapping("/new")
     public ResponseEntity<String> createBread(@Valid @RequestPart BreadFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
     List<MultipartFile> imageFileList) throws Exception {
 
@@ -41,7 +39,7 @@ public class BreadApiController {
 
     }
 
-    @DeleteMapping("myStore/bread/{breadId}")
+    @DeleteMapping("{breadId}")
     public ResponseEntity<String> deleteBread(@PathVariable Long breadId) {
 
         breadService.deleteBread(breadId);
@@ -49,7 +47,7 @@ public class BreadApiController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("빵 삭제 성공");
     }
 
-    @GetMapping("myStore/bread/edit/{breadId}")
+    @GetMapping("edit/{breadId}")
     public ResponseEntity<?> updateBreadPage(@PathVariable Long breadId) {
 
         BreadFormDto breadFormDto = breadService.getBreadForm(breadId);
@@ -57,7 +55,7 @@ public class BreadApiController {
 
     }
 
-    @PostMapping("myStore/bread/edit/{breadId}")
+    @PostMapping("edit/{breadId}")
     public ResponseEntity<?> updateBread(@PathVariable Long breadId, @Valid @RequestPart BreadFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
     List<MultipartFile> imageFileList) throws Exception {
 

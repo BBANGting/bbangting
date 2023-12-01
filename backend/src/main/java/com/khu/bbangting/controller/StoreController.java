@@ -1,14 +1,12 @@
 package com.khu.bbangting.controller;
 
 import com.khu.bbangting.dto.*;
-import com.khu.bbangting.service.FollowService;
 import com.khu.bbangting.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -18,13 +16,13 @@ import java.util.Map;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
+@RequestMapping("/store")
 public class StoreController {
 
     @Autowired
     private StoreService storeService;
 
-
-    @GetMapping("/store")
+    @GetMapping("")
     public ResponseEntity<Map<String, Object>> storePage() {
         Map<String, Object> result = new HashMap<>();
 
@@ -41,7 +39,7 @@ public class StoreController {
         return ResponseEntity.ok().body(result);
     }
 
-    @GetMapping("/store/{storeId}")
+    @GetMapping("/{storeId}")
     public ResponseEntity<Map<String, Object>> storeDetailPage(@PathVariable Long storeId) {
         Map<String, Object> result = new HashMap<>();
 
@@ -58,7 +56,7 @@ public class StoreController {
         return ResponseEntity.ok().body(result);
     }
 
-    @GetMapping("/store/search")
+    @GetMapping("/search")
     public ResponseEntity<?> searchStore(@RequestParam("storeName") String storeName) {
         List<StoreInfoDto> searchResult = storeService.searchBy(storeName);
 
