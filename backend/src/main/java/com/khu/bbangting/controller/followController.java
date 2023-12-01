@@ -27,8 +27,7 @@ public class followController {
             String message = followService.follows(followDto);
             return ResponseEntity.ok().body(message);
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("errorMessage : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("스토어 팔로우를 실패하였습니다. errorMessage : " + e.getMessage());
         }
     }
 }

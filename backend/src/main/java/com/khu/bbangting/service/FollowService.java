@@ -41,10 +41,14 @@ public class FollowService {
         User user = userRepository.findById(followDto.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 id의 유저가 존재하지 않습니다."));
 
+        if(user.getId() == store.getUser().getId())
+            throw new IllegalArgumentException("유저는 자신의 스토어를 팔로우할 수 없습니다.");
 
         // 유저의 해당 가게 follow 여부 판단
         Optional<Follow> followOptional = followRepository.findByStoreIdAndUserId(store.getId(), user.getId());
 
+        // follow 상태 -> unfollow
+        // unfollow 상태 -> follow
         if (followOptional.isPresent()) {
             followRepository.delete(followOptional.get());
 
