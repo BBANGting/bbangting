@@ -6,7 +6,7 @@ import com.khu.bbangting.domain.follow.repository.FollowRepository;
 import com.khu.bbangting.domain.store.dto.StoreInfoDto;
 import com.khu.bbangting.domain.store.model.Store;
 import com.khu.bbangting.domain.store.repository.StoreRepository;
-import com.khu.bbangting.domain.user.dto.UserUpdateDto;
+import com.khu.bbangting.domain.user.dto.UserResponseDto;
 import com.khu.bbangting.domain.user.model.User;
 import com.khu.bbangting.domain.user.repository.UserRepository;
 import com.khu.bbangting.error.CustomException;
@@ -95,20 +95,20 @@ public class FollowService {
         return followingList;
     }
 
-    // 팔로워 목록 호출 기능
-    public List<UserUpdateDto> getFollowerList(Long storeId) {
+    // 팔로워 목록 호출 기능 -> 알람 보내기 위한 리스트
+    public List<UserResponseDto> getFollowerList(Long storeId) {
         List<Follow> followList = followRepository.findAllByStoreId(storeId);
 
-        List<UserUpdateDto> followerList = new ArrayList<>();
+        List<UserResponseDto> followerList = new ArrayList<>();
         for (Follow follow : followList) {
             User user = userRepository.findByEmail(follow.getUser().getEmail())
                     .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-            UserUpdateDto userUpdateDto = UserUpdateDto.builder()
+            UserResponseDto userResponseDto = UserResponseDto.builder()
                     .email(user.getEmail())
                     .nickname(user.getNickname()).build();
 
-            followerList.add(userUpdateDto);
+            followerList.add(userResponseDto);
         }
 
         return followerList;

@@ -1,6 +1,5 @@
 package com.khu.bbangting.domain.user.dto;
 
-import com.khu.bbangting.domain.user.model.User;
 import lombok.Builder;
 
 public class UserResponseDto { //회원 정보 불러오기

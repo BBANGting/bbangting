@@ -14,7 +14,7 @@ public interface BreadRepository extends JpaRepository<Bread, Long> {
 
     List<Bread> findByTingStatusOrderByStore(char tingStatus);
 
-    // 알림 기능
-    @EntityGraph(attributePaths = {"followers"})
-    Bread findTingWithFollowById(Long id);
+//    // 알림 기능
+//    @EntityGraph(attributePaths = {"followers"})
+//    Bread findTingWithFollowById(Long id);
 }

@@ -3,9 +3,9 @@ package com.khu.bbangting.domain.bread.service;
 import com.khu.bbangting.domain.bread.dto.BreadInfoDto;
 import com.khu.bbangting.domain.bread.dto.BreadDetailDto;
 import com.khu.bbangting.domain.bread.dto.BreadFormDto;
-import com.khu.bbangting.domain.bread.event.TingUpdatedEvent;
-import com.khu.bbangting.domain.bread.event.TingValidator;
-import com.khu.bbangting.domain.bread.event.TingCreatedEvent;
+//import com.khu.bbangting.domain.bread.event.TingUpdatedEvent;
+//import com.khu.bbangting.domain.bread.event.TingValidator;
+//import com.khu.bbangting.domain.bread.event.TingCreatedEvent;
 import com.khu.bbangting.domain.bread.model.Bread;
 import com.khu.bbangting.domain.image.dto.ImageDto;
 import com.khu.bbangting.domain.image.model.Image;
@@ -39,7 +39,7 @@ public class BreadService {
     private final ImageService imageService;
 
     private final ApplicationEventPublisher eventPublisher; // 이벤트 발생을 위한 빈 주입
-    private final TingValidator tingValidator;
+//    private final TingValidator tingValidator;
 
     // 등록된 빵 정보 불러오기
     public BreadFormDto getBreadForm(Long breadId) {
@@ -217,30 +217,30 @@ public class BreadService {
         return infoList;
     }
 
-    // 빵팅 등록시
-    public void publishTing(Bread bread) {
-        System.out.println("publishTing 접근");
-        bread.publishTing();
-        eventPublisher.publishEvent(new TingCreatedEvent(bread));
-    }
-
-    // 빵팅 시작시
-    public void startTing(Bread bread) {
-        bread.startTing();
-        eventPublisher.publishEvent(new TingUpdatedEvent(bread,
-                "[" + bread.getStore().getStoreName() + "] " + bread.getBreadName() + " 빵팅이 시작되었습니다!"));
-    }
-
-    // 빵팅 재시작시
-    public void restartTing(Bread bread) {
-        bread.restartTing();
-        eventPublisher.publishEvent(new TingUpdatedEvent(bread,
-                "[" + bread.getStore().getStoreName() + "] " + bread.getBreadName() + " 예약 취소로 인해 재고가 추가되었습니다!"));
-    }
-
-    // 빵팅 종료시
-    public void closeTing(Bread bread) {
-        bread.closeTing();
-    }
+//    // 빵팅 등록시
+//    public void publishTing(Bread bread) {
+//        System.out.println("publishTing 접근");
+//        bread.publishTing();
+//        eventPublisher.publishEvent(new TingCreatedEvent(bread));
+//    }
+//
+//    // 빵팅 시작시
+//    public void startTing(Bread bread) {
+//        bread.startTing();
+//        eventPublisher.publishEvent(new TingUpdatedEvent(bread,
+//                "[" + bread.getStore().getStoreName() + "] " + bread.getBreadName() + " 빵팅이 시작되었습니다!"));
+//    }
+//
+//    // 빵팅 재시작시
+//    public void restartTing(Bread bread) {
+//        bread.restartTing();
+//        eventPublisher.publishEvent(new TingUpdatedEvent(bread,
+//                "[" + bread.getStore().getStoreName() + "] " + bread.getBreadName() + " 예약 취소로 인해 재고가 추가되었습니다!"));
+//    }
+//
+//    // 빵팅 종료시
+//    public void closeTing(Bread bread) {
+//        bread.closeTing();
+//    }
 
 }
