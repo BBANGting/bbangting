@@ -26,6 +26,20 @@ public class MainController {
         return ResponseEntity.ok(todayTingBreadList);
     }
 
+    // 회원가입페이지 호출
+    @GetMapping("/auth/join")
+    public String joinForm() {
+
+        return "user/joinForm";
+    }
+
+    // 로그인페이지 호출
+    @GetMapping("/auth/login")
+    public String login() {
+
+        return "user/loginForm";
+    }
+
     // 오픈예정페이지 호출
     @GetMapping("/comingSoon")
     public ResponseEntity<List<BreadInfoDto>> openLineUp() {
