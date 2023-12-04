@@ -1,7 +1,10 @@
 package com.khu.bbangting.domain.order.service;
 
+import com.khu.bbangting.domain.follow.model.Follow;
 import com.khu.bbangting.domain.order.dto.OrderFormDto;
 import com.khu.bbangting.domain.order.dto.OrderHistDto;
+import com.khu.bbangting.domain.store.dto.StoreInfoDto;
+import com.khu.bbangting.domain.store.model.Store;
 import com.khu.bbangting.error.CustomException;
 import com.khu.bbangting.error.ErrorCode;
 import com.khu.bbangting.domain.bread.model.Bread;
@@ -11,8 +14,10 @@ import com.khu.bbangting.domain.user.model.User;
 import com.khu.bbangting.domain.bread.repository.BreadRepository;
 import com.khu.bbangting.domain.order.repository.OrderRepository;
 import com.khu.bbangting.domain.user.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -34,14 +39,10 @@ public class OrderService {
     private final BreadRepository breadRepository;
 
     // 주문하기
-    public Long addOrder(User user, OrderFormDto requestDto) {
-
-        // 엔티티 조회 (빵팅)
-        Bread bread = breadRepository.findById(requestDto.getBreadId())
-                .orElseThrow(() -> new CustomException(ErrorCode.BREAD_SOLD_OUT));
+    public Long addOrder(User user, Bread bread, OrderFormDto requestDto) {
 
         // 이미 예약한 빵팅인지 확인
-        if (orderRepository.existsByBreadIdAndUserId(bread, user)) {
+        if (orderRepository.existsByBreadAndUser(bread, user)) {
             throw new CustomException(ErrorCode.ORDER_IS_EXIST);}
         //빵 재고 확인
         if (bread.getStock() < requestDto.getQuantity()) {
@@ -70,22 +71,24 @@ public class OrderService {
                 });
     }
 
-    // 유저 구매내역
+    // 유저 주문내역
     @Transactional(readOnly = true)
     public List<OrderHistDto> getOrderList(Long userId) {
 
-        //전체 주문내역에서 유저 주문만 리스트로
         List<Order> orderList = orderRepository.findAllByUserId(userId);
 
-        //유저 주문리스트에서 주문내역 정보 가져오기
-        List<OrderHistDto> orderHistDtoList = new ArrayList<>();
-        for(Order order : orderList) {
-            OrderHistDto orderHistDto = new OrderHistDto(order);
-            orderHistDto.addOrderHistDto(orderHistDto);
-            orderHistDtoList.add(orderHistDto);
-        }
+        List<OrderHistDto> orderHistList = new ArrayList<>();
+        for (Order order : orderList) {
+            OrderHistDto orderHistDto = OrderHistDto.builder()
+                    .orderId(order.getId())
+                    .quantity(order.getQuantity())
+                    .orderDate(order.getOrderDate())
+                    .orderStatus(order.getOrderStatus()).build();
 
-        return orderHistDtoList;
+            orderHistList.add(orderHistDto);
+
+        }
+        return orderHistList;
     }
 
 }

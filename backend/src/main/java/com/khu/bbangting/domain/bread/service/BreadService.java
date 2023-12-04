@@ -55,9 +55,10 @@ public class BreadService {
                 .breadName(bread.getBreadName())
                 .description(bread.getDescription())
                 .price(bread.getPrice())
-                .tingTime(bread.getTingTime())
                 .maxTingNum(bread.getMaxTingNum())
-                .tingStatus(bread.getTingStatus()).build();
+                .tingStatus(bread.getTingStatus())
+                .tingDateTime(bread.getTingDateTime())
+                .build();
 
         breadFormDto.setImageDtoList(breadImgDtoList);
         breadFormDto.setImageIds(imageIds);
@@ -156,8 +157,8 @@ public class BreadService {
                     .breadName(bread.getBreadName())
                     .imgUrl(image.getImageUrl())
                     .storeName(bread.getStore().getStoreName())
-                    .tingTime(bread.getTingTime())
-                    .stock(bread.getStock()).build();
+                    .stock(bread.getStock())
+                    .tingDateTime(bread.getTingDateTime()).build();
 
             breadInfoDtoList.add(breadInfoDto);
         }
@@ -179,7 +180,7 @@ public class BreadService {
                     .breadName(bread.getBreadName())
                     .imgUrl(image.getImageUrl())
                     .storeName(bread.getStore().getStoreName())
-                    .tingTime(bread.getTingTime()).build();
+                    .tingDateTime(bread.getTingDateTime()).build();
 
             breadInfoDtoList.add(breadInfoDto);
         }
@@ -199,9 +200,9 @@ public class BreadService {
                 .breadName(bread.getBreadName())
                 .imgUrl(image.getImageUrl())
                 .price(bread.getPrice())
-                .tingTime(bread.getTingTime())
                 .stock(bread.getStock())
                 .tingStatus(bread.getTingStatus())
+                .storeName(bread.getStore().getStoreName())
                 .storeName(bread.getStore().getStoreName()).build();
     }
 

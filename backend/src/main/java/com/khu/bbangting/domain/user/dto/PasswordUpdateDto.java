@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.Length;
 
 @Data
 @NoArgsConstructor
-public class PasswordUpdateDto { //회원 수정
+public class PasswordUpdateDto {
 
     @Length(min=8, message = "비밀번호는 8자 이상 입력하세요.")
     private String newPassword;

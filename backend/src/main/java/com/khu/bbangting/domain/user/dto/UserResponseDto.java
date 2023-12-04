@@ -1,22 +1,19 @@
 package com.khu.bbangting.domain.user.dto;
 
 import com.khu.bbangting.domain.user.model.User;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-public class UserResponseDto { //회원 정보 불러오기
+@Data
+@AllArgsConstructor
+public class UserResponseDto {
 
     private Long userId;
-    private String email;
-    private String username;
     private String nickname;
-    private int banCount;
+    private String password;
 
-    @Builder
-    public UserResponseDto(Long userId, String email, String username, String nickname, int banCount) {
-        this.userId = userId;
-        this.email = email;
-        this.username = username;
-        this.nickname = nickname;
-        this.banCount = banCount;
+    public static UserResponseDto fromUser(User user) {
+        return new UserResponseDto(user.getId(), user.getNickname(), user.getPassword());
     }
+
 }

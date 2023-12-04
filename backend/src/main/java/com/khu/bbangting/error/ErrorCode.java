@@ -16,6 +16,7 @@ public enum ErrorCode {
     BREAD_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCT-ERR-404", "product not founded"),
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER-ERR-404", "order not founded"),
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "STORE-ERR-404", "store not founded"),
+    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW-ERR-404", "review not founded"),
     TING_NOT_FOUND(HttpStatus.NOT_FOUND, "TING-ERR-404", "ting not founded"),
 
     BREAD_SOLD_OUT(HttpStatus.NOT_FOUND, "PRODUCT-ERR-404", "product quantity is 0"),

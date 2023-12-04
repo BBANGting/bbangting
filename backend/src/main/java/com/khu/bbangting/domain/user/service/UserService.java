@@ -1,10 +1,16 @@
 package com.khu.bbangting.domain.user.service;
 
+import com.khu.bbangting.domain.user.dto.NicknameUpdateDto;
+import com.khu.bbangting.domain.user.dto.PasswordUpdateDto;
 import com.khu.bbangting.domain.user.dto.UserJoinFormDto;
+import com.khu.bbangting.domain.user.dto.UserResponseDto;
 import com.khu.bbangting.domain.user.model.Role;
 import com.khu.bbangting.domain.user.model.Type;
 import com.khu.bbangting.domain.user.model.User;
 import com.khu.bbangting.domain.user.repository.UserRepository;
+import com.khu.bbangting.error.CustomException;
+import com.khu.bbangting.error.ErrorCode;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,15 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 @Slf4j
 public class UserService {
 
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
+    @Transactional
     public User joinUser(UserJoinFormDto userJoinFormDto) {
-        System.out.println("joinUser 진입");
 
         User newUser = saveNewUser(userJoinFormDto);
 
@@ -29,7 +34,6 @@ public class UserService {
     }
 
     private User saveNewUser(UserJoinFormDto userJoinFormDto) {
-        System.out.println("saveNewUser 진입");
 
         String rawPassword = userJoinFormDto.getPassword(); // encoding 전 비밀번호
         String encPassword = passwordEncoder.encode(rawPassword);
@@ -44,14 +48,32 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void updatePassword(User user, String newPassword) {
-        user.updatePassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
+    @Transactional
+    public UserResponseDto updatePassword(Long userId, @Valid PasswordUpdateDto requestDto) {
+
+//        user.updatePassword(passwordEncoder.encode(requestDto.getNewPassword()));
+//        userRepository.save(user);
+
+        return userRepository.findById(userId).map(user -> {
+            User updateUser = user.updatePassword(passwordEncoder.encode(requestDto.getNewPassword()));
+
+            return UserResponseDto.fromUser(updateUser);
+        }).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
-    public void updateNickname(User user, String nickname) {
-        user.updateNickname(nickname);
-        userRepository.save(user);
+
+
+    @Transactional
+    public UserResponseDto updateNickname(Long userId, @Valid NicknameUpdateDto requestDto) {
+
+//        user.updateNickname(requestDto.getNewNickname());
+//        userRepository.save(user);
+
+        return userRepository.findById(userId).map(user -> {
+            User updateUser = user.updateNickname(requestDto.getNewNickname());
+
+            return UserResponseDto.fromUser(updateUser);
+        }).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
 }

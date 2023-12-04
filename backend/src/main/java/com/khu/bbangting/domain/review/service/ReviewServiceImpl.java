@@ -8,16 +8,15 @@ import com.khu.bbangting.domain.review.repository.ReviewRepository;
 import com.khu.bbangting.domain.user.model.User;
 import com.khu.bbangting.error.CustomException;
 import com.khu.bbangting.error.ErrorCode;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@Log4j2
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
 
@@ -34,35 +33,31 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Long register(User user, ReviewFormDto reviewFormDto) {
+    public ReviewFormDto register(User user, Bread bread, @Valid ReviewFormDto requestDto) {
 
-        if (reviewRepository.existsByUserIdAndBreadId(user.getId(), reviewFormDto.getBreadId())) {
+        if (reviewRepository.existsByUserIdAndBreadId(user.getId(), bread.getId())) {
             throw new CustomException(ErrorCode.REVIEW_IS_EXIST);}
 
-        Review breadReview = toEntity(user, reviewFormDto);
-
-        reviewRepository.save(breadReview);
-
-        return breadReview.getId();
+        return fromReview(reviewRepository.save(toEntity(user, bread, requestDto)));
     }
 
     @Override
-    public void modify(User user, Long reviewId, ReviewUpdateFormDto reviewUpdateFormDto) {
+    public ReviewUpdateFormDto modify(User user, Long reviewId, ReviewUpdateFormDto requestDto) {
 
-        Optional<Review> result = reviewRepository.findById(reviewId);
-
-        if (result.isPresent()) {
-
-            Review breadReview = result.get();
-            breadReview.changeRating(reviewUpdateFormDto.getRating());
-            breadReview.changeContent(reviewUpdateFormDto.getContent());
-
-            reviewRepository.save(breadReview);
-        }
+        return reviewRepository.findById(reviewId)
+                .map(review -> {
+                    Review updatedReview = review.update(
+                            requestDto.getRating(),
+                            requestDto.getContent()
+                    );
+                    reviewRepository.save(updatedReview);
+                    return ReviewUpdateFormDto.fromReview(updatedReview);
+                })
+                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
 
     }
 
-    @Override
+    @Transactional
     public void remove(Long reviewId) {
 
         reviewRepository.deleteById(reviewId);

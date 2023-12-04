@@ -1,5 +1,6 @@
 package com.khu.bbangting.domain.user.controller;
 
+import com.khu.bbangting.domain.bread.model.Bread;
 import com.khu.bbangting.domain.follow.service.FollowService;
 import com.khu.bbangting.domain.order.dto.OrderHistDto;
 import com.khu.bbangting.domain.store.dto.StoreInfoDto;
@@ -10,8 +11,12 @@ import com.khu.bbangting.error.ErrorCode;
 import com.khu.bbangting.domain.user.repository.UserRepository;
 import com.khu.bbangting.domain.user.model.User;
 import com.khu.bbangting.domain.order.service.OrderService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,70 +36,72 @@ public class MyPageController {
 
     // 마이페이지 호출 (유저 정보 포함)
     @GetMapping("/myPage/{userId}")
-    public String myPageForm(@PathVariable Long userId,  Model model) {
+    public ResponseEntity<Result<List<StoreInfoDto>>> myPageForm(@PathVariable Long userId) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        // 마이페이지 -> 팔로잉 목록 호출
         List<StoreInfoDto> followingList = followService.getFollowingList(userId);
-        log.info(followingList.toString());
-        model.addAttribute("followingList", followingList);
 
-        // 마이페이지 -> 유저 정보 호출
-        model.addAttribute(user);
+        return ResponseEntity.ok().body(new Result<>(followingList, user));
+    }
 
-        return "myPage";
+    @Getter
+    @Setter
+    static class Result<T> {
+        private T followingList;
+        private User user;
+
+        public Result(T followingList, User user) {
+            this.followingList = followingList;
+            this.user = user;
+        }
     }
 
     // 2. 회원정보 수정 (비밀번호 & 닉네임)
     @GetMapping("/myPage/{userId}/password")
-    public String passwordUpdateForm(@PathVariable Long userId, Model model) {
+    public ResponseEntity<?> passwordUpdateForm(@PathVariable Long userId) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        model.addAttribute(user);
-        model.addAttribute(new PasswordUpdateDto());
-
-        return "myPage/setting/password";
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/myPage/{userId}/nickname")
-    public String nicknameUpdateForm(@PathVariable Long userId, Model model) {
+    public ResponseEntity<?> nicknameUpdateForm(@PathVariable Long userId) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        model.addAttribute(user);
-        model.addAttribute(new NicknameUpdateDto());
-        return "myPage/setting/nickname";
+        return ResponseEntity.ok().build();
     }
 
 
     // 3. 주문내역 페이지 (주문내역 정보 포함)
     @GetMapping("/myPage/{userId}/order")
-    public String userOrderHistForm(@PathVariable Long userId, Model model) {
+    public ResponseEntity<List<OrderHistDto>> userOrderHistForm(@PathVariable Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         List<OrderHistDto> orderList = orderService.getOrderList(userId);
-        log.info(orderList.toString());
-        model.addAttribute("orderList", orderList);
 
-        return "myPage/order";
+        return ResponseEntity.ok(orderList);
     }
 
     // 4. 결제수단 -> 보류
     @GetMapping("/myPage/{userId}/payment")
-    public String paymentForm() {
+    public ResponseEntity<?> paymentForm() {
 
-        return "myPage/paymentForm";
+        return ResponseEntity.ok().build();
     }
 
     // 5. 리뷰관리 -> 보류
     @GetMapping("/myPage/{userId}/review")
-    public String reviewForm() {
+    public ResponseEntity<?> reviewForm() {
 
-        return "myPage/review";
+        return ResponseEntity.ok().build();
     }
 
 }

@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class BreadFormDto {
     private int price;
 
     @NotBlank
-    private String tingTime;
+    private LocalDateTime tingDateTime;
 
     @NotNull(message = "최대 빵팅 개수는 필수 입력 값입니다.")
     @Min(value = 1, message = "최대 빵팅 개수는 1개 이상이어야 합니다.")
@@ -41,14 +42,14 @@ public class BreadFormDto {
     private List<Long> imageIds = new ArrayList<>();         // 상품의 이미지 id를 저장하는 리스트 (수정 시, 이미지 id 담아둘 용도)
 
     @Builder
-    public BreadFormDto(Long storeId, String breadName, String description, int price, String tingTime, int maxTingNum, char tingStatus) {
+    public BreadFormDto(Long storeId, String breadName, String description, int price, int maxTingNum, char tingStatus, LocalDateTime tingDateTime) {
         this.storeId = storeId;
         this.breadName = breadName;
         this.description = description;
         this.price = price;
-        this.tingTime = tingTime;
         this.maxTingNum = maxTingNum;
         this.tingStatus = tingStatus;
+        this.tingDateTime = tingDateTime;
     }
 
     public Bread toEntity(Store store) {
@@ -57,10 +58,10 @@ public class BreadFormDto {
                 .breadName(breadName)
                 .description(description)
                 .price(price)
-                .tingTime(tingTime)
                 .maxTingNum(maxTingNum)
                 .stock(maxTingNum)
-                .tingStatus(tingStatus).build();
+                .tingStatus(tingStatus)
+                .tingDateTime(tingDateTime).build();
     }
 
 }

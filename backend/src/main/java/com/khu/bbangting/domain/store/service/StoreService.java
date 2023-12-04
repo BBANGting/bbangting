@@ -132,7 +132,7 @@ public class StoreService {
                     .breadId(bread.getId())
                     .breadName(bread.getBreadName())
                     .imgUrl(image.getImageUrl())
-                    .tingTime(bread.getTingTime())
+                    .tingDateTime(bread.getTingDateTime())
                     .stock(bread.getStock()).build();
 
             breadDtoList.add(breadInfoDto);

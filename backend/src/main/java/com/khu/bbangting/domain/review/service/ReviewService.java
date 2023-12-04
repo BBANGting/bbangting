@@ -5,7 +5,9 @@ import com.khu.bbangting.domain.bread.model.Bread;
 import com.khu.bbangting.domain.review.dto.ReviewUpdateFormDto;
 import com.khu.bbangting.domain.review.model.Review;
 import com.khu.bbangting.domain.user.model.User;
+import jakarta.validation.Valid;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,21 +17,21 @@ public interface ReviewService {
     List<ReviewFormDto> getListOfBread(Long breadId);
 
     //리뷰 작성
-    Long register(User user, ReviewFormDto reviewFormDto);
+    ReviewFormDto register(User user, Bread bread, @Valid ReviewFormDto requestDto);
 
     //리뷰 수정
-    void modify(User user, Long reviewId, ReviewUpdateFormDto reviewUpdateFormDto);
+    ReviewUpdateFormDto modify(User user, Long reviewId, ReviewUpdateFormDto requestDto);
 
     //리뷰 삭제
     void remove(Long reviewId);
 
-    default Review toEntity(User user, ReviewFormDto reviewFormDto) {
+    default Review toEntity(User user, Bread bread, ReviewFormDto reviewFormDto) {
 
         Review breadReview = Review.builder()
                 .rating(reviewFormDto.getRating())
                 .content(reviewFormDto.getContent())
-                .createdDate(LocalDateTime.now())
-                .bread(Bread.builder().id(reviewFormDto.getBreadId()).build())
+                .createdDate(Timestamp.valueOf(LocalDateTime.now()))
+                .bread(bread)
                 .user(user)
                 .build();
 
@@ -37,14 +39,13 @@ public interface ReviewService {
     }
 
     default ReviewFormDto fromReview(Review review) {
-
         ReviewFormDto breadReviewDto = ReviewFormDto.builder()
-                .breadId(review.getBread().getId())
-                .username(review.getUser().getUsername())
+                .nickname(review.getUser().getNickname())
                 .rating(review.getRating())
                 .content(review.getContent())
                 .build();
 
         return breadReviewDto;
     }
+
 }
