@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -23,13 +24,13 @@ public class Review {
     private Long id;
 
     @Column(nullable = true)
-    private int rating;
+    private double rating;
 
     @Column(nullable = true)
     private String content;
 
     @CreationTimestamp
-    private LocalDateTime createdDate;
+    private Timestamp createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "breadId")
@@ -45,6 +46,12 @@ public class Review {
 
     public void changeContent(String content) {
         this.content = content;
+    }
+
+    public Review update(double rating, String content) {
+        this.rating = rating;
+        this.content = content;
+        return this;
     }
 
 }

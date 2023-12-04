@@ -29,9 +29,6 @@ public class Order {
     @CreationTimestamp
     private Timestamp orderDate;
 
-//    @Column(nullable = false)
-//    private char paymentStatus;
-
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 

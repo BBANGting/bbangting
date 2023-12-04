@@ -2,6 +2,7 @@ package com.khu.bbangting.domain.order.dto;
 
 import com.khu.bbangting.domain.order.model.Order;
 import com.khu.bbangting.domain.order.model.OrderStatus;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,18 +16,16 @@ import java.util.List;
 public class OrderHistDto { //주문 목록 불러오기
 
     private Long orderId;
-
     private int quantity;
-
     private Timestamp orderDate;
-
     private OrderStatus orderStatus;
 
-    public OrderHistDto(Order order) {
-        this.orderId = order.getId();
-        this.quantity = order.getQuantity();
-        this.orderDate = order.getOrderDate();
-        this.orderStatus = order.getOrderStatus();
+    @Builder
+    public OrderHistDto(Long orderId, int quantity, Timestamp orderDate, OrderStatus orderStatus) {
+        this.orderId = orderId;
+        this.quantity = quantity;
+        this.orderDate = orderDate;
+        this.orderStatus = orderStatus;
     }
 
     private List<OrderHistDto> orderList = new ArrayList<>();

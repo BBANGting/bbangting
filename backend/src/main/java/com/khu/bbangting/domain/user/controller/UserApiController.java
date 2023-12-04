@@ -5,6 +5,7 @@ import com.khu.bbangting.domain.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.validation.Errors;
@@ -18,24 +19,20 @@ public class UserApiController {
 
     // 회원가입
     @PostMapping("/auth/join")
-    public String joinUser(@RequestBody UserJoinFormDto userJoinFormDto, Errors errors) {
-
-        if (errors.hasErrors()) {
-            return "user/joinForm";
-        }
+    public ResponseEntity<?> joinUser(@RequestBody UserJoinFormDto userJoinFormDto) {
 
         userService.joinUser(userJoinFormDto);
 
-        return "redirect:/";
+        return ResponseEntity.ok().build();
     }
 
     // 로그아웃
     @GetMapping("/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
         new SecurityContextLogoutHandler().logout(request, response,
                 SecurityContextHolder.getContext().getAuthentication());
 
-        return "redirect:/login";
+        return ResponseEntity.ok().build();
     }
 
 }
