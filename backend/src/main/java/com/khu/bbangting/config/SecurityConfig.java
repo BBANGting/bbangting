@@ -52,6 +52,7 @@ public class SecurityConfig {
                         .requestMatchers(mvcMatcherBuilder.pattern("/order/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/review/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/auth/**")).permitAll()
+                        .requestMatchers(mvcMatcherBuilder.pattern("/myPage/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/myStore/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/js/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/css/**")).permitAll()
