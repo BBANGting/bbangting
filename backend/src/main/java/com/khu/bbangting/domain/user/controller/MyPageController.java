@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.Model;
@@ -65,7 +66,7 @@ public class MyPageController {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     @GetMapping("/myPage/{userId}/nickname")
@@ -74,7 +75,7 @@ public class MyPageController {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
 
@@ -94,14 +95,14 @@ public class MyPageController {
     @GetMapping("/myPage/{userId}/payment")
     public ResponseEntity<?> paymentForm() {
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     // 5. 리뷰관리 -> 보류
     @GetMapping("/myPage/{userId}/review")
     public ResponseEntity<?> reviewForm() {
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
 }

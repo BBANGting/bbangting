@@ -11,6 +11,7 @@ import com.khu.bbangting.error.CustomException;
 import com.khu.bbangting.error.ErrorCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +40,7 @@ public class OrderApiController {
 
         orderService.addOrder(user, bread, requestDto);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     // 주문 취소하기
@@ -48,7 +49,7 @@ public class OrderApiController {
 
         orderService.cancelOrder(orderId);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
 }

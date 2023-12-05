@@ -36,9 +36,9 @@ public class ReviewApiController {
         Bread bread = breadRepository.findById(breadId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BREAD_NOT_FOUND));
 
-        ReviewFormDto newReview = reviewService.register(user, bread, requestDto);
+        reviewService.register(user, bread, requestDto);
 
-        return ResponseEntity.ok(newReview);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     // 리뷰 수정
@@ -52,9 +52,9 @@ public class ReviewApiController {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
 
-        ReviewUpdateFormDto updateReview = reviewService.modify(user, reviewId, requestDto);
+        reviewService.modify(user, reviewId, requestDto);
 
-        return ResponseEntity.ok(updateReview);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     // 리뷰 삭제
@@ -66,7 +66,7 @@ public class ReviewApiController {
 
         reviewService.remove(reviewId);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
 }

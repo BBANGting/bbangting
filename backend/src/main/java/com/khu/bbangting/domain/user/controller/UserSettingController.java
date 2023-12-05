@@ -32,9 +32,9 @@ public class UserSettingController {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        UserResponseDto updatePassword = userService.updatePassword(userId, requestDto);
+        userService.updatePassword(userId, requestDto);
 
-        return ResponseEntity.ok(updatePassword);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     // 닉네임 수정하기
@@ -44,9 +44,9 @@ public class UserSettingController {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        UserResponseDto updateNickname = userService.updateNickname(userId, requestDto);
+        userService.updateNickname(userId, requestDto);
 
-        return ResponseEntity.ok(updateNickname);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
 }
