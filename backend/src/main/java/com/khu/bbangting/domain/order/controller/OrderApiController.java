@@ -38,6 +38,10 @@ public class OrderApiController {
             throw new CustomException(ErrorCode.BAN_USER);
         }
 
+        if (user.getId() == bread.getStore().getUser().getId()) {
+            throw new CustomException(ErrorCode.BAN_USER);
+        }
+
         orderService.addOrder(user, bread, requestDto);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
