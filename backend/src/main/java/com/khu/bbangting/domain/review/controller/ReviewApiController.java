@@ -2,6 +2,8 @@ package com.khu.bbangting.domain.review.controller;
 
 import com.khu.bbangting.domain.bread.model.Bread;
 import com.khu.bbangting.domain.bread.repository.BreadRepository;
+import com.khu.bbangting.domain.order.model.Order;
+import com.khu.bbangting.domain.order.repository.OrderRepository;
 import com.khu.bbangting.domain.review.dto.ReviewFormDto;
 import com.khu.bbangting.domain.review.dto.ReviewUpdateFormDto;
 import com.khu.bbangting.domain.review.model.Review;
@@ -24,11 +26,12 @@ public class ReviewApiController {
     private final UserRepository userRepository;
     private final BreadRepository breadRepository;
     private final ReviewRepository reviewRepository;
+    private final OrderRepository orderRepository;
     private final ReviewService reviewService;
 
     // 리뷰 작성
     @PostMapping("/review/{userId}/{breadId}")
-    public ResponseEntity<ReviewFormDto> addReview(@PathVariable Long userId, @PathVariable Long breadId, @RequestBody ReviewFormDto requestDto) {
+    public ResponseEntity<?> addReview(@PathVariable Long userId, @PathVariable Long breadId, @RequestBody ReviewFormDto requestDto) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -36,14 +39,20 @@ public class ReviewApiController {
         Bread bread = breadRepository.findById(breadId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BREAD_NOT_FOUND));
 
-        reviewService.register(user, bread, requestDto);
+        Order order = orderRepository.findByUserIdAndBreadId(userId, breadId);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        if (order == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("리뷰 작성 실패");
+        }
+
+        reviewService.register(user, bread, requestDto);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("리뷰 작성 성공");
+
     }
 
     // 리뷰 수정
     @PutMapping("/review/{userId}/{reviewId}")
-    public ResponseEntity<ReviewUpdateFormDto> modifyReview(@PathVariable Long userId, @PathVariable Long reviewId,
+    public ResponseEntity<?> modifyReview(@PathVariable Long userId, @PathVariable Long reviewId,
                                                             @RequestBody ReviewUpdateFormDto requestDto) {
 
         User user = userRepository.findById(userId)
@@ -54,7 +63,7 @@ public class ReviewApiController {
 
         reviewService.modify(user, reviewId, requestDto);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("리뷰 수정 성공");
     }
 
     // 리뷰 삭제
@@ -66,7 +75,7 @@ public class ReviewApiController {
 
         reviewService.remove(reviewId);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("리뷰 삭제 성공");
     }
 
 }
