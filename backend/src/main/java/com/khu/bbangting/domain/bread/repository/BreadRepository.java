@@ -11,4 +11,6 @@ public interface BreadRepository extends JpaRepository<Bread, Long> {
     List<Bread> findByTingStatusAndAndStoreId(char tingStatus, Long storeId);
 
     List<Bread> findByTingStatusOrderByStore(char tingStatus);
+
+    List<Bread> findAllByTingStatus(char tingStatus);
 }

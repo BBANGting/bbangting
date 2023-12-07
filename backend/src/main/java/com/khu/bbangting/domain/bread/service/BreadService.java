@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,6 +145,7 @@ public class BreadService {
         }
     }
 
+    @Transactional(readOnly = true)
     // 오늘의 빵팅 목록 불러오기
     public List<BreadInfoDto> getTodayTing() {
         List<Bread> breadList = breadRepository.findByTingStatusOrderByStore('Y');
@@ -166,6 +169,7 @@ public class BreadService {
         return breadInfoDtoList;
     }
 
+    @Transactional(readOnly = true)
     // 오픈 예정 빵 목록 불러오기
     public List<BreadInfoDto> getOpenLineUp() {
         List<Bread> breadList = breadRepository.findAll();
@@ -188,6 +192,7 @@ public class BreadService {
         return breadInfoDtoList;
     }
 
+    @Transactional(readOnly = true)
     // 빵 상세 정보 불러오기
     public BreadSaleDto getBreadSaleInfo(Long breadId) {
         Bread bread = breadRepository.findById(breadId)
@@ -206,6 +211,7 @@ public class BreadService {
                 .storeName(bread.getStore().getStoreName()).build();
     }
 
+    @Transactional(readOnly = true)
     public List<String> getInfo(Long breadId) {
 
         Bread bread = breadRepository.findById(breadId)
@@ -226,4 +232,66 @@ public class BreadService {
 
         return infoList;
     }
+
+    public void closeBBangTing() {
+
+        // 현재 오픈되어 있거나 판매 완료된 빵팅 리스트 호출
+        List<Bread> breadList = breadRepository.findAllByTingStatus('O');
+        breadList.addAll(breadRepository.findAllByTingStatus('E'));
+        log.info(breadList.toString());
+
+        // tingStatus, 판매 종료 상태로 변경
+        for (Bread bread : breadList) {
+            bread.updateTingStatus('N');
+        }
+    }
+
+    public void openBBangTing() {
+
+        // 오픈 예정 빵팅 리스트 호출
+        List<Bread> comingSoonList = breadRepository.findAllByTingStatus('C');
+        System.out.println("comingSoonList.toString() = " + comingSoonList.toString());
+
+        // tingStatus, 오픈 상태로 변경
+        for (Bread bread : comingSoonList) {
+            LocalDateTime tingDateTime = bread.getTingDateTime();
+
+            LocalDateTime currentDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+            log.info(currentDateTime.toString());
+            if (currentDateTime.toLocalDate().equals(tingDateTime.toLocalDate())) {
+                if (currentDateTime.toLocalTime().equals(tingDateTime.toLocalTime())) {
+                    log.info("**** 새로운 빵팅 오픈 완료 *****");
+                    bread.updateTingStatus('O');
+                }
+            }
+        }
+    }
+
+    public void checkBreadStock() {
+
+        // 1) 재고가 0인 빵의 tingStatus, 'E'로 변경
+        List<Bread> openBreadList = breadRepository.findAllByTingStatus('O');
+
+        if (!openBreadList.isEmpty()) {
+            for (Bread bread : openBreadList) {
+                if (bread.getStock() == 0) {
+                    log.info("빵팅 재고 없음 -> 판매 완료 상태로 변경");
+                    bread.updateTingStatus('E');
+                }
+            }
+        }
+
+        // 2) 판매 완료된 빵 중, 재고가 생긴 빵의 tingStatus, 'E'로 변경
+        List<Bread> endBreadList = breadRepository.findAllByTingStatus('E');
+
+        if (!endBreadList.isEmpty()) {
+            for (Bread bread : endBreadList) {
+                if (bread.getStock() != 0) {
+                    log.info("빵팅 취소표 발생 -> 판매 오픈 상태로 변경");
+                    bread.updateTingStatus('O');
+                }
+            }
+        }
+    }
+
 }

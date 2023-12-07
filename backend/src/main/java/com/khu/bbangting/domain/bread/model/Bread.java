@@ -85,6 +85,10 @@ public class Bread {
         this.tingDateTime = requestDto.getTingDateTime();
     }
 
+    public void updateTingStatus(char tingStatus) {
+        this.tingStatus = tingStatus;
+    }
+
     public boolean isTingTime() {
         return LocalDateTime.now().isAfter(this.tingDateTime) && !isSoldOut();
     }
