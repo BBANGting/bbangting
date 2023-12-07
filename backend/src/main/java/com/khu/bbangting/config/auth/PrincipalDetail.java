@@ -27,6 +27,10 @@ public class PrincipalDetail implements UserDetails {
         return user.getUsername();
     }
 
+    public Long getId() {
+        return user.getId();
+    }
+
     // 계정이 만료되지 않았는지 리턴함 (true: 만료 안됨)
     @Override
     public boolean isAccountNonExpired() {
@@ -60,5 +64,6 @@ public class PrincipalDetail implements UserDetails {
 
         return collectors;
     }
+
 
 }
