@@ -1,11 +1,13 @@
 package com.khu.bbangting.domain.user.model;
 
+import com.khu.bbangting.domain.follow.model.Follow;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -68,13 +70,6 @@ public class User {
         return this;
     }
 
-    // 임의 알림 기능 추가
-    @Embedded
-    private Follow follow = new Follow();
-
-    public static class Follow {
-
-    }
 
     // id가 동일하면 같은 객체로 판별
     @Override
@@ -98,4 +93,7 @@ public class User {
         return this.banCount == 5;
     }
 
+    public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
+        return passwordEncoder.matches(password, this.password);
+    }
 }

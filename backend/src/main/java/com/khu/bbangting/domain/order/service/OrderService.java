@@ -80,10 +80,10 @@ public class OrderService {
         List<OrderHistDto> orderHistList = new ArrayList<>();
         for (Order order : orderList) {
             OrderHistDto orderHistDto = OrderHistDto.builder()
-                    .orderId(order.getId())
+                    .breadName(order.getBread().getBreadName())
+                    .price(order.getBread().getPrice())
                     .quantity(order.getQuantity())
-                    .orderDate(order.getOrderDate())
-                    .orderStatus(order.getOrderStatus()).build();
+                    .orderDate(order.getOrderDate()).build();
 
             orderHistList.add(orderHistDto);
 
