@@ -10,6 +10,7 @@ import { MyPage } from './pages/MyPage';
 import { MyStorePage } from './pages/MyStorePage';
 import StoreDetail from './pages/StoreDetail';
 import BreadDetail from './pages/BreadDetail';
+import BreadUpload from './pages/BreadUpload';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/mystorepage" element={<MyStorePage />} />
         <Route path="/bread/:breadId" element={<BreadDetail />} />
+        <Route path="/new/bread" element={<BreadUpload />} />
       </Routes>
     </>
   );
