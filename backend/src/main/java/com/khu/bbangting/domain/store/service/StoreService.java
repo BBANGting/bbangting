@@ -1,11 +1,6 @@
 package com.khu.bbangting.domain.store.service;
 
-import com.khu.bbangting.domain.bread.dto.BreadInfoDto;
-import com.khu.bbangting.domain.bread.model.Bread;
-import com.khu.bbangting.domain.bread.repository.BreadRepository;
-import com.khu.bbangting.domain.image.model.Image;
 import com.khu.bbangting.domain.image.model.StoreImage;
-import com.khu.bbangting.domain.image.repository.ImageRepository;
 import com.khu.bbangting.domain.image.repository.StoreImageRepository;
 import com.khu.bbangting.domain.store.dto.StoreInfoDto;
 import com.khu.bbangting.domain.store.model.Store;
@@ -28,8 +23,6 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final StoreImageRepository storeImageRepository;
-    private final BreadRepository breadRepository;
-    private final ImageRepository imageRepository;
 
 
     @Transactional(readOnly = true)
@@ -118,27 +111,6 @@ public class StoreService {
                 .location(store.getLocation())
                 .followerNum(store.getFollowerNum())
                 .rating(store.getRating()).build();
-    }
-
-    @Transactional(readOnly = true)
-    public List<BreadInfoDto> getBreadList(Long storeId) {
-        List<Bread> breadList = breadRepository.findByStoreId(storeId);
-
-        List<BreadInfoDto> breadDtoList = new ArrayList<>();
-        for (Bread bread : breadList) {
-            Image image = imageRepository.findByBreadIdAndRepImgYn(bread.getId(), 'Y');
-
-            BreadInfoDto breadInfoDto = BreadInfoDto.builder()
-                    .breadId(bread.getId())
-                    .breadName(bread.getBreadName())
-                    .imgUrl(image.getImageUrl())
-                    .tingDateTime(bread.getTingDateTime())
-                    .stock(bread.getStock()).build();
-
-            breadDtoList.add(breadInfoDto);
-        }
-
-        return breadDtoList;
     }
 
 }
