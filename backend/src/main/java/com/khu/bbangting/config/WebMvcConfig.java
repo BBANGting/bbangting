@@ -18,12 +18,4 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addResourceLocations(uploadPath);
     }
 
-    @Override
-    public void addCorsMappings(final CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173")
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
-                .maxAge(3000);
-    }
-
 }
