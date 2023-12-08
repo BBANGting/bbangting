@@ -1,14 +1,11 @@
 package com.khu.bbangting.domain.user.service;
 
-import com.khu.bbangting.domain.follow.service.FollowService;
+import com.khu.bbangting.security.exception.ResourceNotFoundException;
 import com.khu.bbangting.domain.user.dto.NicknameUpdateDto;
 import com.khu.bbangting.domain.user.dto.PasswordUpdateDto;
 import com.khu.bbangting.domain.user.dto.UserResponseDto;
 import com.khu.bbangting.domain.user.model.User;
-import com.khu.bbangting.domain.user.model.UserDetailsImpl;
 import com.khu.bbangting.domain.user.repository.UserRepository;
-import com.khu.bbangting.error.CustomException;
-import com.khu.bbangting.error.ErrorCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,14 +22,15 @@ public class MyPageService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final UserDetailsServiceImpl userDetailsService;
-    private final FollowService followService;
 
     // 회원정보 및 팔로우 내역 표시
     @Transactional(readOnly = true)
-    public User getUserInfo(UserDetailsImpl userDetails) {
+    public User getUserInfo(User user) {
 
-        User user = userDetailsService.findById(userDetails.getId());
+       User getUser = userRepository.findByEmail(user.getEmail()).orElseThrow(
+                () -> new ResourceNotFoundException("Member", "Member Email", user.getEmail())
+        );
+
         List<UserResponseDto> userResponseDtoList = new ArrayList<>();
         userResponseDtoList.add(UserResponseDto.builder()
                 .nickname(user.getNickname())
@@ -44,30 +42,25 @@ public class MyPageService {
 
     // 비밀번호 수정
     @Transactional
-    public UserResponseDto updatePassword(UserDetailsImpl userDetails, @Valid PasswordUpdateDto requestDto) {
+    public UserResponseDto updatePassword(User user, @Valid PasswordUpdateDto requestDto) {
 
-//        user.updatePassword(passwordEncoder.encode(requestDto.getNewPassword()));
-//        userRepository.save(user);
-
-        return userRepository.findById(userDetails.getId()).map(user -> {
-            User updateUser = user.updatePassword(passwordEncoder.encode(requestDto.getNewPassword()));
-
-            return UserResponseDto.fromUser(updateUser);
-        }).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        String encodePwd = passwordEncoder.encode(requestDto.getNewPassword());
+        User updateUser =  userRepository.findByEmail(user.getEmail()).orElseThrow(
+                () -> new ResourceNotFoundException("Member", "Member Email", user.getEmail())
+        );
+        updateUser.updatePassword(encodePwd);
+        return UserResponseDto.fromUser(updateUser);
     }
 
     // 닉네임 수정
     @Transactional
-    public UserResponseDto updateNickname(UserDetailsImpl userDetails, @Valid NicknameUpdateDto requestDto) {
+    public UserResponseDto updateNickname(User user, @Valid NicknameUpdateDto requestDto) {
 
-//        user.updateNickname(requestDto.getNewNickname());
-//        userRepository.save(user);
-
-        return userRepository.findById(userDetails.getId()).map(user -> {
-            User updateUser = user.updateNickname(requestDto.getNewNickname());
-
-            return UserResponseDto.fromUser(updateUser);
-        }).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        User updateUser =  userRepository.findByEmail(user.getEmail()).orElseThrow(
+                () -> new ResourceNotFoundException("Member", "Member Email", user.getEmail())
+        );
+        updateUser.updateNickname(requestDto.getNewNickname());
+        return UserResponseDto.fromUser(updateUser);
     }
 
 }

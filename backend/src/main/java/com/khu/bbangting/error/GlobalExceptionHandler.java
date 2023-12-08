@@ -1,5 +1,6 @@
 package com.khu.bbangting.error;
 
+import com.khu.bbangting.security.exception.UserException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
@@ -13,6 +14,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(UserException.class)
+    public ResponseEntity<String> handleUserException(UserException e) {
+        return new ResponseEntity<>(e.getMessage(), e.getStatus());
+    }
 
     @ExceptionHandler({IllegalArgumentException.class})
     protected ResponseEntity<?> handleIllegalArgumentException(Exception e) {
