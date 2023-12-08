@@ -22,32 +22,32 @@ public class SchedulerService {
     public void updateBBangTing() {
         log.info("<-----closeBBangTing 스케줄러 작동 시작");
         breadService.closeBBangTing();
-        log.info("closeBBangTing 종료----->");
+        log.info("closeBBangTing 종료----->\n");
 
         log.info("<-----reOpenBBangTing 스케줄러 작동 시작");
         breadService.reOpenBBangTing();
-        log.info("reOpenBBangTing 종료----->");
+        log.info("reOpenBBangTing 종료----->\n");
     }
 
 /*   10~20시까지 1시간마다, 빵팅 시간 확인 후 tingStatus 변경
      1) 빵팅 오픈: comingSoon -> open
  */
-    @Scheduled(cron = "0 0 0/1 * * *")
+    @Scheduled(cron = "0 0 10-20/1 * * *")
     public void openBBangTing() {
-        log.info("openBBangTing 스케줄러 작동 시작");
+        log.info("<----openBBangTing 스케줄러 작동 시작");
         breadService.openBBangTing();
-        log.info("openBBangTing 스케줄러 작동 완료");
+        log.info("openBBangTing 스케줄러 작동 완료---->\n");
     }
 
 /*   10~20시까지 10분마다, 재고 확인 후 tingStatus 변경
      1) 재고가 0인 빵팅: open -> end
      2) 재고가 생긴 빵팅: end -> open
  */
-    @Scheduled(cron = "0 0/10 * * * *")
+    @Scheduled(cron = "0 0/10 10-20 * * *")
     public void checkBreadStock() {
-        log.info("checkBreadStock 스케줄러 작동 시작");
+        log.info("<----checkBreadStock 스케줄러 작동 시작");
         breadService.checkBreadStock();
-        log.info("checkBreadStock 스케줄러 작동 완료");
+        log.info("checkBreadStock 스케줄러 작동 완료---->\n");
     }
 
 }
