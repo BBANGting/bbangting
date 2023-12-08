@@ -30,11 +30,21 @@ public class BreadService {
     @Transactional(readOnly = true)
     // 오늘의 빵팅 목록 불러오기
     public List<BreadInfoDto> getTodayTing() {
-        List<Bread> breadList = breadRepository.findByTingStatusOrderByStore('Y');
+
+        // 판매 종료된 빵팅을 제외한 모든 빵 리스트 호출
+        List<Bread> breadList = breadRepository.findAllByTingStatusNot('N');
+
+        // tingDate 가 현재 날짜와 같은 빵만 리스트에 추가
+        List<Bread> todayTingList = new ArrayList<>();
+        for (Bread bread : breadList) {
+            if (bread.getTingDateTime().toLocalDate().isEqual(LocalDateTime.now().toLocalDate())) {
+                todayTingList.add(bread);
+            }
+        }
 
         List<BreadInfoDto> breadInfoDtoList = new ArrayList<>();
 
-        for (Bread bread : breadList) {
+        for (Bread bread : todayTingList) {
             Image image = imageRepository.findByBreadIdAndRepImgYn(bread.getId(), 'Y');
 
             BreadInfoDto breadInfoDto = BreadInfoDto.builder()
@@ -42,7 +52,7 @@ public class BreadService {
                     .breadName(bread.getBreadName())
                     .imgUrl(image.getImageUrl())
                     .storeName(bread.getStore().getStoreName())
-                    .stock(bread.getStock())
+                    .tingStatus(bread.getTingStatus())
                     .tingDateTime(bread.getTingDateTime()).build();
 
             breadInfoDtoList.add(breadInfoDto);
@@ -54,11 +64,18 @@ public class BreadService {
     @Transactional(readOnly = true)
     // 오픈 예정 빵 목록 불러오기
     public List<BreadInfoDto> getOpenLineUp() {
-        List<Bread> breadList = breadRepository.findAll();
+        List<Bread> comingSoonList = breadRepository.findAllByTingStatusOrderByTingDateTime('C');
 
         List<BreadInfoDto> breadInfoDtoList = new ArrayList<>();
 
-        for (Bread bread : breadList) {
+        for (Bread bread : comingSoonList) {
+
+            // 현재 날짜로부터 일주일 치의 빵팅 리스트만 호출
+            // -> 넘어가면 break
+            if (bread.getTingDateTime().minusDays(7).toLocalDate().isEqual(LocalDateTime.now().toLocalDate())) {
+                break;
+            }
+
             Image image = imageRepository.findByBreadIdAndRepImgYn(bread.getId(), 'Y');
 
             BreadInfoDto breadInfoDto = BreadInfoDto.builder()
@@ -85,12 +102,12 @@ public class BreadService {
         return BreadSaleDto.builder()
                 .breadId(bread.getId())
                 .breadName(bread.getBreadName())
+                .storeName(bread.getStore().getStoreName())
                 .imgUrl(image.getImageUrl())
                 .price(bread.getPrice())
+                .tingDateTime(bread.getTingDateTime())
                 .stock(bread.getStock())
-                .tingStatus(bread.getTingStatus())
-                .storeName(bread.getStore().getStoreName())
-                .storeName(bread.getStore().getStoreName()).build();
+                .tingStatus(bread.getTingStatus()).build();
     }
 
     @Transactional(readOnly = true)
@@ -178,7 +195,7 @@ public class BreadService {
             }
         }
 
-        // 2) 판매 완료된 빵 중, 재고가 생긴 빵의 tingStatus, 'E'로 변경
+        // 2) 판매 완료된 빵 중, 재고가 생긴 빵의 tingStatus, 'O'로 변경
         List<Bread> endBreadList = breadRepository.findAllByTingStatus('E');
 
         if (!endBreadList.isEmpty()) {

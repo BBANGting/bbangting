@@ -16,17 +16,20 @@ public class BreadInfoDto {
     private String breadName;
     private String imgUrl;
     private String storeName;
+    private char tingStatus;
+
     private LocalDateTime tingDateTime;
     private int maxTingNum;
     private int stock;
 
 
     @Builder
-    public BreadInfoDto(Long breadId, String breadName, String imgUrl, String storeName, LocalDateTime tingDateTime, int maxTingNum, int stock) {
+    public BreadInfoDto(Long breadId, String breadName, String imgUrl, String storeName, char tingStatus, LocalDateTime tingDateTime, int maxTingNum, int stock) {
         this.breadId = breadId;
         this.breadName = breadName;
         this.imgUrl = imgUrl;
         this.storeName = storeName;
+        this.tingStatus = tingStatus;
         this.tingDateTime = tingDateTime;
         this.maxTingNum = maxTingNum;
         this.stock = stock;

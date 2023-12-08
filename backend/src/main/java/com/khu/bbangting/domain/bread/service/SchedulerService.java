@@ -39,11 +39,11 @@ public class SchedulerService {
         log.info("openBBangTing 스케줄러 작동 완료---->\n");
     }
 
-/*   10~20시까지 10분마다, 재고 확인 후 tingStatus 변경
+/*   10~24시까지 10분마다, 재고 확인 후 tingStatus 변경
      1) 재고가 0인 빵팅: open -> end
      2) 재고가 생긴 빵팅: end -> open
  */
-    @Scheduled(cron = "0 0/10 10-20 * * *")
+    @Scheduled(cron = "0 0/10 10-23 * * *")
     public void checkBreadStock() {
         log.info("<----checkBreadStock 스케줄러 작동 시작");
         breadService.checkBreadStock();

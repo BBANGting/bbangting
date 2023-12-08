@@ -6,11 +6,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface BreadRepository extends JpaRepository<Bread, Long> {
-    List<Bread> findByStoreId(Long storeId);
+    List<Bread> findAllByStoreId(Long storeId);
+
+    List<Bread> findAllByTingStatus(char tingStatus);
+
+    List<Bread> findAllByTingStatusNot(char tingStatus);
+
+    List<Bread> findAllByTingStatusOrderByTingDateTime(char tingStatus);
 
     List<Bread> findByTingStatusAndAndStoreId(char tingStatus, Long storeId);
 
     List<Bread> findByTingStatusOrderByStore(char tingStatus);
 
-    List<Bread> findAllByTingStatus(char tingStatus);
+    List<Bread> findByTingStatusOrderByTingDateTime(char tingStatus);
 }
