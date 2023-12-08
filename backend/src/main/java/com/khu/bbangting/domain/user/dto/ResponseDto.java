@@ -1,15 +1,26 @@
 package com.khu.bbangting.domain.user.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Data
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
-@Builder
 public class ResponseDto<T> {
-    int status;
-    T data;
+    private boolean success;
+    private T data;
+    private Error error;
+
+    public static <T> ResponseDto<T> success(T data) {
+        return new ResponseDto<>(true, data, null);
+    }
+    public static <T> ResponseDto<T> fail(String code, String message) {
+        return new ResponseDto<>(false, null,  new Error(code, message) );
+    }
+    @Getter
+    @AllArgsConstructor
+    static class Error {
+        private String code;
+        private String message;
+    }
+
 }
