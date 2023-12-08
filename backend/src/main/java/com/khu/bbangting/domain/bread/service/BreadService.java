@@ -8,7 +8,6 @@ import com.khu.bbangting.domain.bread.dto.BreadFormDto;
 import com.khu.bbangting.domain.bread.dto.BreadInfoDto;
 import com.khu.bbangting.domain.bread.model.Bread;
 import com.khu.bbangting.domain.image.model.Image;
-import com.khu.bbangting.domain.notification.service.NotificationService;
 import com.khu.bbangting.domain.store.model.Store;
 import com.khu.bbangting.domain.bread.repository.BreadRepository;
 import com.khu.bbangting.domain.image.repository.ImageRepository;
@@ -36,7 +35,7 @@ public class BreadService {
     private final ImageRepository imageRepository;
     private final FollowRepository followRepository;
     private final ImageService imageService;
-    private final NotificationService notificationService;
+//    private final NotificationService notificationService;
 
 
     @Transactional(readOnly = true)
@@ -102,12 +101,12 @@ public class BreadService {
             imageService.saveImage(image, imageFileList.get(i));
         }
 
-        // 해당 스토어 팔로워들에게 빵팅 등록 알림 보내기
-        List<Follow> followers = followRepository.findAllByStoreId(bread.getStore().getId());
-        for(Follow follower : followers) {
-            User user = follower.getUser();
-            notificationService.createTing(user, bread, "[" + bread.getStore().getStoreName() + "] 새로운 빵팅이 등록되었습니다.");
-        }
+//        // 해당 스토어 팔로워들에게 빵팅 등록 알림 보내기
+//        List<Follow> followers = followRepository.findAllByStoreId(bread.getStore().getId());
+//        for(Follow follower : followers) {
+//            User user = follower.getUser();
+//            notificationService.createTing(user, bread, "[" + bread.getStore().getStoreName() + "] 새로운 빵팅이 등록되었습니다.");
+//        }
     }
 
     public void deleteBread(Long breadId) {
