@@ -2,6 +2,7 @@ package com.khu.bbangting.domain.store.controller;
 
 import com.khu.bbangting.domain.bread.dto.BreadInfoDto;
 import com.khu.bbangting.domain.store.dto.StoreInfoDto;
+import com.khu.bbangting.domain.store.service.MyStoreService;
 import com.khu.bbangting.domain.store.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,8 @@ public class StoreController {
 
     @Autowired
     private StoreService storeService;
+    @Autowired
+    private MyStoreService myStoreService;
 
     @GetMapping("")
     public ResponseEntity<Map<String, Object>> storePage() {
@@ -48,7 +51,7 @@ public class StoreController {
             StoreInfoDto storeInfoDto = storeService.getStoreInfo(storeId);
             result.put("storeInfo", storeInfoDto);
 
-            List<BreadInfoDto> breadList = storeService.getBreadList(storeId);
+            List<BreadInfoDto> breadList = myStoreService.getBreadList(storeId);
             result.put("breadList", breadList);
         } catch (Exception e) {
             result.put("errorMessage", HttpStatus.EXPECTATION_FAILED);
