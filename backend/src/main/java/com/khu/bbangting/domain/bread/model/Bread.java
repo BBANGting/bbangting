@@ -45,7 +45,7 @@ public class Bread {
     private int stock;
 
     @Column(nullable = false)
-    private char tingStatus;    // 'Y', 'N'
+    private char tingStatus;    // 'O', 'C', 'E', 'N'
 
     // 알림 기능
     @CreationTimestamp
@@ -81,7 +81,6 @@ public class Bread {
         this.description = requestDto.getDescription();
         this.price = requestDto.getPrice();
         this.maxTingNum = requestDto.getMaxTingNum();
-        this.tingStatus = requestDto.getTingStatus();
         this.tingDateTime = requestDto.getTingDateTime();
     }
 

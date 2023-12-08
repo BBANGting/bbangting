@@ -1,22 +1,16 @@
 package com.khu.bbangting.domain.bread.service;
 
-import com.khu.bbangting.domain.image.dto.ImageDto;
 import com.khu.bbangting.domain.bread.dto.BreadSaleDto;
-import com.khu.bbangting.domain.bread.dto.BreadFormDto;
 import com.khu.bbangting.domain.bread.dto.BreadInfoDto;
 import com.khu.bbangting.domain.bread.model.Bread;
 import com.khu.bbangting.domain.image.model.Image;
-import com.khu.bbangting.domain.store.model.Store;
 import com.khu.bbangting.domain.bread.repository.BreadRepository;
 import com.khu.bbangting.domain.image.repository.ImageRepository;
-import com.khu.bbangting.domain.store.repository.StoreRepository;
-import com.khu.bbangting.domain.image.service.ImageService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -135,18 +129,32 @@ public class BreadService {
         }
     }
 
+    public void reOpenBBangTing() {
+
+        List<Bread> closedBreadList = breadRepository.findAllByTingStatus('N');
+
+        for (Bread bread : closedBreadList) {
+            LocalDateTime tingDateTime = bread.getTingDateTime();
+
+            if (LocalDateTime.now().toLocalDate().isEqual(tingDateTime.toLocalDate())
+                    || LocalDateTime.now().toLocalDate().isBefore(tingDateTime.toLocalDate())) {
+                log.info("종료된 빵팅 재오픈!!!");
+                bread.updateTingStatus('C');
+            }
+        }
+    }
+
     public void openBBangTing() {
 
         // 오픈 예정 빵팅 리스트 호출
         List<Bread> comingSoonList = breadRepository.findAllByTingStatus('C');
-        System.out.println("comingSoonList.toString() = " + comingSoonList.toString());
+        System.out.println("comingSoonList 에 담긴 bread 개수 = " + comingSoonList.size());
 
         // tingStatus, 오픈 상태로 변경
         for (Bread bread : comingSoonList) {
             LocalDateTime tingDateTime = bread.getTingDateTime();
-
             LocalDateTime currentDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-            log.info(currentDateTime.toString());
+
             if (currentDateTime.toLocalDate().equals(tingDateTime.toLocalDate())) {
                 if (currentDateTime.toLocalTime().equals(tingDateTime.toLocalTime())) {
                     log.info("**** 새로운 빵팅 오픈 완료 *****");

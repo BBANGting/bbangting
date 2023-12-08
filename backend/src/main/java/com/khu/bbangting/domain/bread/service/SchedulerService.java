@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 
 @Service
 @Slf4j
@@ -17,12 +16,17 @@ public class SchedulerService {
 /*   매일 자정, 종료 할 빵팅 확인 후 tingStatus 변경
      1) 오픈 상태인 빵팅: open -> no
      2) 판매 완료된 빵팅: end -> no
+     3) 판매 종료된 빵팅 재오픈: no -> comingSoon
  */
     @Scheduled(cron = "0 0 0 * * *")
-    public void closeBBangTing() {
-        log.info("closeBBangTing 스케줄러 작동 시작");
+    public void updateBBangTing() {
+        log.info("<-----closeBBangTing 스케줄러 작동 시작");
         breadService.closeBBangTing();
-        log.info("closeBBangTing 스케줄러 작동 완료");
+        log.info("closeBBangTing 종료----->");
+
+        log.info("<-----reOpenBBangTing 스케줄러 작동 시작");
+        breadService.reOpenBBangTing();
+        log.info("reOpenBBangTing 종료----->");
     }
 
 /*   10~20시까지 1시간마다, 빵팅 시간 확인 후 tingStatus 변경
