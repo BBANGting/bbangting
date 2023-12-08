@@ -35,7 +35,6 @@ public class Store {
     private int followerNum;
 
     @OneToOne
-    @JoinColumn(name = "userId")
     private User user;
 
     @ColumnDefault("0")
