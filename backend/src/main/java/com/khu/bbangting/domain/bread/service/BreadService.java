@@ -1,5 +1,7 @@
 package com.khu.bbangting.domain.bread.service;
 
+import com.khu.bbangting.domain.follow.model.Follow;
+import com.khu.bbangting.domain.follow.repository.FollowRepository;
 import com.khu.bbangting.domain.image.dto.ImageDto;
 import com.khu.bbangting.domain.bread.dto.BreadSaleDto;
 import com.khu.bbangting.domain.bread.dto.BreadFormDto;
@@ -11,6 +13,7 @@ import com.khu.bbangting.domain.bread.repository.BreadRepository;
 import com.khu.bbangting.domain.image.repository.ImageRepository;
 import com.khu.bbangting.domain.store.repository.StoreRepository;
 import com.khu.bbangting.domain.image.service.ImageService;
+import com.khu.bbangting.domain.user.model.User;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +33,9 @@ public class BreadService {
     private final BreadRepository breadRepository;
     private final StoreRepository storeRepository;
     private final ImageRepository imageRepository;
+    private final FollowRepository followRepository;
     private final ImageService imageService;
+//    private final NotificationService notificationService;
 
 
     @Transactional(readOnly = true)
@@ -95,6 +100,13 @@ public class BreadService {
 
             imageService.saveImage(image, imageFileList.get(i));
         }
+
+//        // 해당 스토어 팔로워들에게 빵팅 등록 알림 보내기
+//        List<Follow> followers = followRepository.findAllByStoreId(bread.getStore().getId());
+//        for(Follow follower : followers) {
+//            User user = follower.getUser();
+//            notificationService.createTing(user, bread, "[" + bread.getStore().getStoreName() + "] 새로운 빵팅이 등록되었습니다.");
+//        }
     }
 
     public void deleteBread(Long breadId) {
