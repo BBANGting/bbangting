@@ -1,10 +1,13 @@
 package com.khu.bbangting.domain.user.dto;
 
+import com.khu.bbangting.domain.user.model.Role;
 import com.khu.bbangting.domain.user.model.User;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class JoinRequestDto { //회원 가입
 
     @NotBlank(message="이름은 필수 입력 값입니다.")
@@ -23,12 +26,20 @@ public class JoinRequestDto { //회원 가입
     @Size(min=8, max = 18, message = "비밀번호는 8자 이상 입력하세요.")
     private String password;
 
-    public User toEntity() {
+    @Builder
+    public JoinRequestDto(String username, String nickname, String email, String password) {
+        this.username = username;
+        this.nickname = nickname;
+        this.email = email;
+        this.password = password;
+    }
+
+    public static User ofEntity(JoinRequestDto dto) {
         return User.builder()
-                .username(username)
-                .nickname(nickname)
-                .email(email)
-                .password(password)
+                .username(dto.getUsername())
+                .nickname(dto.getNickname())
+                .email(dto.getEmail())
+                .password(dto.getPassword())
                 .build();
     }
 

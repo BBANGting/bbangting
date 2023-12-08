@@ -2,7 +2,8 @@ package com.khu.bbangting.domain.user.controller;
 
 import com.khu.bbangting.domain.user.dto.NicknameUpdateDto;
 import com.khu.bbangting.domain.user.dto.PasswordUpdateDto;
-import com.khu.bbangting.domain.user.model.UserDetailsImpl;
+import com.khu.bbangting.domain.user.dto.UserResponseDto;
+import com.khu.bbangting.domain.user.model.User;
 import com.khu.bbangting.domain.user.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,20 +19,20 @@ public class UserSettingController {
 
     // 비밀번호 수정하기
     @PostMapping("/myPage/rePassword")
-    public ResponseEntity<?> passwordUpdateForm(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody PasswordUpdateDto requestDto) {
-
-        myPageService.updatePassword(userDetails, requestDto);
-
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    public ResponseEntity<UserResponseDto> updatePassword(
+            @AuthenticationPrincipal User user,
+            @RequestBody PasswordUpdateDto requestDto) {
+        UserResponseDto updatePassword = myPageService.updatePassword(user, requestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(updatePassword);
     }
 
     // 닉네임 수정하기
     @PostMapping("/myPage/reNickname")
-    public ResponseEntity<?> updateNickname(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody NicknameUpdateDto requestDto) {
-
-        myPageService.updateNickname(userDetails, requestDto);
-
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    public ResponseEntity<UserResponseDto> updateNickname(
+            @AuthenticationPrincipal User user,
+            @RequestBody NicknameUpdateDto requestDto) {
+        UserResponseDto updateNickname = myPageService.updateNickname(user, requestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(updateNickname);
     }
 
 }

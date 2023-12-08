@@ -1,24 +1,23 @@
 package com.khu.bbangting.domain.user.model;
 
-import com.khu.bbangting.domain.follow.model.Follow;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.Hibernate;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Timestamp;
 import java.util.*;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name="users")
-@Getter @Setter @Builder
+@Getter @Setter
 @DynamicInsert
-public class User {
+public class User implements UserDetails {
 
     @Id
     @Column(name = "userId")
@@ -70,30 +69,41 @@ public class User {
         return this;
     }
 
-
-    // id가 동일하면 같은 객체로 판별
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
-            return false;
-        }
-        User user = (User) o;
-        return id != null && Objects.equals(id, user.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
-
     public boolean isBanUser(User user) {
         return this.banCount == 5;
     }
 
-    public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
-        return passwordEncoder.matches(password, this.password);
+    //========== UserDetails implements ==========//
+    @Override
+    public String getUsername() {
+        return email;
     }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add( new SimpleGrantedAuthority("ROLE_" + this.role.name()));
+        return authorities;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
 }
