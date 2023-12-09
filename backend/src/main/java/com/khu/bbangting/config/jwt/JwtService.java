@@ -1,4 +1,4 @@
-package com.khu.bbangting.security.jwt;
+package com.khu.bbangting.config.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
