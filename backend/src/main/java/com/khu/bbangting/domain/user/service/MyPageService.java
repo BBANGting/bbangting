@@ -1,6 +1,6 @@
 package com.khu.bbangting.domain.user.service;
 
-import com.khu.bbangting.security.exception.ResourceNotFoundException;
+import com.khu.bbangting.error.ResourceNotFoundException;
 import com.khu.bbangting.domain.user.dto.NicknameUpdateDto;
 import com.khu.bbangting.domain.user.dto.PasswordUpdateDto;
 import com.khu.bbangting.domain.user.dto.UserResponseDto;

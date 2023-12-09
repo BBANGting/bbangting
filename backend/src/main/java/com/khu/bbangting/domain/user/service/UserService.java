@@ -1,21 +1,30 @@
 package com.khu.bbangting.domain.user.service;
 
-import com.khu.bbangting.security.exception.UserException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.khu.bbangting.domain.user.model.TokenType;
+import com.khu.bbangting.domain.user.model.Tokens;
+import com.khu.bbangting.domain.user.repository.TokenRepository;
+import com.khu.bbangting.error.UserException;
 import com.khu.bbangting.domain.user.dto.*;
 import com.khu.bbangting.domain.user.model.User;
 import com.khu.bbangting.domain.user.repository.UserRepository;
-import com.khu.bbangting.security.jwt.JwtTokenUtil;
-import com.khu.bbangting.security.jwt.UserDetailsServiceImpl;
+import com.khu.bbangting.config.jwt.JwtService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,16 +32,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final TokenRepository tokenRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     private final AuthenticationManager authenticationManager;
-    private final UserDetailsServiceImpl userDetailsService;
-    private final JwtTokenUtil jwtTokenUtil;
+    private final JwtService jwtService;
 
-    public HttpStatus checkIdDuplicate(String email) {
-        isExistUserEmail(email);
-        return HttpStatus.OK;
-    }
 
     // 회원가입
     @Transactional
@@ -50,52 +55,61 @@ public class UserService {
 
     // 로그인
     @Transactional
-    public UserTokenDto login(LoginRequestDto requestDto) {
-        authenticate(requestDto.getEmail(), requestDto.getPassword());
-        UserDetails userDetails = userDetailsService.loadUserByUsername(requestDto.getEmail());
-        checkEncodePassword(requestDto.getPassword(), userDetails.getPassword());
-        String token = jwtTokenUtil.generateToken(userDetails);
-        return UserTokenDto.fromEntity(userDetails, token);
+    public UserTokenDto login(User user) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
+        String jwtToken = jwtService.generateToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
+        revokeAllUserTokens(user);
+        saveToken(user, jwtToken);
+        return new UserTokenDto( jwtToken, refreshToken);
 
     }
 
-//    // 로그아웃
-//    public ResponseDto<?> logout() {
-//    }
-
-    /**
-     * 사용자 인증
-     * @param email
-     * @param pwd
-     */
-    private void authenticate(String email, String pwd) {
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, pwd));
-        } catch (DisabledException e) {
-            throw new UserException("인증되지 않은 아이디입니다.", HttpStatus.BAD_REQUEST);
-        } catch (BadCredentialsException e) {
-            throw new UserException("비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+    private void revokeAllUserTokens(User user) {
+        List<Tokens> validTokens = tokenRepository.findAllValidTokenByEmail(user.getEmail());
+        if (!validTokens.isEmpty()) {
+            validTokens.forEach( t-> {
+                t.setExpired(true);
+                t.setRevoked(true);
+            });
+            tokenRepository.saveAll(validTokens);
         }
     }
 
-    /**
-     * 아이디(이메일) 중복 체크
-     * @param email
-     */
+    private void saveToken (User user, String jwtToken) {
+        Tokens token = Tokens.builder()
+                .token(jwtToken)
+                .tokenType(TokenType.BEARER)
+                .expired(false)
+                .revoked(false)
+                .email(user.getEmail())
+                .build();
+        tokenRepository.save(token);
+    }
+
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String refreshToken;
+        final String userEmail; // username
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return;
+        }
+        refreshToken = authHeader.substring(7);
+        userEmail = jwtService.extractUsername(refreshToken);
+        if (userEmail != null) {
+            User user= this.userRepository.findByEmail(userEmail).get();
+            if (jwtService.isTokenValid(refreshToken, user)) {
+                String accessToken = jwtService.generateToken(user);
+                UserTokenDto userTokenDto = new UserTokenDto(accessToken, refreshToken);
+                new ObjectMapper().writeValue(response.getOutputStream(), userTokenDto);
+            }
+        }
+    }
+
     private void isExistUserEmail(String email) {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new UserException("이미 사용 중인 이메일입니다.", HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    /**
-     * 사용자가 입력한 비번과 DB에 저장된 비번이 같은지 체크 : 인코딩 확인
-     * @param rawPassword
-     * @param encodedPassword
-     */
-    private void checkEncodePassword(String rawPassword, String encodedPassword) {
-        if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
-            throw new UserException("패스워드 불일치", HttpStatus.BAD_REQUEST);
         }
     }
 
