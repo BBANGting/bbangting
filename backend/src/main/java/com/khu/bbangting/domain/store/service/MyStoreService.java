@@ -163,7 +163,7 @@ public class MyStoreService {
 
     @Transactional(readOnly = true)
     public List<BreadInfoDto> getBreadList(Long storeId) {
-        List<Bread> breadList = breadRepository.findByStoreId(storeId);
+        List<Bread> breadList = breadRepository.findAllByStoreId(storeId);
 
         List<BreadInfoDto> breadInfoList = new ArrayList<>();
         for (Bread bread : breadList) {
@@ -172,7 +172,9 @@ public class MyStoreService {
             BreadInfoDto breadInfoDto = BreadInfoDto.builder()
                     .breadId(bread.getId())
                     .breadName(bread.getBreadName())
-                    .imgUrl(image.getImageUrl()).build();
+                    .imgUrl(image.getImageUrl())
+                    .tingStatus(bread.getTingStatus())
+                    .tingDateTime(bread.getTingDateTime()).build();
 
             breadInfoList.add(breadInfoDto);
         }
@@ -182,22 +184,32 @@ public class MyStoreService {
 
     @Transactional(readOnly = true)
     public List<BreadInfoDto> getTodayTingList(Long storeId) {
-        List<Bread> tingList = breadRepository.findByTingStatusAndAndStoreId('Y', storeId);
 
-        List<BreadInfoDto> todayTingList = new ArrayList<>();
-        for (Bread bread : tingList) {
+        List<Bread> breadList = breadRepository.findAllByStoreId(storeId);
+
+        // 현재 오픈되어 있는 빵팅 목록 호출
+        List<Bread> todayTingList = new ArrayList<>();
+        for (Bread bread : breadList) {
+            if (bread.getTingStatus() == 'O') {
+                todayTingList.add(bread);
+            }
+        }
+
+        List<BreadInfoDto> breadInfoList = new ArrayList<>();
+        for (Bread bread : todayTingList) {
             Image image = imageRepository.findByBreadIdAndRepImgYn(bread.getId(), 'Y');
 
             BreadInfoDto breadInfoDto = BreadInfoDto.builder()
                     .breadId(bread.getId())
                     .breadName(bread.getBreadName())
                     .imgUrl(image.getImageUrl())
+                    .tingDateTime(bread.getTingDateTime())
                     .maxTingNum(bread.getMaxTingNum())
                     .stock(bread.getStock()).build();
 
-            todayTingList.add(breadInfoDto);
+            breadInfoList.add(breadInfoDto);
         }
 
-        return todayTingList;
+        return breadInfoList;
     }
 }

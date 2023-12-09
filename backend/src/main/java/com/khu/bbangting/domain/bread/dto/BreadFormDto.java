@@ -28,6 +28,7 @@ public class BreadFormDto {
     @Min(value = 1, message = "가격은 1원 이상이어야 합니다.")
     private int price;
 
+    @NotNull
     private LocalDateTime tingDateTime;
 
     @NotNull(message = "최대 빵팅 개수는 필수 입력 값입니다.")
@@ -59,7 +60,7 @@ public class BreadFormDto {
                 .price(price)
                 .maxTingNum(maxTingNum)
                 .stock(maxTingNum)
-                .tingStatus(tingStatus)
+                .tingStatus('C')
                 .tingDateTime(tingDateTime).build();
     }
 

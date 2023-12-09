@@ -1,7 +1,7 @@
 package com.khu.bbangting.domain.bread.controller;
 
 import com.khu.bbangting.domain.bread.dto.BreadFormDto;
-import com.khu.bbangting.domain.bread.service.BreadService;
+import com.khu.bbangting.domain.bread.service.BreadOperationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ import java.util.List;
 public class BreadApiController {
 
     @Autowired
-    private BreadService breadService;
+    private BreadOperationService breadOperationService;
 
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("/new")
@@ -34,7 +34,7 @@ public class BreadApiController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("빵 등록 실패 : " + bindingResult.getFieldError().getDefaultMessage());
         }
 
-        breadService.saveBread(requestDto, imageFileList);
+        breadOperationService.saveBread(requestDto, imageFileList);
         return ResponseEntity.status(HttpStatus.CREATED).body("빵 등록 성공");
 
     }
@@ -42,7 +42,7 @@ public class BreadApiController {
     @DeleteMapping("{breadId}")
     public ResponseEntity<String> deleteBread(@PathVariable Long breadId) {
 
-        breadService.deleteBread(breadId);
+        breadOperationService.deleteBread(breadId);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("빵 삭제 성공");
     }
@@ -50,7 +50,7 @@ public class BreadApiController {
     @GetMapping("edit/{breadId}")
     public ResponseEntity<?> updateBreadPage(@PathVariable Long breadId) {
 
-        BreadFormDto breadFormDto = breadService.getBreadForm(breadId);
+        BreadFormDto breadFormDto = breadOperationService.getBreadForm(breadId);
         return ResponseEntity.ok(breadFormDto);
 
     }
@@ -64,7 +64,7 @@ public class BreadApiController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("빵 정보 수정 실패 : " + bindingResult.getFieldError().getDefaultMessage());
         }
 
-        breadService.updateBread(breadId, requestDto, imageFileList);
+        breadOperationService.updateBread(breadId, requestDto, imageFileList);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("빵 정보 수정 성공");
 
     }
