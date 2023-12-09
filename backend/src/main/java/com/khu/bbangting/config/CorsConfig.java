@@ -1,4 +1,4 @@
-package com.khu.bbangting.security;
+package com.khu.bbangting.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
