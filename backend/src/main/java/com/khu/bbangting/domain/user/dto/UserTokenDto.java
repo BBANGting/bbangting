@@ -9,19 +9,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Setter
 public class UserTokenDto {
 
-    private String email;
-    private String token;
+    private String accessToken;
+    private String refreshToken;
 
     @Builder
-    public UserTokenDto(String email, String token) {
-        this.email = email;
-        this.token = token;
+    public UserTokenDto(String accessToken, String refreshToken) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 
-    public static UserTokenDto fromEntity(UserDetails user, String token) {
-        return UserTokenDto.builder()
-                .email(user.getUsername())
-                .token(token)
-                .build();
-    }
 }
