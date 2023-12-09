@@ -2,6 +2,7 @@ package com.khu.bbangting.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
@@ -22,4 +23,5 @@ public class CustomException extends RuntimeException {
         }
         return String.format("%s, %s", errorCode.getMessage(), message);
     }
+
 }
