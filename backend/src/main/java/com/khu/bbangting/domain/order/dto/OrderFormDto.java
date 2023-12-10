@@ -33,11 +33,4 @@ public class OrderFormDto { //주문하기
                 .build();
     }
 
-    public static OrderFormDto fromOrder(Order order) {
-        return OrderFormDto.builder()
-                .quantity(order.getQuantity())
-                .orderStatus(order.getOrderStatus())
-                .build();
-    }
-
 }
