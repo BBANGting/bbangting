@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,21 +25,14 @@ public class OrderApiController {
     private final OrderService orderService;
 
     // 주문하기
-    @PostMapping("/order/{userId}/{breadId}")
-    public ResponseEntity<?> addOrder(@PathVariable Long userId, @PathVariable Long breadId, @RequestBody @Valid OrderFormDto requestDto) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    @PostMapping("/order/{breadId}")
+    public ResponseEntity<?> addOrder(@AuthenticationPrincipal User user, @PathVariable Long breadId, @RequestBody @Valid OrderFormDto requestDto) {
 
         Bread bread = breadRepository.findById(breadId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BREAD_NOT_FOUND));
 
         if (user.isBanUser(user)) {
             user.setType(Type.RESTRICTED);
-            throw new CustomException(ErrorCode.BAN_USER);
-        }
-
-        if (user.getId() == bread.getStore().getUser().getId()) {
             throw new CustomException(ErrorCode.BAN_USER);
         }
 
