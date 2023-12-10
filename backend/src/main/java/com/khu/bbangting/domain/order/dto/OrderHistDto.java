@@ -1,8 +1,5 @@
 package com.khu.bbangting.domain.order.dto;
 
-import com.khu.bbangting.domain.bread.model.Bread;
-import com.khu.bbangting.domain.order.model.Order;
-import com.khu.bbangting.domain.order.model.OrderStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

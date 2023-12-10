@@ -3,7 +3,6 @@ package com.khu.bbangting.domain.user.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.core.userdetails.UserDetails;
 
 @Getter
 @Setter

@@ -1,26 +1,16 @@
 package com.khu.bbangting.domain.order.service;
 
-import com.khu.bbangting.domain.follow.model.Follow;
 import com.khu.bbangting.domain.order.dto.OrderFormDto;
 import com.khu.bbangting.domain.order.dto.OrderHistDto;
-import com.khu.bbangting.domain.store.dto.StoreInfoDto;
-import com.khu.bbangting.domain.store.model.Store;
 import com.khu.bbangting.error.CustomException;
 import com.khu.bbangting.error.ErrorCode;
 import com.khu.bbangting.domain.bread.model.Bread;
 import com.khu.bbangting.domain.order.model.Order;
 import com.khu.bbangting.domain.order.model.OrderStatus;
 import com.khu.bbangting.domain.user.model.User;
-import com.khu.bbangting.domain.bread.repository.BreadRepository;
 import com.khu.bbangting.domain.order.repository.OrderRepository;
-import com.khu.bbangting.domain.user.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.ast.Or;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,8 +25,6 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
-    private final BreadRepository breadRepository;
 
     // 주문하기
     public Long addOrder(User user, Bread bread, OrderFormDto requestDto) {
