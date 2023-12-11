@@ -2,8 +2,10 @@ import { Container, Grid } from '@mui/material';
 import Profile from '../components/Mypage/Profile';
 import Information from '../components/Mypage/Information';
 import MyStoreBanner from '../components/Mypage/MyStoreBanner';
+import { getUserInfo } from '../apis/api/user';
 
 export const MyPage = () => {
+  getUserInfo().then(res => console.log(res));
   return (
     <>
       <MyStoreBanner />
