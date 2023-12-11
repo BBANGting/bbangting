@@ -3,6 +3,7 @@ package com.khu.bbangting.domain.user.controller;
 import com.khu.bbangting.domain.follow.service.FollowService;
 import com.khu.bbangting.domain.order.dto.OrderHistDto;
 import com.khu.bbangting.domain.store.dto.StoreInfoDto;
+import com.khu.bbangting.domain.user.dto.UserResponseDto;
 import com.khu.bbangting.domain.user.service.MyPageService;
 import com.khu.bbangting.domain.user.repository.UserRepository;
 import com.khu.bbangting.domain.user.model.User;
@@ -31,24 +32,24 @@ public class MyPageController {
 
     // 마이페이지 호출 (유저 정보 포함)
     @GetMapping("/myPage")
-    public ResponseEntity<Result<List<StoreInfoDto>>> getMyPage(@AuthenticationPrincipal User user) {
+    public ResponseEntity<Result<List<?>>> getMyPage(@AuthenticationPrincipal User user) {
 
-        User getUser = myPageService.getUserInfo(user);
+        List<UserResponseDto> userInfo = myPageService.getUserInfo(user);
 
         List<StoreInfoDto> followingList = followService.getFollowingList(user.getId());
 
-        return ResponseEntity.ok().body(new Result<>(followingList, getUser));
+        return ResponseEntity.ok().body(new Result<>(followingList, userInfo));
     }
 
     @Getter
     @Setter
     static class Result<T> {
         private T followingList;
-        private User user;
+        private T userInfo;
 
-        public Result(T followingList, User user) {
+        public Result(T followingList, T userInfo) {
             this.followingList = followingList;
-            this.user = user;
+            this.userInfo = userInfo;
         }
     }
 
