@@ -1,9 +1,13 @@
 package com.khu.bbangting.domain.user.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.khu.bbangting.domain.bread.service.BreadService;
+import com.khu.bbangting.domain.notification.service.NotificationService;
 import com.khu.bbangting.domain.user.model.TokenType;
 import com.khu.bbangting.domain.user.model.Tokens;
 import com.khu.bbangting.domain.user.repository.TokenRepository;
+import com.khu.bbangting.error.CustomException;
+import com.khu.bbangting.error.ErrorCode;
 import com.khu.bbangting.error.UserException;
 import com.khu.bbangting.domain.user.dto.*;
 import com.khu.bbangting.domain.user.model.User;
@@ -34,6 +38,7 @@ public class UserService {
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final BreadService breadService;
 
 
     // 회원가입
@@ -59,8 +64,13 @@ public class UserService {
         String refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
         saveToken(user, jwtToken);
-        return new UserTokenDto( jwtToken, refreshToken);
 
+        User userDetail = userRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        breadService.loginNotification(userDetail);
+
+        return new UserTokenDto(jwtToken, refreshToken);
     }
 
     private void revokeAllUserTokens(User user) {
