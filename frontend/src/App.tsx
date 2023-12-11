@@ -4,7 +4,7 @@ import { Header } from './components/Header';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
-import { CommingSoon } from './pages/CommingSoon';
+import { ComingSoon } from './pages/ComingSoon';
 import { Store } from './pages/Store';
 import { MyPage } from './pages/MyPage';
 import { MyStorePage } from './pages/MyStorePage';
@@ -20,7 +20,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/commingsoon" element={<CommingSoon />} />
+        <Route path="/commingsoon" element={<ComingSoon />} />
         <Route path="/store" element={<Store />} />
         <Route path="/store/:storeId" element={<StoreDetail />} />
         <Route path="/mypage" element={<MyPage />} />

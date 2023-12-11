@@ -2,6 +2,8 @@ import { Container, Grid, Typography } from '@mui/material';
 import { BreadCard } from '../components/Home/BreadCard';
 
 import _DUMMY from '../json/dummy.json';
+import { getComingBread } from '../apis/api/comingBread';
+import { useEffect } from 'react';
 
 const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -23,8 +25,11 @@ const generateDays = () => {
   return result;
 };
 
-export const CommingSoon = () => {
-  console.log(_DUMMY);
+export const ComingSoon = () => {
+  useEffect(() => {
+    getComingBread().then(res => console.log(res));
+  });
+
   return (
     <Container fixed style={{ marginTop: 40, padding: 0 }}>
       <Typography

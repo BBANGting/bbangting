@@ -14,18 +14,17 @@ export const Login = () => {
     formData.append('password', inputPassword);
 
     await axios
-      .post('/auth/login', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data', // 요청 헤더에 Content-Type 설정
-        },
-        withCredentials: true,
+      .post('/auth/login', {
+        email: inputEmail,
+        password: inputPassword,
       })
       .then(res => {
-        console.log(res.headers.get('set-cookie'));
+        const accessToken = res.headers.authorization.split(' ')[1];
+        const refreshToken = res.headers.refreshtoken;
+        localStorage.setItem('access-token', accessToken);
+        localStorage.setItem('refresh-token', refreshToken);
       })
-      .catch(err => {
-        // console.error(err);
-      });
+      .catch(err => console.log(err));
   };
 
   const clickHandler2 = async () => {

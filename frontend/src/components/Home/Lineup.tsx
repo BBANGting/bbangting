@@ -2,9 +2,17 @@ import { Container, Grid, Typography } from '@mui/material';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import StoreBreadCard from '../StoreDetail/StoreBreadCard';
 import { useBreadList } from '../../hooks/useBreadList';
+import { AxiosResponse } from 'axios';
+
+type BreadList = {
+  breadId: number;
+  breadName: string;
+  imgUrl: string;
+  tingDateTime: string;
+};
 
 const Lineup = () => {
-  const onSuccess = (data: any) => {
+  const onSuccess = (data: AxiosResponse) => {
     console.log(data);
   };
   const onError = (error: ErrorEvent) => {
@@ -23,7 +31,7 @@ const Lineup = () => {
       <Grid container>
         {isLoading && <>Loading...</>}
         {!isLoading &&
-          breadList?.data.map((item, idx) => (
+          breadList?.data.map((item: BreadList, idx: number) => (
             <StoreBreadCard
               key={idx}
               breadId={item.breadId}
