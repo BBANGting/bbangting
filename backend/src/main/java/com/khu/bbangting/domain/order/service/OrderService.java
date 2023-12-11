@@ -63,13 +63,13 @@ public class OrderService {
     @Transactional(readOnly = true)
     public List<OrderHistDto> getOrderList(Long userId) {
 
-        List<Order> orderList = orderRepository.findAllByUserId(userId);
+        List<Order> orderList = orderRepository.findAllByUserIdAndOrderStatus(userId, OrderStatus.ORDER);
 
         List<OrderHistDto> orderHistList = new ArrayList<>();
         for (Order order : orderList) {
             OrderHistDto orderHistDto = OrderHistDto.builder()
                     .breadName(order.getBread().getBreadName())
-                    .price(order.getBread().getPrice())
+                    .price(order.getBread().getPrice() * order.getQuantity())
                     .quantity(order.getQuantity())
                     .orderDate(order.getOrderDate()).build();
 
