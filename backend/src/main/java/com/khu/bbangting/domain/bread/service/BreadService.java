@@ -3,9 +3,18 @@ package com.khu.bbangting.domain.bread.service;
 import com.khu.bbangting.domain.bread.dto.BreadSaleDto;
 import com.khu.bbangting.domain.bread.dto.BreadInfoDto;
 import com.khu.bbangting.domain.bread.model.Bread;
+import com.khu.bbangting.domain.follow.model.Follow;
+import com.khu.bbangting.domain.follow.repository.FollowRepository;
 import com.khu.bbangting.domain.image.model.Image;
 import com.khu.bbangting.domain.bread.repository.BreadRepository;
 import com.khu.bbangting.domain.image.repository.ImageRepository;
+import com.khu.bbangting.domain.notification.service.NotificationService;
+import com.khu.bbangting.domain.store.model.Store;
+import com.khu.bbangting.domain.store.repository.StoreRepository;
+import com.khu.bbangting.domain.user.model.User;
+import com.khu.bbangting.domain.user.repository.UserRepository;
+import com.khu.bbangting.error.CustomException;
+import com.khu.bbangting.error.ErrorCode;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +32,11 @@ import java.util.List;
 @Slf4j
 public class BreadService {
 
+    private final UserRepository userRepository;
     private final BreadRepository breadRepository;
     private final ImageRepository imageRepository;
-
+    private final FollowRepository followRepository;
+    private final NotificationService notificationService;
 
     @Transactional(readOnly = true)
     // 오늘의 빵팅 목록 불러오기
@@ -179,6 +190,7 @@ public class BreadService {
                 }
             }
         }
+
     }
 
     public void checkBreadStock() {
@@ -203,7 +215,31 @@ public class BreadService {
                 if (bread.getStock() != 0) {
                     log.info("빵팅 취소표 발생 -> 판매 오픈 상태로 변경");
                     bread.updateTingStatus('O');
+
+                    // 해당 스토어 팔로워들에게 재오픈 알림 전송
+                    List<Follow> followerList = followRepository.findAllByStoreId(bread.getStore().getId());
+
+                    for (Follow follow : followerList) {
+                        User user = userRepository.findById(follow.getUser().getId())
+                                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+                        notificationService.reOpenTing(user, bread);
+                    }
                 }
+            }
+        }
+    }
+
+    // 로그인 시 유저가 팔로우하고 있는 스토어의 오늘의 빵팅 알림 전송
+    public void loginNotification(User user) {
+
+        List<Follow> followingList = followRepository.findAllByUserId(user.getId());
+
+        for (Follow follow : followingList) {
+            Store store = follow.getStore();
+            List<Bread> openBreadList = breadRepository.findByTingStatusAndAndStoreId('O', store.getId());
+            for (Bread bread : openBreadList) {
+                notificationService.openTing(user, bread);
             }
         }
     }
