@@ -16,7 +16,6 @@ import com.khu.bbangting.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,7 +30,7 @@ public class ReviewApiController {
 
     // 리뷰 작성
     @PostMapping("/review/{userId}/{breadId}")
-    public ResponseEntity<?> addReview(@PathVariable Long userId, @PathVariable Long breadId, @RequestBody ReviewFormDto requestDto) {
+    public ResponseEntity<String> addReview(@PathVariable Long userId, @PathVariable Long breadId, @RequestBody ReviewFormDto requestDto) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -52,7 +51,7 @@ public class ReviewApiController {
 
     // 리뷰 수정
     @PutMapping("/review/{userId}/{reviewId}")
-    public ResponseEntity<?> modifyReview(@PathVariable Long userId, @PathVariable Long reviewId,
+    public ResponseEntity<String> modifyReview(@PathVariable Long userId, @PathVariable Long reviewId,
                                                             @RequestBody ReviewUpdateFormDto requestDto) {
 
         User user = userRepository.findById(userId)
@@ -68,7 +67,7 @@ public class ReviewApiController {
 
     // 리뷰 삭제
     @DeleteMapping("/review/{reviewId}")
-    public ResponseEntity<?> removeReview(@PathVariable Long reviewId) {
+    public ResponseEntity<String> removeReview(@PathVariable Long reviewId) {
 
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));

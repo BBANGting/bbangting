@@ -1,4 +1,4 @@
-package com.khu.bbangting.security.exception;
+package com.khu.bbangting.error;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

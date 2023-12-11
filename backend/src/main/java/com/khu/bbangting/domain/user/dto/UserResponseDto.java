@@ -13,9 +13,10 @@ public class UserResponseDto {
 
     private String nickname;
     private String password;
+    private int banCount;
 
     public static UserResponseDto fromUser(User user) {
-        return new UserResponseDto(user.getNickname(), user.getPassword());
+        return new UserResponseDto(user.getNickname(), user.getPassword(), user.getBanCount());
     }
 
 }

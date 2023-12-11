@@ -1,6 +1,5 @@
 package com.khu.bbangting.error;
 
-import com.khu.bbangting.security.exception.UserException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;

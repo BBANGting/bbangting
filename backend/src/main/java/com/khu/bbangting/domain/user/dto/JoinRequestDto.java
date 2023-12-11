@@ -1,6 +1,5 @@
 package com.khu.bbangting.domain.user.dto;
 
-import com.khu.bbangting.domain.user.model.Role;
 import com.khu.bbangting.domain.user.model.User;
 import jakarta.validation.constraints.*;
 import lombok.*;
