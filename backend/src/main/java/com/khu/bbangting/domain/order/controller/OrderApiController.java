@@ -26,7 +26,7 @@ public class OrderApiController {
 
     // 주문하기
     @PostMapping("/order/{breadId}")
-    public ResponseEntity<?> addOrder(@AuthenticationPrincipal User user, @PathVariable Long breadId, @RequestBody @Valid OrderFormDto requestDto) {
+    public ResponseEntity<String> addOrder(@AuthenticationPrincipal User user, @PathVariable Long breadId, @RequestBody @Valid OrderFormDto requestDto) {
 
         Bread bread = breadRepository.findById(breadId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BREAD_NOT_FOUND));
@@ -38,16 +38,16 @@ public class OrderApiController {
 
         orderService.addOrder(user, bread, requestDto);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("주문 성공");
     }
 
     // 주문 취소하기
     @DeleteMapping("/cancel/{orderId}")
-    public ResponseEntity<?> cancelOrder(@PathVariable Long orderId) {
+    public ResponseEntity<String> cancelOrder(@PathVariable Long orderId) {
 
         orderService.cancelOrder(orderId);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("주문 취소 완료");
     }
 
 }

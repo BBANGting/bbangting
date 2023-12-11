@@ -20,9 +20,9 @@ public class UserApiController {
 
     // 회원가입
     @PostMapping("/auth/join")
-    public ResponseEntity<UserResponseDto> joinUser(@RequestBody JoinRequestDto joinRequestDto) {
+    public ResponseEntity<String> joinUser(@RequestBody JoinRequestDto joinRequestDto) {
         userService.join(joinRequestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공");
     }
 
     // 로그인
