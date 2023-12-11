@@ -23,7 +23,7 @@ const generateDays = () => {
   return result;
 };
 
-export const CommingSoon = () => {
+export const ComingSoon = () => {
   console.log(_DUMMY);
   return (
     <Container fixed style={{ marginTop: 40, padding: 0 }}>
