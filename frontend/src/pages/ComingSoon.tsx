@@ -2,6 +2,7 @@ import { Container, Grid, Typography } from '@mui/material';
 import { BreadCard } from '../components/Home/BreadCard';
 
 import _DUMMY from '../json/dummy.json';
+import axios from 'axios';
 
 const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -24,7 +25,10 @@ const generateDays = () => {
 };
 
 export const ComingSoon = () => {
-  console.log(_DUMMY);
+  axios
+    .get(`${import.meta.env.VITE_SERVER_URL}/comingSoon`)
+    .then(res => console.log(res));
+
   return (
     <Container fixed style={{ marginTop: 40, padding: 0 }}>
       <Typography
