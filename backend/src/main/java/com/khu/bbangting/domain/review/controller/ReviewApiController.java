@@ -16,6 +16,7 @@ import com.khu.bbangting.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -29,16 +30,13 @@ public class ReviewApiController {
     private final ReviewService reviewService;
 
     // 리뷰 작성
-    @PostMapping("/review/{userId}/{breadId}")
-    public ResponseEntity<String> addReview(@PathVariable Long userId, @PathVariable Long breadId, @RequestBody ReviewFormDto requestDto) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    @PostMapping("/review/{breadId}")
+    public ResponseEntity<String> addReview(@AuthenticationPrincipal User user, @PathVariable Long breadId, @RequestBody ReviewFormDto requestDto) {
 
         Bread bread = breadRepository.findById(breadId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BREAD_NOT_FOUND));
 
-        Order order = orderRepository.findByUserIdAndBreadId(userId, breadId);
+        Order order = orderRepository.findByUserIdAndBreadId(user.getId(), breadId);
 
         if (order == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("리뷰 작성 실패");
@@ -50,12 +48,9 @@ public class ReviewApiController {
     }
 
     // 리뷰 수정
-    @PutMapping("/review/{userId}/{reviewId}")
-    public ResponseEntity<String> modifyReview(@PathVariable Long userId, @PathVariable Long reviewId,
+    @PutMapping("/review/{reviewId}")
+    public ResponseEntity<String> modifyReview(@AuthenticationPrincipal User user, @PathVariable Long reviewId,
                                                             @RequestBody ReviewUpdateFormDto requestDto) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));

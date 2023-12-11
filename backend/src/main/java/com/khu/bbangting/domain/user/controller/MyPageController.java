@@ -5,7 +5,6 @@ import com.khu.bbangting.domain.order.dto.OrderHistDto;
 import com.khu.bbangting.domain.store.dto.StoreInfoDto;
 import com.khu.bbangting.domain.user.dto.UserResponseDto;
 import com.khu.bbangting.domain.user.service.MyPageService;
-import com.khu.bbangting.domain.user.repository.UserRepository;
 import com.khu.bbangting.domain.user.model.User;
 import com.khu.bbangting.domain.order.service.OrderService;
 import lombok.Getter;
@@ -25,7 +24,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MyPageController {
 
-    private final UserRepository userRepository;
     private final OrderService orderService;
     private final MyPageService myPageService;
     private final FollowService followService;
