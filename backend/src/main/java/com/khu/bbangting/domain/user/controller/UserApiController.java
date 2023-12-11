@@ -27,12 +27,15 @@ public class UserApiController {
 
     // 로그인
     @PostMapping("/auth/login")
-    public ResponseEntity<UserTokenDto> login(@RequestBody LoginRequestDto requestDto) {
+    public ResponseEntity<String> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
         User user = User.builder()
                 .email(requestDto.getEmail())
                 .password(requestDto.getPassword())
                 .build();
-        return ResponseEntity.ok(userService.login(user));
+
+        userService.login(user, response);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("로그인 성공");
     }
 
     @PostMapping("/auth/refresh-token")

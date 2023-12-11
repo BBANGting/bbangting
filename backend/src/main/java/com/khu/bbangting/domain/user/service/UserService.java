@@ -2,7 +2,6 @@ package com.khu.bbangting.domain.user.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.khu.bbangting.domain.bread.service.BreadService;
-import com.khu.bbangting.domain.notification.service.NotificationService;
 import com.khu.bbangting.domain.user.model.TokenType;
 import com.khu.bbangting.domain.user.model.Tokens;
 import com.khu.bbangting.domain.user.repository.TokenRepository;
@@ -25,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -57,20 +58,31 @@ public class UserService {
 
     // 로그인
     @Transactional
-    public UserTokenDto login(User user) {
+    public void login(User user, HttpServletResponse response) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
+
         String jwtToken = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
         saveToken(user, jwtToken);
 
+        long now = (new Date().getTime());
+        Date accessTokenExpiresIn = new Date(now + Duration.ofMinutes(30).toMillis());
+        UserTokenDto tokenDto = UserTokenDto.builder()
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .build();
+
+        response.addHeader("Authorization", "BEARER" + " " + tokenDto.getAccessToken());
+        response.addHeader("RefreshToken", tokenDto.getRefreshToken());
+        response.addHeader("Access-Token-Expire-Time", String.valueOf(accessTokenExpiresIn));
+
+        // 로그인 시 오늘의 빵팅 알림 전송
         User userDetail = userRepository.findByEmail(user.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         breadService.loginNotification(userDetail);
-
-        return new UserTokenDto(jwtToken, refreshToken);
     }
 
     private void revokeAllUserTokens(User user) {
@@ -92,6 +104,7 @@ public class UserService {
                 .revoked(false)
                 .email(user.getEmail())
                 .build();
+
         tokenRepository.save(token);
     }
 
