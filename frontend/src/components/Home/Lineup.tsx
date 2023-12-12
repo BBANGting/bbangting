@@ -2,23 +2,10 @@ import { Container, Grid, Typography } from '@mui/material';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import StoreBreadCard from '../StoreDetail/StoreBreadCard';
 import { useBreadList } from '../../hooks/useBreadList';
-import { AxiosResponse } from 'axios';
-
-type BreadList = {
-  breadId: number;
-  breadName: string;
-  imgUrl: string;
-  tingDateTime: string;
-};
+import { BreadList } from '../../types';
 
 const Lineup = () => {
-  const onSuccess = (data: AxiosResponse) => {
-    console.log(data);
-  };
-  const onError = (error: ErrorEvent) => {
-    console.log(error);
-  };
-  const { isLoading, data: breadList } = useBreadList(onSuccess, onError);
+  const { isLoading, data: breadList } = useBreadList();
 
   return (
     <Container fixed style={{ marginTop: 40, padding: 0 }}>
@@ -30,8 +17,8 @@ const Lineup = () => {
       </Typography>
       <Grid container>
         {isLoading && <>Loading...</>}
-        {!isLoading &&
-          breadList?.data.map((item: BreadList, idx: number) => (
+        {breadList &&
+          breadList.map((item: BreadList, idx: number) => (
             <StoreBreadCard
               key={idx}
               breadId={item.breadId}
