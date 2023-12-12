@@ -7,3 +7,8 @@ export type BreadList = {
   tingDateTime: string;
   tingStatus: string;
 };
+
+export type UserInfo = {
+  nickname: string;
+  banCount: number;
+};

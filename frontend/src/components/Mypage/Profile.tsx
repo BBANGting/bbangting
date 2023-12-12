@@ -20,7 +20,6 @@ const Profile: React.FC<ProfileProps> = ({
   warning,
   follower,
 }: ProfileProps) => {
-  console.log(follower);
   return (
     <Grid container width={350} mr={3}>
       <Grid container direction="column" alignItems="center">
