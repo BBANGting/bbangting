@@ -1,4 +1,4 @@
-export type BreadList = {
+export type TBread = {
   breadId: number;
   breadName: string;
   imgUrl: string;
@@ -8,12 +8,12 @@ export type BreadList = {
   tingStatus: string;
 };
 
-export type UserInfo = {
+export type TUserInfo = {
   nickname: string;
   banCount: number;
 };
 
-export type StoreInfo = {
+export type TStoreInfo = {
   storeId: number;
   storeName: string;
   imgUrl: string;
@@ -24,7 +24,7 @@ export type StoreInfo = {
   rating: number;
 };
 
-export type StoreRanking = {
-  storeInfoList: StoreInfo[];
-  storeRankingList: StoreInfo[];
+export type TStoreRanking = {
+  storeInfoList: TStoreInfo[];
+  storeRankingList: TStoreInfo[];
 };
