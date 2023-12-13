@@ -2,6 +2,7 @@ import { AccountCircle } from '@mui/icons-material';
 import {
   AppBar,
   Box,
+  Container,
   IconButton,
   MenuItem,
   ThemeProvider,
@@ -56,31 +57,23 @@ export const Header = (): ReactElement => {
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static" color="header" sx={{ placeItems: 'center' }}>
-          <Toolbar sx={{ minWidth: width ? 1080 : 1440 }} disableGutters>
-            <Link to={`/`}>
-              <Typography
-                variant="h6"
-                component={'div'}
-                sx={{ flexGrow: 0, fontWeight: 600, fontSize: 24, mr: 5 }}
-              >
-                BBANGTING
-              </Typography>
-            </Link>
-            <Box sx={{ flexGrow: 1, display: 'flex' }}>
-              {leftOptions.map((menu, idx) => (
-                <Link to={menu.link} key={idx}>
-                  <MenuItem sx={{ borderRadius: 5 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 400 }}>
-                      {menu.name}
-                    </Typography>
-                  </MenuItem>
-                </Link>
-              ))}
-            </Box>
-            {!isLogin ? (
-              <>
-                {rightOptions.map((menu, idx) => (
+        <AppBar position="static" color="header">
+          <Container disableGutters sx={{ minHeight: 64 }}>
+            <Toolbar
+              sx={{ maxWidth: 1200, flexGrow: 1, minHeight: 64 }}
+              disableGutters
+            >
+              <Link to={`/`}>
+                <Typography
+                  variant="h6"
+                  component={'div'}
+                  sx={{ flexGrow: 0, fontWeight: 600, fontSize: 24, mr: 5 }}
+                >
+                  BBANGTING
+                </Typography>
+              </Link>
+              <Box sx={{ flexGrow: 1, display: 'flex' }}>
+                {leftOptions.map((menu, idx) => (
                   <Link to={menu.link} key={idx}>
                     <MenuItem sx={{ borderRadius: 5 }}>
                       <Typography variant="h6" sx={{ fontWeight: 400 }}>
@@ -89,23 +82,36 @@ export const Header = (): ReactElement => {
                     </MenuItem>
                   </Link>
                 ))}
-              </>
-            ) : (
-              <>
-                <Link to={`/mypage`}>
-                  <IconButton
-                    size="large"
-                    aria-label="menu"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    color="accountIcon"
-                  >
-                    <AccountCircle />
-                  </IconButton>
-                </Link>
-              </>
-            )}
-          </Toolbar>
+              </Box>
+              {!isLogin ? (
+                <>
+                  {rightOptions.map((menu, idx) => (
+                    <Link to={menu.link} key={idx}>
+                      <MenuItem sx={{ borderRadius: 5 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 400 }}>
+                          {menu.name}
+                        </Typography>
+                      </MenuItem>
+                    </Link>
+                  ))}
+                </>
+              ) : (
+                <>
+                  <Link to={`/mypage`}>
+                    <IconButton
+                      size="large"
+                      aria-label="menu"
+                      aria-controls="menu-appbar"
+                      aria-haspopup="true"
+                      color="accountIcon"
+                    >
+                      <AccountCircle />
+                    </IconButton>
+                  </Link>
+                </>
+              )}
+            </Toolbar>
+          </Container>
         </AppBar>
       </Box>
     </ThemeProvider>
