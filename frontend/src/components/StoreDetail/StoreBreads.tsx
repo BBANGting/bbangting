@@ -1,21 +1,9 @@
 import { Grid } from '@mui/material';
 import StoreBreadCard from './StoreBreadCard';
-
-export type BreadType = {
-  breadId: number;
-  storeId: number;
-  breadName: string;
-  breadImage: string;
-  content: string;
-  price: string;
-  tingTime: string;
-  maxTingNum: number;
-  stock: number;
-  tingStatus: string;
-};
+import { TBread } from '../../types';
 
 type StoreBreadsProps = {
-  bread: BreadType[];
+  bread: TBread[];
 };
 
 const StoreBreads: React.FC<StoreBreadsProps> = ({ bread }) => {
@@ -24,9 +12,9 @@ const StoreBreads: React.FC<StoreBreadsProps> = ({ bread }) => {
       {bread.map(item => (
         <StoreBreadCard
           breadId={item.breadId}
-          breadImage={item.breadImage}
+          breadImage={item.imgUrl}
           breadName={item.breadName}
-          tingTime={item.tingTime}
+          tingTime={item.tingDateTime}
           tingStatus={item.tingStatus}
         />
       ))}

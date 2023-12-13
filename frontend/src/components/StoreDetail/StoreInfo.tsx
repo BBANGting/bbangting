@@ -6,14 +6,10 @@ import {
   createTheme,
 } from '@mui/material';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
+import { TStoreInfo } from '../../types';
 
 type StoreInfoProps = {
-  store: {
-    storeName: string;
-    introduction: string;
-    location: string;
-    follower: number;
-  };
+  store: TStoreInfo;
 };
 
 const theme = createTheme({
@@ -37,10 +33,10 @@ const StoreInfo: React.FC<StoreInfoProps> = ({ store }) => {
         <Typography fontStyle={{ color: '#888888' }}>
           {store.location}
         </Typography>
-        <Typography margin={'50px 0'}>{store.introduction}</Typography>
+        <Typography margin={'50px 0'}>{store.description}</Typography>
         <Button variant="contained" color="button" style={{ height: 50 }}>
           <PersonAddAlt1Icon style={{ marginRight: '10px' }} />
-          <Typography>팔로우 {store.follower}</Typography>
+          <Typography>팔로우 {store.followerNum}</Typography>
         </Button>
       </Grid>
     </ThemeProvider>
