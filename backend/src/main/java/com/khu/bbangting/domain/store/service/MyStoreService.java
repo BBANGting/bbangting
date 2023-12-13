@@ -80,6 +80,9 @@ public class MyStoreService {
         if(imageFileList.get(0).isEmpty())
             throw new IllegalArgumentException("스토어 로고는 필수 입력 값입니다.");
 
+        if(imageFileList.get(1).isEmpty())
+            throw new IllegalArgumentException("스토어 대표 이미지는 필수 입력 값입니다.");
+
         // 스토어 정보 저장
         Store store = requestDto.toEntity(user);
         storeRepository.save(store);
@@ -92,7 +95,7 @@ public class MyStoreService {
             if(i == 0)
                 storeImage.setLogoImgYn('Y');     // 첫번째 사진 -> 로고 이미지
             else
-                storeImage.setLogoImgYn('N');     // 나머지 사진
+                storeImage.setLogoImgYn('N');     // 두번째 사진 -> 빵집 대표 이미지, 나머지 사진
 
             imageService.saveStoreImage(storeImage, imageFileList.get(i));
         }
