@@ -3,12 +3,19 @@ package com.khu.bbangting.domain.bread.service;
 import com.khu.bbangting.domain.bread.dto.BreadFormDto;
 import com.khu.bbangting.domain.bread.model.Bread;
 import com.khu.bbangting.domain.bread.repository.BreadRepository;
+import com.khu.bbangting.domain.follow.model.Follow;
+import com.khu.bbangting.domain.follow.repository.FollowRepository;
 import com.khu.bbangting.domain.image.dto.ImageDto;
 import com.khu.bbangting.domain.image.model.Image;
 import com.khu.bbangting.domain.image.repository.ImageRepository;
 import com.khu.bbangting.domain.image.service.ImageService;
+import com.khu.bbangting.domain.notification.service.NotificationService;
 import com.khu.bbangting.domain.store.model.Store;
 import com.khu.bbangting.domain.store.repository.StoreRepository;
+import com.khu.bbangting.domain.user.model.User;
+import com.khu.bbangting.domain.user.repository.UserRepository;
+import com.khu.bbangting.error.CustomException;
+import com.khu.bbangting.error.ErrorCode;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +32,14 @@ import java.util.List;
 @Slf4j
 public class BreadOperationService {
 
+    private final UserRepository userRepository;
     private final BreadRepository breadRepository;
     private final StoreRepository storeRepository;
     private final ImageRepository imageRepository;
+    private final FollowRepository followRepository;
     private final ImageService imageService;
+    private final NotificationService notificationService;
+
 
     @Transactional(readOnly = true)
     public BreadFormDto getBreadForm(Long breadId) {
@@ -91,6 +102,16 @@ public class BreadOperationService {
                 image.setRepImgYn('N');     // 나머지 사진
 
             imageService.saveImage(image, imageFileList.get(i));
+        }
+
+        // 팔로워한 유저들에게 빵팅 등록 알림 전송
+        List<Follow> followerList = followRepository.findAllByStoreId(store.getId());
+
+        for (Follow follow : followerList) {
+            User user = userRepository.findById(follow.getUser().getId())
+                    .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+            notificationService.createTing(user, bread);
         }
     }
 

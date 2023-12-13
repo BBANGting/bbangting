@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# 업로드 이미지 깃에 올리지 않기
+images
+
+# 환경변수
+.env

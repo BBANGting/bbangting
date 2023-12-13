@@ -1,17 +1,50 @@
 import { Box, Container, Grid, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import { AuthButton } from '../components/Login/AuthButton';
+import axios from 'axios';
 
 export const Login = () => {
   const [isError, setIsError] = useState<boolean>(false);
   const [inputEmail, setInputEmail] = useState<string>('');
+  const [inputPassword, setInputPassword] = useState<string>('');
+
+  const clickHandler = async () => {
+    const formData = new FormData();
+    formData.append('email', inputEmail);
+    formData.append('password', inputPassword);
+
+    await axios
+      .post('/auth/login', {
+        email: inputEmail,
+        password: inputPassword,
+      })
+      .then(res => {
+        const accessToken = res.headers.authorization.split(' ')[1];
+        const refreshToken = res.headers.refreshtoken;
+        localStorage.setItem('access-token', accessToken);
+        localStorage.setItem('refresh-token', refreshToken);
+      })
+      .catch(err => console.log(err));
+  };
+
+  const clickHandler2 = async () => {
+    await axios
+      .post('/logout')
+      .then(res => console.log(res))
+      .catch(err => console.log(err));
+  };
 
   const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setInputEmail(e.target.value);
-    const confirmEmail: boolean = /^[\w+_]\w+@\w+\.\w+/.test(inputEmail);
+    const confirmEmail: boolean = /^[\w+_]\w+@\w+\.\w+/.test(e.target.value);
     console.log(confirmEmail);
     setIsError(!confirmEmail);
+  };
+
+  const passwordInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setInputPassword(e.target.value);
   };
 
   return (
@@ -39,10 +72,18 @@ export const Login = () => {
           <Typography variant="subtitle1" mb={0.5}>
             비밀번호
           </Typography>
-          <TextField fullWidth placeholder="비밀번호 입력" />
+          <TextField
+            fullWidth
+            placeholder="비밀번호 입력"
+            type="password"
+            onChange={passwordInputHandler}
+          />
         </Grid>
         <Grid mt={3}>
-          <AuthButton text="로그인" />
+          <AuthButton text="로그인" onClick={clickHandler} />
+        </Grid>
+        <Grid mt={3}>
+          <AuthButton text="로그아웃" onClick={clickHandler2} />
         </Grid>
       </Box>
     </Container>

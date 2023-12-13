@@ -1,79 +1,136 @@
 package com.khu.bbangting.domain.user.service;
 
-import com.khu.bbangting.domain.user.dto.NicknameUpdateDto;
-import com.khu.bbangting.domain.user.dto.PasswordUpdateDto;
-import com.khu.bbangting.domain.user.dto.UserJoinFormDto;
-import com.khu.bbangting.domain.user.dto.UserResponseDto;
-import com.khu.bbangting.domain.user.model.Role;
-import com.khu.bbangting.domain.user.model.Type;
-import com.khu.bbangting.domain.user.model.User;
-import com.khu.bbangting.domain.user.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.khu.bbangting.domain.bread.service.BreadService;
+import com.khu.bbangting.domain.user.model.TokenType;
+import com.khu.bbangting.domain.user.model.Tokens;
+import com.khu.bbangting.domain.user.repository.TokenRepository;
 import com.khu.bbangting.error.CustomException;
 import com.khu.bbangting.error.ErrorCode;
-import jakarta.validation.Valid;
+import com.khu.bbangting.error.UserException;
+import com.khu.bbangting.domain.user.dto.*;
+import com.khu.bbangting.domain.user.model.User;
+import com.khu.bbangting.domain.user.repository.UserRepository;
+import com.khu.bbangting.config.jwt.JwtService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.time.Duration;
+import java.util.Date;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
-@Slf4j
+@Transactional
 public class UserService {
 
-    private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final TokenRepository tokenRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+    private final BreadService breadService;
+
+
+    // 회원가입
     @Transactional
-    public User joinUser(UserJoinFormDto userJoinFormDto) {
+    public UserResponseDto join(JoinRequestDto requestDto) {
+        isExistUserEmail(requestDto.getEmail());
 
-        User newUser = saveNewUser(userJoinFormDto);
+        String rawPassword = requestDto.getPassword(); // encoding 전 비밀번호
+        String encPassword = passwordEncoder.encode(rawPassword);
+        requestDto.setPassword(encPassword);
 
-        return newUser;
+        User saveUser = userRepository.save(JoinRequestDto.ofEntity(requestDto));
+
+        return UserResponseDto.fromUser(saveUser);
     }
 
-    private User saveNewUser(UserJoinFormDto userJoinFormDto) {
+    // 로그인
+    @Transactional
+    public void login(User user, HttpServletResponse response) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
 
-        String rawPassword = userJoinFormDto.getPassword(); // encoding 전 비밀번호
-        String encPassword = passwordEncoder.encode(rawPassword);
+        String jwtToken = jwtService.generateToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
+        revokeAllUserTokens(user);
+        saveToken(user, jwtToken);
 
-        User user = User.builder()
-                .email(userJoinFormDto.getEmail())
-                .password(encPassword)
-                .username(userJoinFormDto.getUsername())
-                .nickname(userJoinFormDto.getNickname())
+        long now = (new Date().getTime());
+        Date accessTokenExpiresIn = new Date(now + Duration.ofMinutes(30).toMillis());
+        UserTokenDto tokenDto = UserTokenDto.builder()
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
                 .build();
 
-        return userRepository.save(user);
+        response.addHeader("Authorization", "BEARER" + " " + tokenDto.getAccessToken());
+        response.addHeader("RefreshToken", tokenDto.getRefreshToken());
+        response.addHeader("Access-Token-Expire-Time", String.valueOf(accessTokenExpiresIn));
+
+        // 로그인 시 오늘의 빵팅 알림 전송
+        User userDetail = userRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        breadService.loginNotification(userDetail);
     }
 
-    @Transactional
-    public UserResponseDto updatePassword(Long userId, @Valid PasswordUpdateDto requestDto) {
-
-//        user.updatePassword(passwordEncoder.encode(requestDto.getNewPassword()));
-//        userRepository.save(user);
-
-        return userRepository.findById(userId).map(user -> {
-            User updateUser = user.updatePassword(passwordEncoder.encode(requestDto.getNewPassword()));
-
-            return UserResponseDto.fromUser(updateUser);
-        }).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    private void revokeAllUserTokens(User user) {
+        List<Tokens> validTokens = tokenRepository.findAllValidTokenByEmail(user.getEmail());
+        if (!validTokens.isEmpty()) {
+            validTokens.forEach( t-> {
+                t.setExpired(true);
+                t.setRevoked(true);
+            });
+            tokenRepository.saveAll(validTokens);
+        }
     }
 
+    private void saveToken (User user, String jwtToken) {
+        Tokens token = Tokens.builder()
+                .token(jwtToken)
+                .tokenType(TokenType.BEARER)
+                .expired(false)
+                .revoked(false)
+                .email(user.getEmail())
+                .build();
 
+        tokenRepository.save(token);
+    }
 
-    @Transactional
-    public UserResponseDto updateNickname(Long userId, @Valid NicknameUpdateDto requestDto) {
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String refreshToken;
+        final String userEmail; // username
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return;
+        }
+        refreshToken = authHeader.substring(7);
+        userEmail = jwtService.extractUsername(refreshToken);
+        if (userEmail != null) {
+            User user= this.userRepository.findByEmail(userEmail).get();
+            if (jwtService.isTokenValid(refreshToken, user)) {
+                String accessToken = jwtService.generateToken(user);
+                UserTokenDto userTokenDto = new UserTokenDto(accessToken, refreshToken);
+                new ObjectMapper().writeValue(response.getOutputStream(), userTokenDto);
+            }
+        }
+    }
 
-//        user.updateNickname(requestDto.getNewNickname());
-//        userRepository.save(user);
-
-        return userRepository.findById(userId).map(user -> {
-            User updateUser = user.updateNickname(requestDto.getNewNickname());
-
-            return UserResponseDto.fromUser(updateUser);
-        }).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    private void isExistUserEmail(String email) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new UserException("이미 사용 중인 이메일입니다.", HttpStatus.BAD_REQUEST);
+        }
     }
 
 }
