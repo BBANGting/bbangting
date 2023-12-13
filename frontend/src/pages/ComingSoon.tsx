@@ -36,23 +36,20 @@ export const ComingSoon = () => {
 
   return (
     <Container fixed style={{ marginTop: 40, padding: 0 }}>
-      <Typography
-        variant="h5"
-        sx={{ fontWeight: 600, marginLeft: 5, marginBottom: 5 }}
-      >
+      <Typography variant="h5" sx={{ fontWeight: 600, marginBottom: 5 }}>
         오픈 예정
       </Typography>
       <Grid container display="block">
         {generateDays().map((day, idx) => (
           <>
-            <Typography key={idx} variant="h6" fontWeight={600} ml={5} mb={2}>
+            <Typography key={idx} variant="h6" fontWeight={600} mb={2}>
               {day.label}
             </Typography>
             <Grid container display="flex">
               {breadList.filter(
                 bread => bread.tingDateTime.split('T')[0] === day.date,
               ).length === 0 ? (
-                <Typography variant="h5" ml={5} mb={2} color="#c7c7c7">
+                <Typography variant="h5" mb={2} color="#c7c7c7">
                   오픈 예정인 빵켓팅이 없습니다.
                 </Typography>
               ) : (

@@ -5,7 +5,7 @@ import Search from '../components/Store/Search';
 
 export const Store = () => {
   return (
-    <Container fixed style={{ marginTop: 40, paddingLeft: 40 }}>
+    <Container fixed style={{ marginTop: 40 }} disableGutters>
       <Typography variant="h5" sx={{ fontWeight: 600, marginBottom: 5 }}>
         스토어
       </Typography>

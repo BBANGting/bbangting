@@ -1,5 +1,4 @@
 import { Container, Grid, Typography } from '@mui/material';
-import { ReactQueryDevtools } from 'react-query/devtools';
 import StoreBreadCard from '../StoreDetail/StoreBreadCard';
 import { useBreadList } from '../../hooks/useBreadList';
 import { BreadList } from '../../types';
@@ -9,10 +8,7 @@ const Lineup = () => {
 
   return (
     <Container fixed style={{ marginTop: 40, padding: 0 }}>
-      <Typography
-        variant="h5"
-        sx={{ fontWeight: 600, marginLeft: 5, marginBottom: 5 }}
-      >
+      <Typography variant="h5" sx={{ fontWeight: 600, marginBottom: 5 }}>
         빵케팅 라인업
       </Typography>
       <Grid container>
@@ -29,7 +25,6 @@ const Lineup = () => {
             />
           ))}
       </Grid>
-      <ReactQueryDevtools position="bottom-right" />
     </Container>
   );
 };
