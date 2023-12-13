@@ -11,6 +11,7 @@ const StoreBreads: React.FC<StoreBreadsProps> = ({ bread }) => {
     <Grid container mt={5}>
       {bread.map(item => (
         <StoreBreadCard
+          key={item.breadId}
           breadId={item.breadId}
           breadImage={item.imgUrl}
           breadName={item.breadName}
