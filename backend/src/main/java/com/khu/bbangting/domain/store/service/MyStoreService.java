@@ -3,6 +3,7 @@ package com.khu.bbangting.domain.store.service;
 import com.khu.bbangting.domain.bread.dto.BreadInfoDto;
 import com.khu.bbangting.domain.bread.model.Bread;
 import com.khu.bbangting.domain.bread.repository.BreadRepository;
+import com.khu.bbangting.domain.bread.service.BreadOperationService;
 import com.khu.bbangting.domain.image.model.Image;
 import com.khu.bbangting.domain.image.model.StoreImage;
 import com.khu.bbangting.domain.image.repository.ImageRepository;
@@ -33,6 +34,7 @@ import java.util.List;
 public class MyStoreService {
 
     private final StoreRepository storeRepository;
+    private final BreadOperationService breadOperationService;
     private final BreadRepository breadRepository;
     private final UserRepository userRepository;
     private final ImageService imageService;
@@ -106,6 +108,12 @@ public class MyStoreService {
 
         Store store = storeRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 스토어가 존재하지 않습니다. userId = " + userId));
+
+        // 스토어 삭제 시, 등록된 빵 또한 삭제
+        List<Bread> breadList = breadRepository.findAllByStoreId(store.getId());
+        for (Bread bread : breadList) {
+            breadOperationService.deleteBread(bread.getId());
+        }
 
         // 스토어 삭제 시, 스토어 이미지 또한 삭제
         List<StoreImage> storeImageList = storeImageRepository.findAllByStoreId(store.getId());
