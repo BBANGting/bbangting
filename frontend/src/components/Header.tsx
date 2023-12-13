@@ -9,7 +9,6 @@ import {
   Toolbar,
   Typography,
   createTheme,
-  useMediaQuery,
 } from '@mui/material';
 import { ReactElement, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -51,8 +50,6 @@ const theme = createTheme({
 export const Header = (): ReactElement => {
   // eslint-disable-next-line
   const [isLogin, setIsLogin] = useState<boolean>(true);
-
-  const width = useMediaQuery('(max-width:1440px)');
 
   return (
     <ThemeProvider theme={theme}>

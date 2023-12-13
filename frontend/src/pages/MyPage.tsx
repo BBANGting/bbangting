@@ -18,16 +18,18 @@ export const MyPage = () => {
     <>
       <MyStoreBanner />
       <Container disableGutters>
-        <Grid container mt={10} direction={'row'}>
-          <Profile
-            img="/imgs/profile.png"
-            nickname={userInfo.nickname}
-            name="김진우"
-            email="rlawlsdn316@gmail.com"
-            warning={userInfo.banCount}
-          />
-          <Information />
-        </Grid>
+        {userInfo && (
+          <Grid container mt={10} direction={'row'}>
+            <Profile
+              img="/imgs/profile.png"
+              nickname={userInfo.nickname}
+              name="김진우"
+              email="rlawlsdn316@gmail.com"
+              warning={userInfo.banCount}
+            />
+            <Information />
+          </Grid>
+        )}
       </Container>
     </>
   );
