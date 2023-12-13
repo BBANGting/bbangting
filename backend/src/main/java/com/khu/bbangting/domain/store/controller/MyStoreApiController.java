@@ -34,6 +34,11 @@ public class MyStoreApiController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("스토어 등록 실패 : " + bindingResult.getFieldError().getDefaultMessage());
         }
 
+        // 예외 처리) 스토어 이미지 등록 2개 이상 필수 (로고 이미지, 스토어 대표 이미지)
+        if (imageFileList.size() < 2) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("스토어 등록 실패 : 로고 이미지와 스토어 대표 이미지는 필수 입력값입니다.");
+        }
+
         myStoreService.saveStore(requestDto, imageFileList);
         return ResponseEntity.status(HttpStatus.CREATED).body("마이스토어 등록 성공");
 
