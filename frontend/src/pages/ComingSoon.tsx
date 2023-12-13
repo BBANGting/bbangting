@@ -1,9 +1,8 @@
 import { Container, Grid, Typography } from '@mui/material';
 import { BreadCard } from '../components/Home/BreadCard';
 
-import _DUMMY from '../json/dummy.json';
 import { getComingBread } from '../apis/api/comingBread';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -26,9 +25,14 @@ const generateDays = () => {
 };
 
 export const ComingSoon = () => {
+  const [breadList, setBreadList] = useState([]);
+
   useEffect(() => {
-    getComingBread().then(res => console.log(res));
-  });
+    getComingBread().then(res => {
+      console.log(res);
+      setBreadList(res);
+    });
+  }, []);
 
   return (
     <Container fixed style={{ marginTop: 40, padding: 0 }}>
@@ -45,21 +49,24 @@ export const ComingSoon = () => {
               {day.label}
             </Typography>
             <Grid container display="flex">
-              {_DUMMY.filter(bread => bread.openDate === day.date).length ===
-              0 ? (
+              {breadList.filter(
+                bread => bread.tingDateTime.split('T')[0] === day.date,
+              ).length === 0 ? (
                 <Typography variant="h5" ml={5} mb={2} color="#c7c7c7">
                   오픈 예정인 빵켓팅이 없습니다.
                 </Typography>
               ) : (
-                _DUMMY
-                  .filter(bread => bread.openDate === day.date)
+                breadList
+                  .filter(
+                    bread => bread.tingDateTime.split('T')[0] === day.date,
+                  )
                   .map((bread, idx) => (
                     <BreadCard
                       key={idx}
-                      store={bread.store}
-                      name={bread.name}
-                      img={bread.img}
-                      openTime={bread.openTime}
+                      store={bread.storeName}
+                      name={bread.breadName}
+                      img={bread.imgUrl}
+                      openTime={bread.tingDateTime.split('T')[1]}
                     />
                   ))
               )}
