@@ -34,6 +34,7 @@ public class MyStoreApiController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("스토어 등록 실패 : " + bindingResult.getFieldError().getDefaultMessage());
         }
 
+        // 오류 잡기
         myStoreService.saveStore(requestDto, imageFileList);
         return ResponseEntity.status(HttpStatus.CREATED).body("마이스토어 등록 성공");
 
