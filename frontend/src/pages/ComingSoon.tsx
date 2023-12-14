@@ -3,6 +3,7 @@ import { BreadCard } from '../components/Home/BreadCard';
 
 import { getComingBread } from '../apis/api/comingBread';
 import { useEffect, useState } from 'react';
+import { TBread } from '../types';
 
 const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -25,7 +26,7 @@ const generateDays = () => {
 };
 
 export const ComingSoon = () => {
-  const [breadList, setBreadList] = useState([]);
+  const [breadList, setBreadList] = useState<TBread[]>([]);
 
   useEffect(() => {
     getComingBread().then(res => {

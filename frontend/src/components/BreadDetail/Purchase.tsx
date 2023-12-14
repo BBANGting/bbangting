@@ -35,7 +35,7 @@ const Purchase: React.FC<PurchaseProps> = ({ bread }) => {
       <Grid container mt={5}>
         <Grid item xs={12} sm={6}>
           <img
-            src={bread.breadImage}
+            src={bread.imgUrl}
             alt="빵 사진"
             width={'100%'}
             style={{ maxWidth: 530, maxHeight: 350 }}

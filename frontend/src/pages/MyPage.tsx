@@ -4,10 +4,10 @@ import Information from '../components/Mypage/Information';
 import MyStoreBanner from '../components/Mypage/MyStoreBanner';
 import { getUserInfo } from '../apis/api/user';
 import { useEffect, useState } from 'react';
-import { UserInfo } from '../types';
+import { TUserInfo } from '../types';
 
 export const MyPage = () => {
-  const [userInfo, setUserInfo] = useState<UserInfo | undefined>();
+  const [userInfo, setUserInfo] = useState<TUserInfo | undefined>();
   useEffect(() => {
     getUserInfo().then(res => {
       console.log(res);
