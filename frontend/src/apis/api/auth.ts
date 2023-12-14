@@ -6,7 +6,19 @@ export const userLogin = async (data: TLoginForm) => {
   return res;
 };
 
+export const userSignup = async (data: TSignupForm) => {
+  const res = await defaultInstance.post('/auth/join', data);
+  return res;
+};
+
 type TLoginForm = {
+  email: string;
+  password: string;
+};
+
+type TSignupForm = {
+  username: string;
+  nickname: string;
   email: string;
   password: string;
 };

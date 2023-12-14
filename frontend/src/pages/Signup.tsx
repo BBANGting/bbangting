@@ -1,7 +1,8 @@
 import { Box, Container, Grid, TextField, Typography } from '@mui/material';
 import { useRef, useState } from 'react';
 import { AuthButton } from '../components/Login/AuthButton';
-import axios from 'axios';
+import { userSignup } from '../apis/api/auth';
+import { useNavigate } from 'react-router-dom';
 
 export const Signup = () => {
   const [isError, setIsError] = useState<boolean>(false);
@@ -13,16 +14,30 @@ export const Signup = () => {
   const emailRef = useRef<HTMLInputElement>(null);
   const pwdRef = useRef<HTMLInputElement>(null);
 
+  const navigate = useNavigate();
+
   const clickHandler = () => {
-    axios
-      .post('http://localhost:8080/auth/join', {
-        username: nameRef.current.value,
-        nickname: nicknameRef.current.value,
-        email: emailRef.current.value,
-        password: pwdRef.current.value,
+    const username = nameRef.current!.value;
+    const nickname = nicknameRef.current!.value;
+    const email = emailRef.current!.value;
+    const password = pwdRef.current!.value;
+    if (username && nickname && email && password) {
+      userSignup({
+        username,
+        nickname,
+        email,
+        password,
       })
-      .then(res => console.log(res))
-      .catch(err => console.log(err));
+        .then(res => {
+          alert('회원가입 성공!');
+          navigate('/login');
+        })
+        .catch(() => {
+          alert('이미 존재하는 이메일 입니다.');
+        });
+    } else {
+      alert(`모두 입력해주세요`);
+    }
   };
 
   const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
