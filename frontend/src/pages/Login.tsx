@@ -1,30 +1,33 @@
 import { Box, Container, Grid, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import { AuthButton } from '../components/Login/AuthButton';
-import axios from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import { userLogin } from '../apis/api/user';
+import { useNavigate } from 'react-router-dom';
 
 export const Login = () => {
   const [isError, setIsError] = useState<boolean>(false);
   const [inputEmail, setInputEmail] = useState<string>('');
   const [inputPassword, setInputPassword] = useState<string>('');
 
+  const navigate = useNavigate();
+
   const clickHandler = async () => {
     const formData = new FormData();
     formData.append('email', inputEmail);
     formData.append('password', inputPassword);
 
-    await axios
-      .post('/auth/login', {
-        email: inputEmail,
-        password: inputPassword,
-      })
+    userLogin({ email: inputEmail, password: inputPassword })
       .then(res => {
         const accessToken = res.headers.authorization.split(' ')[1];
         const refreshToken = res.headers.refreshtoken;
         localStorage.setItem('access-token', accessToken);
         localStorage.setItem('refresh-token', refreshToken);
+        navigate('/');
       })
-      .catch(err => console.log(err));
+      .catch(() => {
+        alert('이메일 혹은 비밀번호를 확인하세요');
+      });
   };
 
   const clickHandler2 = async () => {
@@ -38,7 +41,6 @@ export const Login = () => {
     e.preventDefault();
     setInputEmail(e.target.value);
     const confirmEmail: boolean = /^[\w+_]\w+@\w+\.\w+/.test(e.target.value);
-    console.log(confirmEmail);
     setIsError(!confirmEmail);
   };
 

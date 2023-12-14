@@ -6,6 +6,7 @@ const axiosApi = (url: string, options?: AxiosRequestConfig) => {
   const instance = axios.create({
     baseURL: url,
     ...options,
+    timeout: 2000,
   });
   return instance;
 };
