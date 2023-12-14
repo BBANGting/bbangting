@@ -6,13 +6,13 @@ import {
   Typography,
   createTheme,
 } from '@mui/material';
-import { BreadType } from '../StoreDetail/StoreBreads';
 import { useState } from 'react';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { TBread } from '../../types';
 
 type PurchaseProps = {
-  bread: BreadType;
+  bread: TBread;
 };
 
 const theme = createTheme({
@@ -55,7 +55,7 @@ const Purchase: React.FC<PurchaseProps> = ({ bread }) => {
           <Typography>별점?</Typography>
           <Typography fontSize={26} mt={'10%'}>
             <span style={{ color: '#db9669', fontSize: 30 }}>
-              {bread.price}
+              {bread.price.toLocaleString()}
             </span>{' '}
             원
           </Typography>

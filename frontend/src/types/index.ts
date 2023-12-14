@@ -3,6 +3,7 @@ export type TBread = {
   breadName: string;
   imgUrl: string;
   stock: number;
+  price: number;
   storeName: string;
   maxTingNum: number;
   tingDateTime: string;
