@@ -1,14 +1,18 @@
 import { Box, Container, Grid, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import { AuthButton } from '../components/Login/AuthButton';
-import axios, { AxiosError, AxiosResponse } from 'axios';
-import { userLogin } from '../apis/api/user';
+import axios from 'axios';
+import { userLogin } from '../apis/api/auth';
 import { useNavigate } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import { tokenState } from '../store/auth';
 
 export const Login = () => {
   const [isError, setIsError] = useState<boolean>(false);
   const [inputEmail, setInputEmail] = useState<string>('');
   const [inputPassword, setInputPassword] = useState<string>('');
+
+  const setToken = useSetRecoilState(tokenState);
 
   const navigate = useNavigate();
 
@@ -23,6 +27,7 @@ export const Login = () => {
         const refreshToken = res.headers.refreshtoken;
         localStorage.setItem('access-token', accessToken);
         localStorage.setItem('refresh-token', refreshToken);
+        setToken(accessToken);
         navigate('/');
       })
       .catch(() => {
