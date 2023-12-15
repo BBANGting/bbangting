@@ -3,10 +3,12 @@ package com.khu.bbangting.domain.store.controller;
 import com.khu.bbangting.domain.bread.dto.BreadInfoDto;
 import com.khu.bbangting.domain.store.dto.MyStoreInfoDto;
 import com.khu.bbangting.domain.store.service.MyStoreService;
+import com.khu.bbangting.domain.user.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -22,12 +24,12 @@ public class MyStoreController {
     private MyStoreService myStoreService;
 
     // 마이스토어 페이지 호출
-    @GetMapping("/myStore/{userId}")
-    public ResponseEntity<Map<String, Object>> myStorePage(@PathVariable Long userId){
+    @GetMapping("/myStore")
+    public ResponseEntity<Map<String, Object>> myStorePage(@AuthenticationPrincipal User user){
         Map<String, Object> result = new HashMap<>();
 
         // 스토어 정보 호출
-        MyStoreInfoDto myStoreInfoDto = myStoreService.getMyStoreInfo(userId);
+        MyStoreInfoDto myStoreInfoDto = myStoreService.getMyStoreInfo(user.getId());
         result.put("myStoreInfo", myStoreInfoDto);
 
         // 빵 목록 호출
