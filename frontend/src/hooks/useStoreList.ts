@@ -1,6 +1,6 @@
 import { UseQueryOptions, useQuery } from 'react-query';
 import { defaultInstance } from '../apis/utils/instance';
-import { StoreRanking } from '../types';
+import { TStoreRanking } from '../types';
 
 const getStoreList = async () => {
   try {
@@ -12,7 +12,7 @@ const getStoreList = async () => {
 };
 
 export const useStoreList = (
-  options?: UseQueryOptions<StoreRanking, Error, StoreRanking, string[]>,
+  options?: UseQueryOptions<TStoreRanking, Error, TStoreRanking, string[]>,
 ) => {
   return useQuery(['getStore'], getStoreList, {
     ...options,

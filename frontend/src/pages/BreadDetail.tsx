@@ -4,13 +4,14 @@ import { Container } from '@mui/material';
 import ExtraInfo from '../components/BreadDetail/ExtraInfo';
 import { useEffect, useState } from 'react';
 import { getBreadInfo } from '../apis/api/breadInfo';
+import { TBread } from '../types';
 
 const BreadDetail: React.FC = () => {
   const { breadId } = useParams<string>();
-  const [bread, setBread] = useState({});
+  const [bread, setBread] = useState<TBread>({} as TBread);
+
   useEffect(() => {
     getBreadInfo(Number(breadId)).then(res => {
-      console.log(res);
       setBread(res.breadDetail);
     });
   }, []);
