@@ -55,7 +55,7 @@ const Purchase: React.FC<PurchaseProps> = ({ bread }) => {
           <Typography>별점?</Typography>
           <Typography fontSize={26} mt={'10%'}>
             <span style={{ color: '#db9669', fontSize: 30 }}>
-              {bread.price.toLocaleString()}
+              {bread.price && bread.price.toLocaleString()}
             </span>{' '}
             원
           </Typography>
