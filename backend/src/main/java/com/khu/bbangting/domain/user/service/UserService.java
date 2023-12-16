@@ -58,14 +58,14 @@ public class UserService {
 
     // 로그인
     @Transactional
-    public void login(User user, HttpServletResponse response) {
+    public LoginResponseDto login(User user, HttpServletResponse response) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
 
         String jwtToken = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
-        saveToken(user, jwtToken);
+        saveToken(user, refreshToken);
 
         long now = (new Date().getTime());
         Date accessTokenExpiresIn = new Date(now + Duration.ofMinutes(30).toMillis());
@@ -83,6 +83,13 @@ public class UserService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         breadService.loginNotification(userDetail);
+
+        // 로그인 시 userId, username 반환
+        return LoginResponseDto.builder()
+                .userId(userDetail.getId())
+                .username(userDetail.getUsername())
+                .build();
+
     }
 
     private void revokeAllUserTokens(User user) {

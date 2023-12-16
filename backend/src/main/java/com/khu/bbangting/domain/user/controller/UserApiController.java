@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -27,20 +28,25 @@ public class UserApiController {
 
     // 로그인
     @PostMapping("/auth/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
         User user = User.builder()
                 .email(requestDto.getEmail())
                 .password(requestDto.getPassword())
                 .build();
 
-        userService.login(user, response);
+        LoginResponseDto responseDto = userService.login(user, response);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("로그인 성공");
+        return ResponseEntity.ok(responseDto);
     }
 
     @PostMapping("/auth/refresh-token")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         userService.refreshToken(request, response);
+    }
+
+    @GetMapping("/checkToken")
+    public void checkToken(@AuthenticationPrincipal User user) {
+
     }
 
 }

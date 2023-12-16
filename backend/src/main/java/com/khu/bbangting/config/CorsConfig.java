@@ -21,6 +21,7 @@ public class CorsConfig {
         configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
 
         configuration.addExposedHeader("Authorization");
+        configuration.addExposedHeader("RefreshToken");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
