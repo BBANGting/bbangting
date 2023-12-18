@@ -13,8 +13,6 @@ import com.khu.bbangting.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -48,26 +46,6 @@ public class UserService {
 
         return UserResponseDto.fromUser(saveUser);
     }
-
-//    // 로그인
-//    @Transactional
-//    public LoginResponseDto login(User user, HttpServletResponse response) {
-//        authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
-//
-//        // 로그인 시 오늘의 빵팅 알림 전송
-//        User userDetail = userRepository.findByEmail(user.getEmail())
-//                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-//
-//        breadService.loginNotification(userDetail);
-//
-//        // 로그인 시 userId, username 반환
-//        return LoginResponseDto.builder()
-//                .userId(userDetail.getId())
-//                .username(userDetail.getUsername())
-//                .build();
-//
-//    }
 
     private void isExistUserEmail(String email) {
         if (userRepository.findByEmail(email).isPresent()) {

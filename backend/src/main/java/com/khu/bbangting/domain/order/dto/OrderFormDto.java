@@ -6,8 +6,6 @@ import com.khu.bbangting.domain.order.model.OrderStatus;
 import com.khu.bbangting.domain.user.model.User;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @ToString
 @Getter
 @Setter
