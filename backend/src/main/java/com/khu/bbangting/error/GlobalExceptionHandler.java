@@ -1,5 +1,7 @@
 package com.khu.bbangting.error;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
@@ -75,6 +77,20 @@ public class GlobalExceptionHandler {
                 .message("유효성 검사 실패 : " + e.getMessage())
                 .build();
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    // Refresh Token 만료
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<CustomException> refreshTokenExpiredException() {
+        CustomException customException = new CustomException(ErrorCode.EXPIRED_TOKEN);
+        return new ResponseEntity<>(customException, HttpStatus.UNAUTHORIZED);
+    }
+
+    // 잘못된 Refresh Token
+    @ExceptionHandler(JWTVerificationException.class)
+    public ResponseEntity<CustomException> refreshTokenVerificationException() {
+        CustomException customException = new CustomException(ErrorCode.INVALID_TOKEN);
+        return new ResponseEntity<>(customException, HttpStatus.BAD_REQUEST);
     }
 
 }

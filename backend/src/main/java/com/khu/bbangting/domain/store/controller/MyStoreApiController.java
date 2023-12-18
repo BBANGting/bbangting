@@ -1,8 +1,12 @@
 package com.khu.bbangting.domain.store.controller;
 
+import com.khu.bbangting.config.jwt.SecurityUtils;
 import com.khu.bbangting.domain.store.dto.StoreFormDto;
 import com.khu.bbangting.domain.store.service.MyStoreService;
 import com.khu.bbangting.domain.user.model.User;
+import com.khu.bbangting.domain.user.repository.UserRepository;
+import com.khu.bbangting.error.CustomException;
+import com.khu.bbangting.error.ErrorCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +28,8 @@ public class MyStoreApiController {
 
     @Autowired
     private MyStoreService myStoreService;
+    @Autowired
+    private UserRepository userRepository;
 
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("/new")
@@ -47,7 +53,11 @@ public class MyStoreApiController {
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteMyStore(@AuthenticationPrincipal User user) {
+    public ResponseEntity<String> deleteMyStore() {
+
+        String userEmail = SecurityUtils.getCurrentUserEmail();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         myStoreService.deleteStore(user.getId());
 
@@ -55,7 +65,11 @@ public class MyStoreApiController {
     }
 
     @GetMapping("/edit")
-    public ResponseEntity<?> updateMyStorePage(@AuthenticationPrincipal User user) {
+    public ResponseEntity<?> updateMyStorePage() {
+
+        String userEmail = SecurityUtils.getCurrentUserEmail();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         StoreFormDto storeFormDto = myStoreService.getStoreForm(user.getId());
         return ResponseEntity.ok(storeFormDto);
@@ -63,8 +77,12 @@ public class MyStoreApiController {
     }
 
     @PostMapping("/edit")
-    public ResponseEntity<?> updateMyStore(@AuthenticationPrincipal User user, @Valid @RequestPart StoreFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
+    public ResponseEntity<?> updateMyStore(@Valid @RequestPart StoreFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
     List<MultipartFile> imageFileList) throws Exception {
+
+        String userEmail = SecurityUtils.getCurrentUserEmail();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         if (bindingResult.hasErrors()) {
             log.info("requestDto 검증 오류 발생 errors={}", bindingResult.getAllErrors());
