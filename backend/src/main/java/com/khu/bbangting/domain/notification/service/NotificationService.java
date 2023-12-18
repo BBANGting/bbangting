@@ -1,9 +1,12 @@
 package com.khu.bbangting.domain.notification.service;
 
 import com.khu.bbangting.domain.bread.model.Bread;
+import com.khu.bbangting.domain.notification.dto.NotificationDto;
 import com.khu.bbangting.domain.notification.model.Notification;
 import com.khu.bbangting.domain.notification.repository.NotificationRepository;
 import com.khu.bbangting.domain.user.model.User;
+import com.khu.bbangting.error.CustomException;
+import com.khu.bbangting.error.ErrorCode;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -86,5 +90,24 @@ public class NotificationService {
         }
         log.info("deleteNotification 스케줄러 작동 완료---->\n");
 
+    }
+
+    @Transactional(readOnly = true)
+    public List<NotificationDto> getNotification(List<Notification> notificationList) {
+        List<NotificationDto> isNotReadList = new ArrayList<>();
+
+        for (Notification notification : notificationList) {
+            if (notification.isRead() == false) {
+                NotificationDto notificationDto = NotificationDto.builder()
+                        .id(notification.getId())
+                        .title(notification.getTitle())
+                        .message(notification.getMessage())
+                        .createdAt(notification.getCreatedAt())
+                        .build();
+                isNotReadList.add(notificationDto);
+            }
+        }
+
+        return isNotReadList;
     }
 }

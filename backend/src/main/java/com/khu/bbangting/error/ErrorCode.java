@@ -9,8 +9,11 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
 
     DUPLICATED_LOGIN_EMAIL(HttpStatus.CONFLICT,"USER-ERR-409", "loginEmail is duplicated"),
+    INVALID_EMAIL_OR_PASSWORD(HttpStatus.UNAUTHORIZED, "USER-ERR-401", "Email or Password is invalid"),
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "USER-ERR-401", "Password is invalid"),
     INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "USER-ERR-401", "Permission is invalid"),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN-ERR-400", "Token is invalid"),
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN-ERR-401", "Token is expired"),
 
     USER_NOT_FOUND(HttpStatus.NOT_FOUND,"USER-ERR-404", "user not founded"),
     BREAD_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCT-ERR-404", "product not founded"),
@@ -18,6 +21,8 @@ public enum ErrorCode {
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "STORE-ERR-404", "store not founded"),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW-ERR-404", "review not founded"),
     TING_NOT_FOUND(HttpStatus.NOT_FOUND, "TING-ERR-404", "ting not founded"),
+    NOTI_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTIFICATION-ERR-404", "notification not founded"),
+    TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "TOKEN-ERR-404", "token not founded"),
 
     BREAD_SOLD_OUT(HttpStatus.NOT_FOUND, "PRODUCT-ERR-404", "product quantity is 0"),
     NOT_BBANGTING_TIME(HttpStatus.METHOD_NOT_ALLOWED, "ORDER-ERR-405", "not sale time"),

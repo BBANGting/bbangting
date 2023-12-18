@@ -1,13 +1,16 @@
 package com.khu.bbangting.domain.user.controller;
 
+import com.khu.bbangting.config.jwt.SecurityUtils;
 import com.khu.bbangting.domain.follow.service.FollowService;
 import com.khu.bbangting.domain.order.dto.OrderHistDto;
 import com.khu.bbangting.domain.store.dto.StoreInfoDto;
 import com.khu.bbangting.domain.user.dto.UserResponseDto;
-import com.khu.bbangting.domain.user.service.MyPageService;
 import com.khu.bbangting.domain.user.repository.UserRepository;
+import com.khu.bbangting.domain.user.service.MyPageService;
 import com.khu.bbangting.domain.user.model.User;
 import com.khu.bbangting.domain.order.service.OrderService;
+import com.khu.bbangting.error.CustomException;
+import com.khu.bbangting.error.ErrorCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -32,7 +35,11 @@ public class MyPageController {
 
     // 마이페이지 호출 (유저 정보 포함)
     @GetMapping("/myPage")
-    public ResponseEntity<Result<List<?>>> getMyPage(@AuthenticationPrincipal User user) {
+    public ResponseEntity<Result<List<?>>> getMyPage() {
+
+        String userEmail = SecurityUtils.getCurrentUserEmail();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         List<UserResponseDto> userInfo = myPageService.getUserInfo(user);
 
@@ -55,13 +62,13 @@ public class MyPageController {
 
     // 2. 회원정보 수정 (비밀번호 & 닉네임)
     @GetMapping("/myPage/password")
-    public ResponseEntity<?> passwordUpdateForm(@AuthenticationPrincipal User user) {
+    public ResponseEntity<?> passwordUpdateForm() {
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     @GetMapping("/myPage/nickname")
-    public ResponseEntity<?> nicknameUpdateForm(@AuthenticationPrincipal User user) {
+    public ResponseEntity<?> nicknameUpdateForm() {
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
@@ -69,7 +76,11 @@ public class MyPageController {
 
     // 3. 주문내역 페이지 (주문내역 정보 포함)
     @GetMapping("/myPage/order")
-    public ResponseEntity<List<OrderHistDto>> userOrderHistForm(@AuthenticationPrincipal User user) {
+    public ResponseEntity<List<OrderHistDto>> userOrderHistForm() {
+
+        String userEmail = SecurityUtils.getCurrentUserEmail();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         List<OrderHistDto> orderList = orderService.getOrderList(user.getId());
 

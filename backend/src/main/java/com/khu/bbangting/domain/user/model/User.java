@@ -17,7 +17,7 @@ import java.util.*;
 @Table(name="users")
 @Getter @Setter
 @DynamicInsert
-public class User implements UserDetails {
+public class User {
 
     @Id
     @Column(name = "userId")
@@ -42,6 +42,8 @@ public class User implements UserDetails {
 
     @CreationTimestamp
     private Timestamp createdDate;
+
+    private String refreshToken;
 
     @ColumnDefault("'USER'")
     @Enumerated(EnumType.STRING)
@@ -69,41 +71,12 @@ public class User implements UserDetails {
         return this;
     }
 
+    public void updateRefreshToken(String newToken) {
+        this.refreshToken = newToken;
+    }
+
     public boolean isBanUser(User user) {
         return this.banCount == 5;
-    }
-
-    //========== UserDetails implements ==========//
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add( new SimpleGrantedAuthority("ROLE_" + this.role.name()));
-        return authorities;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
     }
 
 }

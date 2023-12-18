@@ -34,6 +34,11 @@ public class ImageService {
         String imageName = "";
         String imageUrl = "";
 
+        // 예외처리) imageFile 값이 null인 경우
+        if (oriImageName == "") {
+            throw new IllegalArgumentException("imageFile이 첨부되지 않았습니다. 이미지 파일 업로드 여부를 다시 한번 확인해주세요.");
+        }
+
         // 파일 업로드
         if (!StringUtils.isEmpty(oriImageName)) {
             imageName = fileService.uploadFile(imageLocation, oriImageName, imageFile.getBytes());

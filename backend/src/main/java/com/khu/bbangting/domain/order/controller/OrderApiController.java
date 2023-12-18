@@ -1,5 +1,6 @@
 package com.khu.bbangting.domain.order.controller;
 
+import com.khu.bbangting.config.jwt.SecurityUtils;
 import com.khu.bbangting.domain.bread.model.Bread;
 import com.khu.bbangting.domain.bread.repository.BreadRepository;
 import com.khu.bbangting.domain.order.dto.OrderFormDto;
@@ -26,7 +27,11 @@ public class OrderApiController {
 
     // 주문하기
     @PostMapping("/order/{breadId}")
-    public ResponseEntity<String> addOrder(@AuthenticationPrincipal User user, @PathVariable Long breadId, @RequestBody @Valid OrderFormDto requestDto) {
+    public ResponseEntity<String> addOrder(@PathVariable Long breadId, @RequestBody @Valid OrderFormDto requestDto) {
+
+        String userEmail = SecurityUtils.getCurrentUserEmail();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         Bread bread = breadRepository.findById(breadId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BREAD_NOT_FOUND));
