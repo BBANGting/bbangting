@@ -9,7 +9,7 @@ type ProfileProps = {
   name?: string;
   email?: string;
   warning?: number;
-  follower?: number;
+  follower?: number | string;
 };
 
 const Profile: React.FC<ProfileProps> = ({
@@ -23,7 +23,13 @@ const Profile: React.FC<ProfileProps> = ({
   return (
     <Grid container width={350} mr={3}>
       <Grid container direction="column" alignItems="center">
-        <img src={img} alt="" width="300" style={{ borderRadius: 99999 }} />
+        <img
+          src={img}
+          alt=""
+          width="300"
+          height={300}
+          style={{ borderRadius: 99999 }}
+        />
         <Grid sx={{ display: 'flex', alignItems: 'center' }} mt={6}>
           <InfoTitle>{nickname} 님</InfoTitle>
           {follower && (
