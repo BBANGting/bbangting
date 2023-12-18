@@ -14,10 +14,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -31,7 +29,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
-@Component
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
@@ -40,8 +37,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
 
         // login or refresh 요청이면 토큰 검사 x
-        if (servletPath.equals("/auth/login") || servletPath.equals("/refresh") || servletPath.equals("/auth/join")
-                || servletPath.equals("/") || servletPath.equals("/store") || servletPath.equals("/bread") || servletPath.equals("/comingSoon")) {
+        if (servletPath.equals("/auth/login") || servletPath.equals("/refresh")) {
             filterChain.doFilter(request, response);
         } else if (authorizationHeader == null || !authorizationHeader.startsWith(TOKEN_HEADER_PREFIX)) {
             // 토큰값이 없거나 정상적이지 않다면 400 오류

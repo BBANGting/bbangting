@@ -2,16 +2,15 @@ package com.khu.bbangting.config;
 
 import com.khu.bbangting.config.jwt.CustomAuthenticationFilter;
 import com.khu.bbangting.config.jwt.CustomAuthorizationFilter;
-import com.khu.bbangting.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -32,7 +31,6 @@ public class SecurityConfig {
     private final AuthenticationSuccessHandler authenticationSuccessHandler;
     private final AccessDeniedHandler accessDeniedHandler;
     private final AuthenticationConfiguration authConfig;
-    private final CustomAuthorizationFilter customAuthorizationFilter;
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -63,7 +61,7 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/review/**")).hasRole("USER")
                         .anyRequest().authenticated())
                     .addFilter(customAuthenticationFilter)
-                    .addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+                    .addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
                     .exceptionHandling(exception -> exception
                         .accessDeniedHandler(accessDeniedHandler));
 
@@ -74,6 +72,17 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager()
             throws Exception {
         return authConfig.getAuthenticationManager();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring()
+                .requestMatchers(new AntPathRequestMatcher("/"))
+                .requestMatchers(new AntPathRequestMatcher("/auth/join"))
+                .requestMatchers(new AntPathRequestMatcher("/refresh"))
+                .requestMatchers(new AntPathRequestMatcher("/store/**"))
+                .requestMatchers(new AntPathRequestMatcher("/comingSoon/**"))
+                .requestMatchers(new AntPathRequestMatcher("/bread/**"));
     }
 
 }
