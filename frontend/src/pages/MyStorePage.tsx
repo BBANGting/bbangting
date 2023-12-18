@@ -8,7 +8,7 @@ import { getMyStoreInfo } from '../apis/api/mystore';
 export const MyStorePage = () => {
   const [storeInfo, setStoreInfo] = useState();
   useEffect(() => {
-    getMyStoreInfo(1).then(res => {
+    getMyStoreInfo(10).then(res => {
       console.log(res);
       setStoreInfo(res);
     });
@@ -18,11 +18,21 @@ export const MyStorePage = () => {
     <>
       <StoreBanner />
       <Container disableGutters>
+        {!storeInfo && (
+          <Grid container mt={10}>
+            <Profile
+              nickname="빵팅 주인"
+              follower={`0`}
+              img={`/imgs/profile.png`}
+            />
+            <MyStoreInfo isStore={true} />
+          </Grid>
+        )}
         {storeInfo && (
           <Grid container mt={10}>
             <Profile
               nickname={storeInfo.myStoreInfo.storeName}
-              follower={storeInfo.myStoreInfo.followerNum}
+              follower={storeInfo.myStoreInfo.followerNum.toString()}
               img={storeInfo.myStoreInfo.imgUrl}
             />
             <MyStoreInfo />
