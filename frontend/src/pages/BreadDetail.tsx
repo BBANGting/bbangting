@@ -18,8 +18,12 @@ const BreadDetail: React.FC = () => {
 
   return (
     <Container disableGutters>
-      <Purchase bread={bread} />
-      <ExtraInfo />
+      {bread && (
+        <>
+          <Purchase bread={bread} />
+          <ExtraInfo />
+        </>
+      )}
     </Container>
   );
 };
