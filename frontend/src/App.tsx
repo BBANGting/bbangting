@@ -12,6 +12,7 @@ import StoreDetail from './pages/StoreDetail';
 import BreadDetail from './pages/BreadDetail';
 import BreadUpload from './pages/BreadUpload';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import StoreUpload from './pages/StoreUpload';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/mystorepage" element={<MyStorePage />} />
         <Route path="/bread/:breadId" element={<BreadDetail />} />
         <Route path="/new/bread" element={<BreadUpload />} />
+        <Route path="/new/store" element={<StoreUpload />} />
       </Routes>
       <ReactQueryDevtools position="bottom-right" />
     </>
