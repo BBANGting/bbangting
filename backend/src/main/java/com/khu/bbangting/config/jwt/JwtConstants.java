@@ -10,7 +10,7 @@ public class JwtConstants {
     public static final long HOUR = 60 * MINUTE;
     public static final long DAY = 24 * HOUR;
 
-    public static final long AT_EXP_TIME = 1 * MINUTE;
+    public static final long AT_EXP_TIME = 30 * MINUTE;
     public static final long RT_EXP_TIME = 2 * DAY;
 
     // Secret

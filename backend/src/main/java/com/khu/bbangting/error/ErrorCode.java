@@ -23,6 +23,7 @@ public enum ErrorCode {
     TING_NOT_FOUND(HttpStatus.NOT_FOUND, "TING-ERR-404", "ting not founded"),
     NOTI_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTIFICATION-ERR-404", "notification not founded"),
     TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "TOKEN-ERR-404", "token not founded"),
+    FOLLOW_NOT_FOUND(HttpStatus.NOT_FOUND, "FOLLOW-ERR-404", "follow not founded"),
 
     BREAD_SOLD_OUT(HttpStatus.NOT_FOUND, "PRODUCT-ERR-404", "product quantity is 0"),
     NOT_BBANGTING_TIME(HttpStatus.METHOD_NOT_ALLOWED, "ORDER-ERR-405", "not sale time"),
