@@ -1,8 +1,8 @@
 import { UseQueryOptions, useQuery } from 'react-query';
 import { defaultInstance } from '../apis/utils/instance';
-import { BreadList } from '../types';
+import { TBread } from '../types';
 
-const getBreadList = async () => {
+const getBread = async () => {
   try {
     const response = await defaultInstance.get('');
     return response.data;
@@ -12,9 +12,9 @@ const getBreadList = async () => {
 };
 
 export const useBreadList = (
-  options?: UseQueryOptions<BreadList[], Error, BreadList[], string[]>,
+  options?: UseQueryOptions<TBread[], Error, TBread[], string[]>,
 ) => {
-  return useQuery(['getBread'], getBreadList, {
+  return useQuery(['getBread'], getBread, {
     ...options,
     onSuccess: data => {
       console.log(data);

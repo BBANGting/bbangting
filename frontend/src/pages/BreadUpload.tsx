@@ -17,11 +17,11 @@ const BreadUpload = () => {
 
     const jsonBody = {
       storeId: 1,
-      breadName: name.current.value,
+      breadName: name.current?.value,
       description: '맛난 빵',
-      price: price.current.value,
-      tingDateTime: tingDate.current.value,
-      maxTingNum: stock.current.value,
+      price: price.current?.value,
+      tingDateTime: tingDate.current?.value,
+      maxTingNum: stock.current?.value,
       tingStatus: 'Y',
     };
 

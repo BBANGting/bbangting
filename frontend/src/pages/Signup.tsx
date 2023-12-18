@@ -28,7 +28,7 @@ export const Signup = () => {
         email,
         password,
       })
-        .then(res => {
+        .then(() => {
           alert('회원가입 성공!');
           navigate('/login');
         })

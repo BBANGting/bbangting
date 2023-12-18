@@ -32,7 +32,7 @@ const StoreInfo: React.FC<StoreInfoProps> = ({ store, refetch }) => {
 
   const clickHandler = () => {
     storeFollow({
-      userId: 9,
+      userId: 1,
       storeId: Number(storeId),
     }).then(() => {
       refetch();
