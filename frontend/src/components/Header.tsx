@@ -10,8 +10,9 @@ import {
   Typography,
   createTheme,
 } from '@mui/material';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { checkToken } from '../apis/api/auth';
 
 const leftOptions = [
   {
@@ -48,8 +49,13 @@ const theme = createTheme({
 });
 
 export const Header = (): ReactElement => {
-  // eslint-disable-next-line
-  const [isLogin, setIsLogin] = useState<boolean>(true);
+  const [isLogin, setIsLogin] = useState<boolean>(false);
+
+  useEffect(() => {
+    checkToken()
+      .then(() => setIsLogin(true))
+      .catch(() => setIsLogin(false));
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -80,33 +86,33 @@ export const Header = (): ReactElement => {
                   </Link>
                 ))}
               </Box>
-              {/* {!isLogin ? ( */}
-              <>
-                {rightOptions.map((menu, idx) => (
-                  <Link to={menu.link} key={idx}>
-                    <MenuItem sx={{ borderRadius: 5 }}>
-                      <Typography variant="h6" sx={{ fontWeight: 400 }}>
-                        {menu.name}
-                      </Typography>
-                    </MenuItem>
+              {!isLogin ? (
+                <>
+                  {rightOptions.map((menu, idx) => (
+                    <Link to={menu.link} key={idx}>
+                      <MenuItem sx={{ borderRadius: 5 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 400 }}>
+                          {menu.name}
+                        </Typography>
+                      </MenuItem>
+                    </Link>
+                  ))}
+                </>
+              ) : (
+                <>
+                  <Link to={`/mypage`}>
+                    <IconButton
+                      size="large"
+                      aria-label="menu"
+                      aria-controls="menu-appbar"
+                      aria-haspopup="true"
+                      color="accountIcon"
+                    >
+                      <AccountCircle />
+                    </IconButton>
                   </Link>
-                ))}
-              </>
-              {/* ) : ( */}
-              <>
-                <Link to={`/mypage`}>
-                  <IconButton
-                    size="large"
-                    aria-label="menu"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    color="accountIcon"
-                  >
-                    <AccountCircle />
-                  </IconButton>
-                </Link>
-              </>
-              {/* )} */}
+                </>
+              )}
             </Toolbar>
           </Container>
         </AppBar>
