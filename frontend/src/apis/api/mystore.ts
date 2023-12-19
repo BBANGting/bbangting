@@ -2,7 +2,7 @@ import { authInstance } from '../utils/instance';
 
 export const getMyStoreInfo = async (userId: number) => {
   try {
-    const { data } = await authInstance.get(`myStore/${userId}`);
+    const { data } = await authInstance.get(`myStore`);
     return data;
   } catch (err) {
     console.log(err);

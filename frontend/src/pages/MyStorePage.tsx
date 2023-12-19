@@ -8,7 +8,7 @@ import { getMyStoreInfo } from '../apis/api/mystore';
 export const MyStorePage = () => {
   const [storeInfo, setStoreInfo] = useState();
   useEffect(() => {
-    getMyStoreInfo(10).then(res => {
+    getMyStoreInfo().then(res => {
       console.log(res);
       setStoreInfo(res);
     });
