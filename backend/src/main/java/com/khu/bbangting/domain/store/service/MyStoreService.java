@@ -16,10 +16,13 @@ import com.khu.bbangting.domain.image.dto.StoreImageDto;
 import com.khu.bbangting.domain.user.model.User;
 import com.khu.bbangting.domain.user.repository.UserRepository;
 import com.khu.bbangting.domain.image.service.ImageService;
+import com.khu.bbangting.error.CustomException;
+import com.khu.bbangting.error.ErrorCode;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,10 +46,13 @@ public class MyStoreService {
 
 
     @Transactional(readOnly = true)
-    public StoreFormDto getStoreForm(Long userId) {
+    public StoreFormDto getStoreForm(Authentication authentication) {
 
-        Store store = storeRepository.findByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 스토어가 존재하지 않습니다. userId = " + userId));
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        Store store = storeRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 스토어가 존재하지 않습니다. userId = " + user.getId()));
 
         List<StoreImage> storeImgList = storeImageRepository.findByStoreIdOrderByIdAsc(store.getId());
         List<StoreImageDto> storeImgDtoList = new ArrayList<>();
@@ -104,10 +110,13 @@ public class MyStoreService {
 
     }
 
-    public void deleteStore(Long userId) {
+    public void deleteStore(Authentication authentication) {
 
-        Store store = storeRepository.findByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 스토어가 존재하지 않습니다. userId = " + userId));
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        Store store = storeRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 스토어가 존재하지 않습니다. userId = " + user.getId()));
 
         // 스토어 삭제 시, 등록된 빵 또한 삭제
         List<Bread> breadList = breadRepository.findAllByStoreId(store.getId());
@@ -126,11 +135,14 @@ public class MyStoreService {
     }
 
 
-    public void updateStore(Long userId, StoreFormDto requestDto, List<MultipartFile> imageFileList) throws Exception {
+    public void updateStore(Authentication authentication, StoreFormDto requestDto, List<MultipartFile> imageFileList) throws Exception {
+
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // 예외처리) 스토어가 존재하지 않을 경우
-        Store store = storeRepository.findByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 스토어가 존재하지 않습니다. userId = " + userId));
+        Store store = storeRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 스토어가 존재하지 않습니다. userId = " + user.getId()));
 
         // 예외처리) 스토어 로고 이미지 업로드 하지 않은 경우
         if(imageFileList.get(0).isEmpty())
@@ -158,10 +170,13 @@ public class MyStoreService {
     }
 
     @Transactional(readOnly = true)
-    public MyStoreInfoDto getMyStoreInfo(Long userId) {
+    public MyStoreInfoDto getMyStoreInfo(Authentication authentication) {
 
-        Store store = storeRepository.findByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 스토어가 존재하지 않습니다. userId = " + userId));
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        Store store = storeRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 스토어가 존재하지 않습니다. userId = " + user.getId()));
 
         StoreImage storeImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'Y');
 

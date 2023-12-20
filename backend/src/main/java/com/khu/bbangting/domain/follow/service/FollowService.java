@@ -8,10 +8,13 @@ import com.khu.bbangting.domain.follow.model.Follow;
 import com.khu.bbangting.domain.store.model.Store;
 import com.khu.bbangting.domain.follow.repository.FollowRepository;
 import com.khu.bbangting.domain.store.repository.StoreRepository;
+import com.khu.bbangting.error.CustomException;
+import com.khu.bbangting.error.ErrorCode;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,8 +76,12 @@ public class FollowService {
     }
 
     // 팔로잉 목록 호출 기능
-    public List<StoreInfoDto> getFollowingList(Long userId) {
-        List<Follow> followList = followRepository.findAllByUserId(userId);
+    public List<StoreInfoDto> getFollowingList(Authentication authentication) {
+
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        List<Follow> followList = followRepository.findAllByUserId(user.getId());
 
         List<StoreInfoDto> followingList = new ArrayList<>();
         for (Follow follow : followList) {

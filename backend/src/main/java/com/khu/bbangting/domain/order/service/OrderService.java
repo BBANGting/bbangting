@@ -2,6 +2,7 @@ package com.khu.bbangting.domain.order.service;
 
 import com.khu.bbangting.domain.order.dto.OrderFormDto;
 import com.khu.bbangting.domain.order.dto.OrderHistDto;
+import com.khu.bbangting.domain.user.repository.UserRepository;
 import com.khu.bbangting.error.CustomException;
 import com.khu.bbangting.error.ErrorCode;
 import com.khu.bbangting.domain.bread.model.Bread;
@@ -11,6 +12,7 @@ import com.khu.bbangting.domain.user.model.User;
 import com.khu.bbangting.domain.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,7 @@ import java.util.List;
 @Slf4j
 public class OrderService {
 
+    private final UserRepository userRepository;
     private final OrderRepository orderRepository;
 
     // 주문하기
@@ -61,9 +64,12 @@ public class OrderService {
 
     // 유저 주문내역
     @Transactional(readOnly = true)
-    public List<OrderHistDto> getOrderList(Long userId) {
+    public List<OrderHistDto> getOrderList(Authentication authentication) {
 
-        List<Order> orderList = orderRepository.findAllByUserIdAndOrderStatus(userId, OrderStatus.ORDER);
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        List<Order> orderList = orderRepository.findAllByUserIdAndOrderStatus(user.getId(), OrderStatus.ORDER);
 
         List<OrderHistDto> orderHistList = new ArrayList<>();
         for (Order order : orderList) {

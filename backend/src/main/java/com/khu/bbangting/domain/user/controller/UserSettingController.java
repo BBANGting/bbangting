@@ -8,6 +8,7 @@ import com.khu.bbangting.domain.user.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,18 +21,19 @@ public class UserSettingController {
     // 비밀번호 수정하기
     @PostMapping("/myPage/rePassword")
     public ResponseEntity<UserResponseDto> updatePassword(
-            @AuthenticationPrincipal User user,
+            Authentication authentication,
             @RequestBody PasswordUpdateDto requestDto) {
-        UserResponseDto updatePassword = myPageService.updatePassword(user, requestDto);
+
+        UserResponseDto updatePassword = myPageService.updatePassword(authentication, requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(updatePassword);
     }
 
     // 닉네임 수정하기
     @PostMapping("/myPage/reNickname")
     public ResponseEntity<UserResponseDto> updateNickname(
-            @AuthenticationPrincipal User user,
+            Authentication authentication,
             @RequestBody NicknameUpdateDto requestDto) {
-        UserResponseDto updateNickname = myPageService.updateNickname(user, requestDto);
+        UserResponseDto updateNickname = myPageService.updateNickname(authentication, requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(updateNickname);
     }
 

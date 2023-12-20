@@ -11,11 +11,13 @@ import com.khu.bbangting.domain.review.repository.ReviewRepository;
 import com.khu.bbangting.domain.review.service.ReviewService;
 import com.khu.bbangting.domain.user.model.User;
 import com.khu.bbangting.domain.user.repository.UserRepository;
+import com.khu.bbangting.domain.user.service.AuthService;
 import com.khu.bbangting.error.CustomException;
 import com.khu.bbangting.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +33,10 @@ public class ReviewApiController {
 
     // 리뷰 작성
     @PostMapping("/review/{breadId}")
-    public ResponseEntity<String> addReview(@AuthenticationPrincipal User user, @PathVariable Long breadId, @RequestBody ReviewFormDto requestDto) {
+    public ResponseEntity<String> addReview(Authentication authentication, @PathVariable Long breadId, @RequestBody ReviewFormDto requestDto) {
+
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         Bread bread = breadRepository.findById(breadId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BREAD_NOT_FOUND));
@@ -49,26 +54,20 @@ public class ReviewApiController {
 
     // 리뷰 수정
     @PutMapping("/review/{reviewId}")
-    public ResponseEntity<String> modifyReview(@AuthenticationPrincipal User user, @PathVariable Long reviewId,
+    public ResponseEntity<String> modifyReview(Authentication authentication, @PathVariable Long reviewId,
                                                             @RequestBody ReviewUpdateFormDto requestDto) {
 
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         reviewService.modify(user, reviewId, requestDto);
-
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("리뷰 수정 성공");
     }
 
     // 리뷰 삭제
     @DeleteMapping("/review/{reviewId}")
     public ResponseEntity<String> removeReview(@PathVariable Long reviewId) {
-
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
-
         reviewService.remove(reviewId);
-
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("리뷰 삭제 성공");
     }
 

@@ -13,6 +13,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,11 +31,11 @@ public class MyPageController {
 
     // 마이페이지 호출 (유저 정보 포함)
     @GetMapping("/myPage")
-    public ResponseEntity<Result<List<?>>> getMyPage(@AuthenticationPrincipal User user) {
+    public ResponseEntity<Result<List<?>>> getMyPage(Authentication authentication) {
 
-        List<UserResponseDto> userInfo = myPageService.getUserInfo(user);
+        List<UserResponseDto> userInfo = myPageService.getUserInfo(authentication);
 
-        List<StoreInfoDto> followingList = followService.getFollowingList(user.getId());
+        List<StoreInfoDto> followingList = followService.getFollowingList(authentication);
 
         return ResponseEntity.ok().body(new Result<>(followingList, userInfo));
     }
@@ -53,13 +54,13 @@ public class MyPageController {
 
     // 2. 회원정보 수정 (비밀번호 & 닉네임)
     @GetMapping("/myPage/password")
-    public ResponseEntity<?> passwordUpdateForm(@AuthenticationPrincipal User user) {
+    public ResponseEntity<?> passwordUpdateForm(Authentication authentication) {
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     @GetMapping("/myPage/nickname")
-    public ResponseEntity<?> nicknameUpdateForm(@AuthenticationPrincipal User user) {
+    public ResponseEntity<?> nicknameUpdateForm(Authentication authentication) {
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
@@ -67,9 +68,9 @@ public class MyPageController {
 
     // 3. 주문내역 페이지 (주문내역 정보 포함)
     @GetMapping("/myPage/order")
-    public ResponseEntity<List<OrderHistDto>> userOrderHistForm(@AuthenticationPrincipal User user) {
+    public ResponseEntity<List<OrderHistDto>> userOrderHistForm(Authentication authentication) {
 
-        List<OrderHistDto> orderList = orderService.getOrderList(user.getId());
+        List<OrderHistDto> orderList = orderService.getOrderList(authentication);
 
         return ResponseEntity.ok(orderList);
     }

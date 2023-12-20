@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -47,23 +48,23 @@ public class MyStoreApiController {
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteMyStore(@AuthenticationPrincipal User user) {
+    public ResponseEntity<String> deleteMyStore(Authentication authentication) {
 
-        myStoreService.deleteStore(user.getId());
+        myStoreService.deleteStore(authentication);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("마이스토어 삭제 성공");
     }
 
     @GetMapping("/edit")
-    public ResponseEntity<?> updateMyStorePage(@AuthenticationPrincipal User user) {
+    public ResponseEntity<?> updateMyStorePage(Authentication authentication) {
 
-        StoreFormDto storeFormDto = myStoreService.getStoreForm(user.getId());
+        StoreFormDto storeFormDto = myStoreService.getStoreForm(authentication);
         return ResponseEntity.ok(storeFormDto);
 
     }
 
     @PostMapping("/edit")
-    public ResponseEntity<?> updateMyStore(@AuthenticationPrincipal User user, @Valid @RequestPart StoreFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
+    public ResponseEntity<?> updateMyStore(Authentication authentication, @Valid @RequestPart StoreFormDto requestDto, BindingResult bindingResult, @RequestPart("imageFile")
     List<MultipartFile> imageFileList) throws Exception {
 
         if (bindingResult.hasErrors()) {
@@ -71,7 +72,7 @@ public class MyStoreApiController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("스토어 수정 실패 : " + bindingResult.getFieldError().getDefaultMessage());
         }
 
-        myStoreService.updateStore(user.getId(), requestDto, imageFileList);
+        myStoreService.updateStore(authentication, requestDto, imageFileList);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("마이스토어 수정 성공");
 
     }

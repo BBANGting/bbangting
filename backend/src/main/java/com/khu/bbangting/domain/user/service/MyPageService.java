@@ -9,6 +9,7 @@ import com.khu.bbangting.domain.user.model.User;
 import com.khu.bbangting.domain.user.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,14 +22,15 @@ import java.util.List;
 @Transactional
 public class MyPageService {
 
+    private final AuthService authService;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     // 회원정보 및 팔로우 내역 표시
     @Transactional(readOnly = true)
-    public List<UserResponseDto> getUserInfo(User user) {
+    public List<UserResponseDto> getUserInfo(Authentication authentication) {
 
-        User getUser = userRepository.findById(user.getId()).orElseThrow(
+        User getUser = userRepository.findByEmail(authentication.getName()).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         List<UserResponseDto> userResponseDtoList = new ArrayList<>();
@@ -42,21 +44,22 @@ public class MyPageService {
 
     // 비밀번호 수정
     @Transactional
-    public UserResponseDto updatePassword(User user, @Valid PasswordUpdateDto requestDto) {
+    public UserResponseDto updatePassword(Authentication authentication, @Valid PasswordUpdateDto requestDto) {
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
         String encodePwd = passwordEncoder.encode(requestDto.getNewPassword());
-        User updateUser = userRepository.findById(user.getId()).orElseThrow(
-                () -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        updateUser.updatePassword(encodePwd);
-        return UserResponseDto.fromUser(updateUser);
+        user.updatePassword(encodePwd);
+        return UserResponseDto.fromUser(user);
     }
 
     // 닉네임 수정
     @Transactional
-    public UserResponseDto updateNickname(User user, @Valid NicknameUpdateDto requestDto) {
-        User updateUser = userRepository.findById(user.getId()).orElseThrow(
-                () -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        updateUser.updateNickname(requestDto.getNewNickname());
-        return UserResponseDto.fromUser(updateUser);
+    public UserResponseDto updateNickname(Authentication authentication, @Valid NicknameUpdateDto requestDto) {
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        user.updateNickname(requestDto.getNewNickname());
+        return UserResponseDto.fromUser(user);
     }
 
 }
