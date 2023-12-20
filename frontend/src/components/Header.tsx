@@ -8,11 +8,11 @@ import {
   ThemeProvider,
   Toolbar,
   Typography,
-  createTheme,
 } from '@mui/material';
 import { ReactElement, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { checkToken } from '../apis/api/auth';
+import { headerTheme } from '../styles/themes';
 
 const leftOptions = [
   {
@@ -36,18 +36,6 @@ const rightOptions = [
   },
 ];
 
-const theme = createTheme({
-  palette: {
-    header: {
-      main: '#ffffff',
-      contrastText: '#464643',
-    },
-    accountIcon: {
-      main: '#000000',
-    },
-  },
-});
-
 export const Header = (): ReactElement => {
   const [isLogin, setIsLogin] = useState<boolean>(false);
 
@@ -58,7 +46,7 @@ export const Header = (): ReactElement => {
   }, []);
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={headerTheme}>
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static" color="header">
           <Container disableGutters sx={{ minHeight: 64 }}>

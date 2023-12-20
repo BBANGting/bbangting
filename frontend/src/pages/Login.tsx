@@ -1,12 +1,11 @@
 import { Box, Container, Grid, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
-import { AuthButton } from '../components/Login/AuthButton';
-import axios from 'axios';
 import { userLogin } from '../apis/api/auth';
 import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { tokenState } from '../store/auth';
 import { userState } from '../store/user';
+import ColorButton from '../components/common/ColorButton';
 
 export const Login = () => {
   const [isError, setIsError] = useState<boolean>(false);
@@ -38,13 +37,6 @@ export const Login = () => {
         alert('이메일 혹은 비밀번호를 확인하세요');
         console.log(err);
       });
-  };
-
-  const clickHandler2 = async () => {
-    await axios
-      .post('/logout')
-      .then(res => console.log(res))
-      .catch(err => console.log(err));
   };
 
   const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,10 +84,9 @@ export const Login = () => {
           />
         </Grid>
         <Grid mt={3}>
-          <AuthButton text="로그인" onClick={clickHandler} />
-        </Grid>
-        <Grid mt={3}>
-          <AuthButton text="로그아웃" onClick={clickHandler2} />
+          <ColorButton fullWidth sx={{ height: 50 }} onClick={clickHandler}>
+            <Typography variant="h6">로그인</Typography>
+          </ColorButton>
         </Grid>
       </Box>
     </Container>

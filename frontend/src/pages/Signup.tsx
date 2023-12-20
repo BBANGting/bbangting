@@ -1,8 +1,8 @@
 import { Box, Container, Grid, TextField, Typography } from '@mui/material';
 import { useRef, useState } from 'react';
-import { AuthButton } from '../components/Login/AuthButton';
 import { userSignup } from '../apis/api/auth';
 import { useNavigate } from 'react-router-dom';
+import ColorButton from '../components/common/ColorButton';
 
 export const Signup = () => {
   const [isError, setIsError] = useState<boolean>(false);
@@ -105,7 +105,9 @@ export const Signup = () => {
           />
         </Grid>
         <Grid mt={3}>
-          <AuthButton text="회원가입 완료" onClick={clickHandler} />
+          <ColorButton fullWidth sx={{ height: 50 }} onClick={clickHandler}>
+            <Typography variant="h6">회원가입 완료</Typography>
+          </ColorButton>
         </Grid>
       </Box>
     </Container>
