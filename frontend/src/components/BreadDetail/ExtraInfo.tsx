@@ -25,7 +25,7 @@ const ExtraInfo: React.FC<ExtraInfoProps> = ({ breadDetailImg }) => {
       >
         <Tab label="상세 정보" />
         <Tab label="리뷰" />
-        <Tab label="문의" />
+        {/* <Tab label="문의" /> */}
       </Tabs>
       <Box>
         <TabPanel value={value} index={0}>

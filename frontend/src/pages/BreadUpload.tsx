@@ -1,5 +1,4 @@
 import { Button, Container, Grid, TextField, Typography } from '@mui/material';
-import axios from 'axios';
 import { useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { newMyBread } from '../apis/api/mybread';
@@ -29,10 +28,6 @@ const BreadUpload = () => {
       tingDateTime: tingDate.current?.value,
       maxTingNum: stock.current?.value,
       tingStatus: 'Y',
-    };
-
-    const headers = {
-      'Content-Type': 'multipart/form-data',
     };
 
     formdata.append(

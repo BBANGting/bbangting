@@ -21,6 +21,7 @@ const StoreBanner: React.FC<StoreBannerProps> = ({ storeImage, storeLogo }) => {
         height={130}
         style={{
           position: 'absolute',
+          objectFit: 'cover',
           bottom: 20,
           left: 20,
           borderRadius: 999,
