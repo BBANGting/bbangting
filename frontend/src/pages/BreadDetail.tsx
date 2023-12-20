@@ -9,10 +9,13 @@ import { TBread } from '../types';
 const BreadDetail: React.FC = () => {
   const { breadId } = useParams<string>();
   const [bread, setBread] = useState<TBread>({} as TBread);
+  const [breadDetailImg, setBreadDetailImg] = useState<string>('');
 
   useEffect(() => {
     getBreadInfo(Number(breadId)).then(res => {
+      console.log(res);
       setBread(res.breadDetail);
+      setBreadDetailImg(res.breadDetailPage[2]);
     });
   }, []);
 
@@ -21,7 +24,7 @@ const BreadDetail: React.FC = () => {
       {bread && (
         <>
           <Purchase bread={bread} />
-          <ExtraInfo />
+          <ExtraInfo breadDetailImg={breadDetailImg} />
         </>
       )}
     </Container>
