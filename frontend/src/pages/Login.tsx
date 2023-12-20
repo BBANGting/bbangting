@@ -6,11 +6,14 @@ import { userLogin } from '../apis/api/auth';
 import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { tokenState } from '../store/auth';
+import { userState } from '../store/user';
 
 export const Login = () => {
   const [isError, setIsError] = useState<boolean>(false);
   const [inputEmail, setInputEmail] = useState<string>('');
   const [inputPassword, setInputPassword] = useState<string>('');
+
+  const setUserState = useSetRecoilState(userState);
 
   const setToken = useSetRecoilState(tokenState);
 
@@ -21,17 +24,19 @@ export const Login = () => {
     formData.append('email', inputEmail);
     formData.append('password', inputPassword);
 
-    userLogin({ email: inputEmail, password: inputPassword })
+    userLogin(formData)
       .then(res => {
-        const accessToken = res.headers.authorization.split(' ')[1];
-        const refreshToken = res.headers.refreshtoken;
+        setUserState(res.data);
+        const accessToken = res.headers.access_token;
+        const refreshToken = res.headers.refresh_token;
         localStorage.setItem('access-token', accessToken);
         localStorage.setItem('refresh-token', refreshToken);
         setToken(accessToken);
         navigate('/');
       })
-      .catch(() => {
+      .catch(err => {
         alert('이메일 혹은 비밀번호를 확인하세요');
+        console.log(err);
       });
   };
 
