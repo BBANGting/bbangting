@@ -1,71 +1,63 @@
 package com.khu.bbangting.config.jwt;
 
-import com.khu.bbangting.domain.user.repository.TokenRepository;
+import io.jsonwebtoken.IncorrectClaimException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-/**
- * JWT 토큰의 유효성을 검사하고, 인증
- */
-@Component
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
+// SecurityConfig.class에서 UsernamePasswordAuthenticationFilter 이전에 통과할 filter
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
-    private final TokenRepository tokenRepository;
-
-    @Value("${jwt.header}") private String HEADER_STRING;
-    @Value("${jwt.prefix}") private String TOKEN_PREFIX;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain) throws ServletException, IOException {
 
-        // get token
-        final String authHeader = request.getHeader(HEADER_STRING);
-        final String jwt;
-        final String userEmail;
+        // Access Token 추출
+        String accessToken = resolveToken(request);
 
-        if (authHeader == null || !authHeader.startsWith(TOKEN_PREFIX)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        jwt = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(jwt);
-        System.out.println(userEmail);
-        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
-            boolean isTokenValid = tokenRepository.findByToken(jwt).map(t -> !t.isExpired() && !t.isRevoked()).orElse(false);
-            if (jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                log.info("authenticated user " + userEmail + ", setting security context");
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            } else {
-                log.info("Invalid JWT Token !!");
+        try { // 정상 토큰인지 검사
+            if (accessToken != null && jwtTokenProvider.validateAccessToken(accessToken)) {
+                Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                log.debug("Save authentication in SecurityContextHolder.");
             }
-        } else {
-            log.info("Username is null or context is not null !!");
+        } catch (IncorrectClaimException e) { // 잘못된 토큰일 경우 -> 403 에러처리
+            SecurityContextHolder.clearContext();
+            log.debug("Invalid JWT token.");
+            response.sendError(403);
+        } catch (UsernameNotFoundException e) { // 회원을 찾을 수 없는 경우 -> 403 에러처리
+            SecurityContextHolder.clearContext();
+            log.debug("User not founded.");
+            response.sendError(403);
         }
 
         filterChain.doFilter(request, response);
     }
+
+    // Http Request Header로부터 토큰 추출
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+
+        return null;
+    }
+
 }
