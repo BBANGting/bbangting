@@ -1,62 +1,85 @@
 package com.khu.bbangting.config;
 
+import com.khu.bbangting.config.jwt.JwtAccessDeniedHandler;
+import com.khu.bbangting.config.jwt.JwtAuthenticationEntryPoint;
 import com.khu.bbangting.config.jwt.JwtAuthenticationFilter;
+import com.khu.bbangting.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final AuthenticationProvider authenticationProvider;
-    private final CorsConfigurationSource corsConfigurationSource;
-    private final JwtAuthenticationFilter jwtAuthFilter;
-    private final LogoutHandler logoutService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        // ACL(Access Control List, 접근 제어 목록)의 예외 URL 설정
+        return (web) -> web
+                .ignoring()
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()) // 정적 리소스들
+                .requestMatchers(new AntPathRequestMatcher("/"))
+                .requestMatchers(new AntPathRequestMatcher("/auth/**"))
+                .requestMatchers(new AntPathRequestMatcher("/store/**"))
+                .requestMatchers(new AntPathRequestMatcher("/comingSoon/**"))
+                .requestMatchers(new AntPathRequestMatcher("/bread/**"));
+
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity
+                // jwt 토큰 사용을 위한 설정
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                .httpBasic(httpBasic -> httpBasic.disable())
+                .formLogin(login -> login.disable())
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 X
+
+                // 예외처리
+                .exceptionHandling(except -> except
+                        // 401에러 핸들링을 위한 설정
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        // 403 에러 핸들링을 위한 설정
+                        .accessDeniedHandler(jwtAccessDeniedHandler))
 
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(new AntPathRequestMatcher("/")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/store/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/comingSoon/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/bread/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/logout")).hasRole("USER")
                         .requestMatchers(new AntPathRequestMatcher("/myStore/**")).hasRole("USER")
                         .requestMatchers(new AntPathRequestMatcher("/myPage/**")).hasRole("USER")
                         .requestMatchers(new AntPathRequestMatcher("/review/**")).hasRole("USER")
-                        .anyRequest().authenticated()
+                        .anyRequest().authenticated())
 
-                )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 X
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout(logoutConfig -> {
-                    logoutConfig
-                            .logoutUrl("/logout")
-                            .addLogoutHandler(logoutService)
-                            .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext()));
-                });
+                .headers(header -> header
+                        .frameOptions(frameOptionsConfig -> frameOptionsConfig.sameOrigin()));
 
         return httpSecurity.build();
+    }
 
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
 }
