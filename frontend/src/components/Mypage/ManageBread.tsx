@@ -2,6 +2,7 @@ import { Grid } from '@mui/material';
 import InfoTitle from './InfoTitle';
 import ManageBreadCard from './ManageBreadCard';
 import bread from '../json/bread.json';
+import { Link } from 'react-router-dom';
 
 const ManageBread: React.FC = () => {
   return (
@@ -11,6 +12,11 @@ const ManageBread: React.FC = () => {
         {bread.map(item => (
           <ManageBreadCard img={item.breadImage} name={item.breadName} />
         ))}
+        <ManageBreadCard
+          img={'/imgs/newBread.png'}
+          name="새 빵팅 등록"
+          isBtn={true}
+        />
       </Grid>
     </>
   );

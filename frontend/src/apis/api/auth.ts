@@ -1,8 +1,12 @@
 import { AxiosResponse } from 'axios';
-import { defaultInstance } from '../utils/instance';
+import { authInstance, defaultInstance } from '../utils/instance';
 
-export const userLogin = async (data: TLoginForm) => {
-  const res: AxiosResponse = await defaultInstance.post('/auth/login', data);
+export const userLogin = async (data: FormData) => {
+  const res: AxiosResponse = await defaultInstance.post('/auth/login', data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
   return res;
 };
 
@@ -11,9 +15,9 @@ export const userSignup = async (data: TSignupForm) => {
   return res;
 };
 
-type TLoginForm = {
-  email: string;
-  password: string;
+export const checkToken = async () => {
+  const res = await authInstance.get('checkToken');
+  return res;
 };
 
 type TSignupForm = {
