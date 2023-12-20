@@ -1,6 +1,8 @@
 import { Grid, IconButton, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { Link } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { storeIdState } from '../../store/store';
 
 type ManageBreadCardProps = {
   img: string;
@@ -13,6 +15,8 @@ const ManageBreadCard: React.FC<ManageBreadCardProps> = ({
   name,
   isBtn,
 }) => {
+  const storeId = useRecoilValue(storeIdState);
+
   return (
     <Grid
       item
@@ -36,7 +40,7 @@ const ManageBreadCard: React.FC<ManageBreadCardProps> = ({
         position="relative"
       >
         {isBtn ? (
-          <Link to={`/new/bread`}>
+          <Link to={`/new/bread/${storeId}`}>
             <img src={img} alt="hi" width={160} height={160} />
           </Link>
         ) : (

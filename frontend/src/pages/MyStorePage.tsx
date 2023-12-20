@@ -4,12 +4,18 @@ import Profile from '../components/Mypage/Profile';
 import MyStoreInfo from '../components/Mypage/MyStoreInfo';
 import { useEffect, useState } from 'react';
 import { getMyStoreInfo } from '../apis/api/mystore';
+import { useSetRecoilState } from 'recoil';
+import { storeIdState } from '../store/store';
 
 export const MyStorePage = () => {
   const [storeInfo, setStoreInfo] = useState();
+
+  const setStoreId = useSetRecoilState(storeIdState);
+
   useEffect(() => {
     getMyStoreInfo().then(res => {
       console.log(res);
+      setStoreId(res.myStoreInfo.storeId);
       setStoreInfo(res);
     });
   }, []);

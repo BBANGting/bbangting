@@ -28,7 +28,7 @@ function App() {
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/mystorepage" element={<MyStorePage />} />
         <Route path="/bread/:breadId" element={<BreadDetail />} />
-        <Route path="/new/bread" element={<BreadUpload />} />
+        <Route path="/new/bread/:storeId" element={<BreadUpload />} />
         <Route path="/new/store" element={<StoreUpload />} />
       </Routes>
       <ReactQueryDevtools position="bottom-right" />

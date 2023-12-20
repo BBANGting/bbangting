@@ -1,6 +1,8 @@
 import { Button, Container, Grid, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import { useRef } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { newMyBread } from '../apis/api/mybread';
 
 const BreadUpload = () => {
   const logoImg = useRef<HTMLInputElement>(null);
@@ -10,13 +12,17 @@ const BreadUpload = () => {
   const stock = useRef<HTMLInputElement>(null);
   const tingDate = useRef<HTMLInputElement>(null);
 
+  const { storeId } = useParams();
+
+  const navigate = useNavigate();
+
   const clickHandler = () => {
     const formdata = new FormData();
     formdata.append('imageFile', logoImg.current.files[0]);
     formdata.append('imageFile', descImg.current.files[0]);
 
     const jsonBody = {
-      storeId: 1,
+      storeId,
       breadName: name.current?.value,
       description: '맛난 빵',
       price: price.current?.value,
@@ -34,10 +40,10 @@ const BreadUpload = () => {
       new Blob([JSON.stringify(jsonBody)], { type: 'application/json' }),
     );
 
-    axios
-      .post(`http://localhost:8080/myStore/bread/new`, formdata, { headers })
-      .then(res => console.log(res))
-      .catch(error => console.error(error));
+    newMyBread(formdata).then(() => {
+      alert('빵 등록 성공!');
+      navigate('/mystorepage');
+    });
   };
 
   return (
