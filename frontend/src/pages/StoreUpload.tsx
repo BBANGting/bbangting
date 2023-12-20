@@ -1,6 +1,8 @@
 import { Button, Container, Grid, TextField, Typography } from '@mui/material';
 import { useRef } from 'react';
 import { newMyStore } from '../apis/api/mystore';
+import { useRecoilValue } from 'recoil';
+import { userState } from '../store/user';
 
 const StoreUpload = () => {
   const logoImg = useRef<HTMLInputElement>(null);
@@ -9,13 +11,15 @@ const StoreUpload = () => {
   const location = useRef<HTMLInputElement>(null);
   const description = useRef<HTMLInputElement>(null);
 
+  const { userId } = useRecoilValue(userState);
+
   const clickHandler = () => {
     const formdata = new FormData();
     formdata.append('imageFile', logoImg.current.files[0]);
     formdata.append('imageFile', descImg.current.files[0]);
 
     const jsonBody = {
-      userId: 10,
+      userId,
       storeName: name.current?.value,
       description: '개쩌는 빵 판매중',
       location: location.current?.value,
