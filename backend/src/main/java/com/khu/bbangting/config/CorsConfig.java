@@ -21,7 +21,7 @@ public class CorsConfig {
         configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
 
         configuration.addExposedHeader("Authorization");
-        configuration.addExposedHeader("Seu-Cookie");
+        configuration.addExposedHeader("Set-Cookie");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
