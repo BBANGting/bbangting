@@ -6,19 +6,16 @@ import com.khu.bbangting.domain.order.model.Order;
 import com.khu.bbangting.domain.order.repository.OrderRepository;
 import com.khu.bbangting.domain.review.dto.ReviewFormDto;
 import com.khu.bbangting.domain.review.dto.ReviewUpdateFormDto;
-import com.khu.bbangting.domain.review.model.Review;
 import com.khu.bbangting.domain.review.repository.ReviewRepository;
 import com.khu.bbangting.domain.review.service.ReviewService;
 import com.khu.bbangting.domain.user.model.User;
 import com.khu.bbangting.domain.user.repository.UserRepository;
-import com.khu.bbangting.domain.user.service.AuthService;
 import com.khu.bbangting.error.CustomException;
 import com.khu.bbangting.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

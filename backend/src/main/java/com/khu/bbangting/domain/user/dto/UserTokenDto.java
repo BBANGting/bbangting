@@ -1,11 +1,9 @@
 package com.khu.bbangting.domain.user.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserTokenDto {
 
     private String accessToken;

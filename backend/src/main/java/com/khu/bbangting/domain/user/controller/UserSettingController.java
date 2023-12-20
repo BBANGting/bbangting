@@ -3,13 +3,11 @@ package com.khu.bbangting.domain.user.controller;
 import com.khu.bbangting.domain.user.dto.NicknameUpdateDto;
 import com.khu.bbangting.domain.user.dto.PasswordUpdateDto;
 import com.khu.bbangting.domain.user.dto.UserResponseDto;
-import com.khu.bbangting.domain.user.model.User;
 import com.khu.bbangting.domain.user.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

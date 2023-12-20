@@ -8,10 +8,8 @@ import com.khu.bbangting.domain.user.service.AuthService;
 import com.khu.bbangting.domain.user.service.UserService;
 import com.khu.bbangting.error.CustomException;
 import com.khu.bbangting.error.ErrorCode;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

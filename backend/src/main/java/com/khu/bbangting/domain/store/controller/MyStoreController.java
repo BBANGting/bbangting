@@ -3,16 +3,11 @@ package com.khu.bbangting.domain.store.controller;
 import com.khu.bbangting.domain.bread.dto.BreadInfoDto;
 import com.khu.bbangting.domain.store.dto.MyStoreInfoDto;
 import com.khu.bbangting.domain.store.service.MyStoreService;
-import com.khu.bbangting.domain.user.model.User;
-import com.khu.bbangting.domain.user.service.AuthService;
-import com.khu.bbangting.error.CustomException;
-import com.khu.bbangting.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;

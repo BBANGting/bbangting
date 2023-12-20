@@ -5,8 +5,6 @@ import com.khu.bbangting.domain.notification.dto.NotificationDto;
 import com.khu.bbangting.domain.notification.model.Notification;
 import com.khu.bbangting.domain.notification.repository.NotificationRepository;
 import com.khu.bbangting.domain.user.model.User;
-import com.khu.bbangting.error.CustomException;
-import com.khu.bbangting.error.ErrorCode;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

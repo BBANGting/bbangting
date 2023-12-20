@@ -1,6 +1,5 @@
 package com.khu.bbangting.config.jwt;
 
-import com.khu.bbangting.error.ErrorResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
