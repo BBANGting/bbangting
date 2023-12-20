@@ -1,7 +1,7 @@
 import { Container, Grid, Typography } from '@mui/material';
-import StoreBreadCard from '../StoreDetail/StoreBreadCard';
 import { useBreadList } from '../../hooks/useBreadList';
 import { TBread } from '../../types';
+import BreadCard from '../common/Breadcard';
 
 const Lineup = () => {
   const { isLoading, data: breadList } = useBreadList();
@@ -15,7 +15,7 @@ const Lineup = () => {
         {isLoading && <>Loading...</>}
         {breadList &&
           breadList.map((item: TBread, idx: number) => (
-            <StoreBreadCard
+            <BreadCard
               key={idx}
               breadId={item.breadId}
               breadName={item.breadName}

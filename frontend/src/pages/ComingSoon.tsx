@@ -1,9 +1,9 @@
 import { Container, Grid, Typography } from '@mui/material';
-import { BreadCard } from '../components/Home/BreadCard';
 
 import { getComingBread } from '../apis/api/comingBread';
 import { useEffect, useState } from 'react';
 import { TBread } from '../types';
+import BreadCard from '../components/common/Breadcard';
 
 const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -61,10 +61,12 @@ export const ComingSoon = () => {
                   .map((bread, idx) => (
                     <BreadCard
                       key={idx}
-                      store={bread.storeName}
-                      name={bread.breadName}
-                      img={bread.imgUrl}
-                      openTime={bread.tingDateTime.split('T')[1]}
+                      breadId={bread.breadId}
+                      storeName={bread.storeName}
+                      breadName={bread.breadName}
+                      breadImage={bread.imgUrl}
+                      tingTime={bread.tingDateTime.split('T')[1]}
+                      tingStatus={bread.tingStatus}
                     />
                   ))
               )}
