@@ -1,6 +1,6 @@
 import { authInstance } from '../utils/instance';
 
-export const getMyStoreInfo = async (userId: number) => {
+export const getMyStoreInfo = async () => {
   try {
     const { data } = await authInstance.get(`myStore`);
     return data;
