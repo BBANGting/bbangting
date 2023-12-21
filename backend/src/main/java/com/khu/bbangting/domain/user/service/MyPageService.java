@@ -1,5 +1,6 @@
 package com.khu.bbangting.domain.user.service;
 
+import com.khu.bbangting.domain.user.dto.UserInfoDto;
 import com.khu.bbangting.error.CustomException;
 import com.khu.bbangting.error.ErrorCode;
 import com.khu.bbangting.domain.user.dto.NicknameUpdateDto;
@@ -28,18 +29,20 @@ public class MyPageService {
 
     // 회원정보 및 팔로우 내역 표시
     @Transactional(readOnly = true)
-    public List<UserResponseDto> getUserInfo(Authentication authentication) {
+    public List<UserInfoDto> getUserInfo(Authentication authentication) {
 
         User getUser = userRepository.findByEmail(authentication.getName()).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        List<UserResponseDto> userResponseDtoList = new ArrayList<>();
-        userResponseDtoList.add(UserResponseDto.builder()
+        List<UserInfoDto> userInfoDtoList = new ArrayList<>();
+        userInfoDtoList.add(UserInfoDto.builder()
+                .email(getUser.getEmail())
+                .username(getUser.getUsername())
                 .nickname(getUser.getNickname())
                 .banCount(getUser.getBanCount())
                 .build());
 
-        return userResponseDtoList;
+        return userInfoDtoList;
     }
 
     // 비밀번호 수정

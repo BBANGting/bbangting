@@ -3,6 +3,7 @@ package com.khu.bbangting.domain.user.controller;
 import com.khu.bbangting.domain.follow.service.FollowService;
 import com.khu.bbangting.domain.order.dto.OrderHistDto;
 import com.khu.bbangting.domain.store.dto.StoreInfoDto;
+import com.khu.bbangting.domain.user.dto.UserInfoDto;
 import com.khu.bbangting.domain.user.dto.UserResponseDto;
 import com.khu.bbangting.domain.user.service.MyPageService;
 import com.khu.bbangting.domain.order.service.OrderService;
@@ -31,7 +32,7 @@ public class MyPageController {
     @GetMapping("/myPage")
     public ResponseEntity<Result<List<?>>> getMyPage(Authentication authentication) {
 
-        List<UserResponseDto> userInfo = myPageService.getUserInfo(authentication);
+        List<UserInfoDto> userInfo = myPageService.getUserInfo(authentication);
 
         List<StoreInfoDto> followingList = followService.getFollowingList(authentication);
 
