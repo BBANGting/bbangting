@@ -5,6 +5,11 @@ export const storeFollow = async (data: TFollowData) => {
   return res;
 };
 
+export const isFollow = async (storeId: number, userId: number) => {
+  const res = await defaultInstance.get(`store/${storeId}/${userId}`);
+  return res;
+};
+
 type TFollowData = {
   userId: number;
   storeId: number;

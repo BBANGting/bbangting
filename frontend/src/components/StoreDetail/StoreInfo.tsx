@@ -1,9 +1,12 @@
 import { Button, Grid, Typography } from '@mui/material';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import { TStoreInfo } from '../../types';
-import { storeFollow } from '../../apis/api/follow';
+import { isFollow, storeFollow } from '../../apis/api/follow';
 import { useParams } from 'react-router-dom';
 import { QueryObserverResult } from 'react-query';
+import { useRecoilValue } from 'recoil';
+import { userState } from '../../store/user';
+import { useEffect } from 'react';
 
 type StoreInfoProps = {
   store: TStoreInfo;
@@ -12,6 +15,12 @@ type StoreInfoProps = {
 
 const StoreInfo: React.FC<StoreInfoProps> = ({ store, refetch }) => {
   const { storeId } = useParams();
+
+  const { userId } = useRecoilValue(userState);
+
+  useEffect(() => {
+    isFollow(Number(storeId), userId).then(res => console.log(res));
+  }, [userId]);
 
   const clickHandler = () => {
     storeFollow({
