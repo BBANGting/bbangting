@@ -37,6 +37,7 @@ const ManageBreadCard: React.FC<ManageBreadCardProps> = ({
         borderRadius={5}
         justifyContent="center"
         alignItems="center"
+        flexDirection="column"
         position="relative"
       >
         {isBtn ? (
@@ -46,13 +47,17 @@ const ManageBreadCard: React.FC<ManageBreadCardProps> = ({
         ) : (
           <img src={img} alt="hi" width={160} height={160} />
         )}
-
-        <Typography fontWeight={'bold'}>{name}</Typography>
-        <IconButton sx={{ color: '#dddddd', padding: 0.5 }}>
+        <Grid display="flex" mt={3}>
+          <Typography fontWeight={'bold'}>{name}</Typography>
           {!isBtn && (
-            <EditIcon fontSize="small" sx={{ width: '16px', height: '16px' }} />
+            <IconButton sx={{ color: '#dddddd', padding: 0.5 }}>
+              <EditIcon
+                fontSize="small"
+                sx={{ width: '16px', height: '16px' }}
+              />
+            </IconButton>
           )}
-        </IconButton>
+        </Grid>
       </Grid>
     </Grid>
   );

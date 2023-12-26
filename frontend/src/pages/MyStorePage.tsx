@@ -6,16 +6,19 @@ import { useEffect, useState } from 'react';
 import { getMyStoreInfo } from '../apis/api/mystore';
 import { useSetRecoilState } from 'recoil';
 import { storeIdState } from '../store/store';
+import { storeBreadState } from '../store/state';
 
 export const MyStorePage = () => {
   const [storeInfo, setStoreInfo] = useState();
 
   const setStoreId = useSetRecoilState(storeIdState);
+  const setStoreBread = useSetRecoilState(storeBreadState);
 
   useEffect(() => {
     getMyStoreInfo().then(res => {
       console.log(res);
       setStoreId(res.myStoreInfo.storeId);
+      setStoreBread(res.breadList);
       setStoreInfo(res);
     });
   }, []);
