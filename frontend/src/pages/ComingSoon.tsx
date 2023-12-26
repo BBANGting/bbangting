@@ -42,7 +42,7 @@ export const ComingSoon = () => {
       </Typography>
       <Grid container display="block">
         {generateDays().map((day, idx) => (
-          <>
+          <div key={idx}>
             <Typography key={idx} variant="h6" fontWeight={600} mb={2}>
               {day.label}
             </Typography>
@@ -71,7 +71,7 @@ export const ComingSoon = () => {
                   ))
               )}
             </Grid>
-          </>
+          </div>
         ))}
       </Grid>
     </Container>
