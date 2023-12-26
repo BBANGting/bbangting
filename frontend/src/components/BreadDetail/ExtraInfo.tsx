@@ -4,7 +4,11 @@ import TabPanel from './TabPanel';
 import BreadInfo from './BreadInfo';
 import BreadReview from './BreadReview';
 
-const ExtraInfo: React.FC = () => {
+type ExtraInfoProps = {
+  breadDetailImg: string;
+};
+
+const ExtraInfo: React.FC<ExtraInfoProps> = ({ breadDetailImg }) => {
   const [value, setValue] = useState<number>(0);
 
   const handleChange = (e: SyntheticEvent, newValue: number) => {
@@ -21,11 +25,11 @@ const ExtraInfo: React.FC = () => {
       >
         <Tab label="상세 정보" />
         <Tab label="리뷰" />
-        <Tab label="문의" />
+        {/* <Tab label="문의" /> */}
       </Tabs>
       <Box>
         <TabPanel value={value} index={0}>
-          <BreadInfo />
+          <BreadInfo breadDetailImg={breadDetailImg} />
         </TabPanel>
         <TabPanel value={value} index={1}>
           <BreadReview />

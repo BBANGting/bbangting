@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 public class PasswordUpdateDto {
 
     private String newPassword;
-
     private String newPasswordConfirm;
 
     @Builder

@@ -5,19 +5,15 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Timestamp;
-import java.util.*;
 
 @NoArgsConstructor
 @Entity
 @Table(name="users")
 @Getter @Setter
 @DynamicInsert
-public class User implements UserDetails {
+public class User {
 
     @Id
     @Column(name = "userId")
@@ -42,6 +38,8 @@ public class User implements UserDetails {
 
     @CreationTimestamp
     private Timestamp createdDate;
+
+    private String refreshToken;
 
     @ColumnDefault("'USER'")
     @Enumerated(EnumType.STRING)
@@ -69,41 +67,12 @@ public class User implements UserDetails {
         return this;
     }
 
+    public void updateRefreshToken(String newToken) {
+        this.refreshToken = newToken;
+    }
+
     public boolean isBanUser(User user) {
         return this.banCount == 5;
-    }
-
-    //========== UserDetails implements ==========//
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add( new SimpleGrantedAuthority("ROLE_" + this.role.name()));
-        return authorities;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
     }
 
 }

@@ -1,44 +1,48 @@
 import { Box, Container, Grid, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
-import { AuthButton } from '../components/Login/AuthButton';
-import axios from 'axios';
+import { userLogin } from '../apis/api/auth';
+import { useNavigate } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import { tokenState } from '../store/auth';
+import { userState } from '../store/user';
+import ColorButton from '../components/common/ColorButton';
 
 export const Login = () => {
   const [isError, setIsError] = useState<boolean>(false);
   const [inputEmail, setInputEmail] = useState<string>('');
   const [inputPassword, setInputPassword] = useState<string>('');
 
+  const setUserState = useSetRecoilState(userState);
+
+  const setToken = useSetRecoilState(tokenState);
+
+  const navigate = useNavigate();
+
   const clickHandler = async () => {
     const formData = new FormData();
     formData.append('email', inputEmail);
     formData.append('password', inputPassword);
 
-    await axios
-      .post('/auth/login', {
-        email: inputEmail,
-        password: inputPassword,
-      })
+    userLogin(formData)
       .then(res => {
-        const accessToken = res.headers.authorization.split(' ')[1];
-        const refreshToken = res.headers.refreshtoken;
+        setUserState(res.data);
+        const accessToken = res.headers.access_token;
+        const refreshToken = res.headers.refresh_token;
         localStorage.setItem('access-token', accessToken);
         localStorage.setItem('refresh-token', refreshToken);
+        setToken(accessToken);
+        navigate('/');
       })
-      .catch(err => console.log(err));
-  };
-
-  const clickHandler2 = async () => {
-    await axios
-      .post('/logout')
-      .then(res => console.log(res))
-      .catch(err => console.log(err));
+      .catch(err => {
+        alert('이메일 혹은 비밀번호를 확인하세요');
+        console.log(err);
+      });
   };
 
   const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setInputEmail(e.target.value);
     const confirmEmail: boolean = /^[\w+_]\w+@\w+\.\w+/.test(e.target.value);
-    console.log(confirmEmail);
     setIsError(!confirmEmail);
   };
 
@@ -80,10 +84,9 @@ export const Login = () => {
           />
         </Grid>
         <Grid mt={3}>
-          <AuthButton text="로그인" onClick={clickHandler} />
-        </Grid>
-        <Grid mt={3}>
-          <AuthButton text="로그아웃" onClick={clickHandler2} />
+          <ColorButton fullWidth sx={{ height: 50 }} onClick={clickHandler}>
+            <Typography variant="h6">로그인</Typography>
+          </ColorButton>
         </Grid>
       </Box>
     </Container>

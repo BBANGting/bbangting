@@ -1,16 +1,28 @@
 import { Grid } from '@mui/material';
 import InfoTitle from './InfoTitle';
 import ManageBreadCard from './ManageBreadCard';
-import bread from '../json/bread.json';
+import { useRecoilValue } from 'recoil';
+import { storeBreadState } from '../../store/state';
 
 const ManageBread: React.FC = () => {
+  const storeBread = useRecoilValue(storeBreadState);
+
   return (
     <>
       <InfoTitle sx={{ mt: 15 }}>빵 관리</InfoTitle>
       <Grid container sx={{ overflowX: 'auto' }}>
-        {bread.map(item => (
-          <ManageBreadCard img={item.breadImage} name={item.breadName} />
+        {storeBread.map(item => (
+          <ManageBreadCard
+            key={item.breadId}
+            img={item.imgUrl}
+            name={item.breadName}
+          />
         ))}
+        <ManageBreadCard
+          img={'/imgs/newBread.png'}
+          name="새 빵팅 등록"
+          isBtn={true}
+        />
       </Grid>
     </>
   );

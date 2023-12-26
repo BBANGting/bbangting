@@ -1,5 +1,6 @@
 package com.khu.bbangting.domain.review.controller;
 
+import com.khu.bbangting.config.jwt.SecurityUtils;
 import com.khu.bbangting.domain.bread.model.Bread;
 import com.khu.bbangting.domain.bread.repository.BreadRepository;
 import com.khu.bbangting.domain.order.model.Order;
@@ -16,7 +17,6 @@ import com.khu.bbangting.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,7 +31,11 @@ public class ReviewApiController {
 
     // 리뷰 작성
     @PostMapping("/review/{breadId}")
-    public ResponseEntity<String> addReview(@AuthenticationPrincipal User user, @PathVariable Long breadId, @RequestBody ReviewFormDto requestDto) {
+    public ResponseEntity<String> addReview(@PathVariable Long breadId, @RequestBody ReviewFormDto requestDto) {
+
+        String userEmail = SecurityUtils.getCurrentUserEmail();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         Bread bread = breadRepository.findById(breadId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BREAD_NOT_FOUND));
@@ -49,8 +53,12 @@ public class ReviewApiController {
 
     // 리뷰 수정
     @PutMapping("/review/{reviewId}")
-    public ResponseEntity<String> modifyReview(@AuthenticationPrincipal User user, @PathVariable Long reviewId,
-                                                            @RequestBody ReviewUpdateFormDto requestDto) {
+    public ResponseEntity<String> modifyReview(@PathVariable Long reviewId, @RequestBody ReviewUpdateFormDto requestDto) {
+
+        String userEmail = SecurityUtils.getCurrentUserEmail();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
 
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));

@@ -6,6 +6,7 @@ import com.khu.bbangting.domain.review.dto.ReviewUpdateFormDto;
 import com.khu.bbangting.domain.review.model.Review;
 import com.khu.bbangting.domain.review.repository.ReviewRepository;
 import com.khu.bbangting.domain.user.model.User;
+import com.khu.bbangting.domain.user.repository.UserRepository;
 import com.khu.bbangting.error.CustomException;
 import com.khu.bbangting.error.ErrorCode;
 import jakarta.validation.Valid;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
 
+    private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
 
     @Override
@@ -35,10 +37,13 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ReviewFormDto register(User user, Bread bread, @Valid ReviewFormDto requestDto) {
 
-        if (reviewRepository.existsByUserIdAndBreadId(user.getId(), bread.getId())) {
+        User userDetail = userRepository.findByEmail(user.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if (reviewRepository.existsByUserIdAndBreadId(userDetail.getId(), bread.getId())) {
             throw new CustomException(ErrorCode.REVIEW_IS_EXIST);}
 
-        return fromReview(reviewRepository.save(toEntity(user, bread, requestDto)));
+        return fromReview(reviewRepository.save(toEntity(userDetail, bread, requestDto)));
     }
 
     @Override

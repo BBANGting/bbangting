@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
-import './App.css';
+import './styles/global.css';
 import { Header } from './components/Header';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
@@ -11,6 +11,8 @@ import { MyStorePage } from './pages/MyStorePage';
 import StoreDetail from './pages/StoreDetail';
 import BreadDetail from './pages/BreadDetail';
 import BreadUpload from './pages/BreadUpload';
+import { ReactQueryDevtools } from 'react-query/devtools';
+import StoreUpload from './pages/StoreUpload';
 
 function App() {
   return (
@@ -26,8 +28,10 @@ function App() {
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/mystorepage" element={<MyStorePage />} />
         <Route path="/bread/:breadId" element={<BreadDetail />} />
-        <Route path="/new/bread" element={<BreadUpload />} />
+        <Route path="/new/bread/:storeId" element={<BreadUpload />} />
+        <Route path="/new/store" element={<StoreUpload />} />
       </Routes>
+      <ReactQueryDevtools position="bottom-right" />
     </>
   );
 }

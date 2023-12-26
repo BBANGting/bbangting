@@ -1,38 +1,21 @@
 import { Container, Grid, Typography } from '@mui/material';
-import { ReactQueryDevtools } from 'react-query/devtools';
-import StoreBreadCard from '../StoreDetail/StoreBreadCard';
 import { useBreadList } from '../../hooks/useBreadList';
-import { AxiosResponse } from 'axios';
-
-type BreadList = {
-  breadId: number;
-  breadName: string;
-  imgUrl: string;
-  tingDateTime: string;
-};
+import { TBread } from '../../types';
+import BreadCard from '../common/Breadcard';
 
 const Lineup = () => {
-  const onSuccess = (data: AxiosResponse) => {
-    console.log(data);
-  };
-  const onError = (error: ErrorEvent) => {
-    console.log(error);
-  };
-  const { isLoading, data: breadList } = useBreadList(onSuccess, onError);
+  const { isLoading, data: breadList } = useBreadList();
 
   return (
     <Container fixed style={{ marginTop: 40, padding: 0 }}>
-      <Typography
-        variant="h5"
-        sx={{ fontWeight: 600, marginLeft: 5, marginBottom: 5 }}
-      >
+      <Typography variant="h5" sx={{ fontWeight: 600, marginBottom: 5 }}>
         빵케팅 라인업
       </Typography>
       <Grid container>
         {isLoading && <>Loading...</>}
-        {!isLoading &&
-          breadList?.data.map((item: BreadList, idx: number) => (
-            <StoreBreadCard
+        {breadList &&
+          breadList.map((item: TBread, idx: number) => (
+            <BreadCard
               key={idx}
               breadId={item.breadId}
               breadName={item.breadName}
@@ -42,7 +25,6 @@ const Lineup = () => {
             />
           ))}
       </Grid>
-      <ReactQueryDevtools position="bottom-right" />
     </Container>
   );
 };

@@ -12,7 +12,7 @@ const StoreBanner: React.FC<StoreBannerProps> = ({ storeImage, storeLogo }) => {
         src={storeImage}
         alt="스토어 배경"
         width="100%"
-        style={{ objectFit: 'cover', minHeight: 270 }}
+        style={{ objectFit: 'cover', minHeight: 270, height: 370 }}
       />
       <img
         src={storeLogo}
@@ -21,6 +21,7 @@ const StoreBanner: React.FC<StoreBannerProps> = ({ storeImage, storeLogo }) => {
         height={130}
         style={{
           position: 'absolute',
+          objectFit: 'cover',
           bottom: 20,
           left: 20,
           borderRadius: 999,

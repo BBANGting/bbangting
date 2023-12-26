@@ -17,7 +17,7 @@ export const MainBanner = () => {
       <Box
         sx={{
           display: 'flex',
-          width: 1440,
+          width: 1200,
         }}
       >
         <Box sx={{ alignSelf: 'flex-end' }}>

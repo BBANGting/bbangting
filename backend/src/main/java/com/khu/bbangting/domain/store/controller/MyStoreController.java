@@ -1,9 +1,13 @@
 package com.khu.bbangting.domain.store.controller;
 
+import com.khu.bbangting.config.jwt.SecurityUtils;
 import com.khu.bbangting.domain.bread.dto.BreadInfoDto;
 import com.khu.bbangting.domain.store.dto.MyStoreInfoDto;
 import com.khu.bbangting.domain.store.service.MyStoreService;
 import com.khu.bbangting.domain.user.model.User;
+import com.khu.bbangting.domain.user.repository.UserRepository;
+import com.khu.bbangting.error.CustomException;
+import com.khu.bbangting.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +26,17 @@ public class MyStoreController {
 
     @Autowired
     private MyStoreService myStoreService;
+    @Autowired
+    private UserRepository userRepository;
 
     // 마이스토어 페이지 호출
     @GetMapping("/myStore")
-    public ResponseEntity<Map<String, Object>> myStorePage(@AuthenticationPrincipal User user){
+    public ResponseEntity<Map<String, Object>> myStorePage(){
+
+        String userEmail = SecurityUtils.getCurrentUserEmail();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
         Map<String, Object> result = new HashMap<>();
 
         // 스토어 정보 호출

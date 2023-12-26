@@ -28,8 +28,8 @@ public class MyPageService {
     @Transactional(readOnly = true)
     public List<UserResponseDto> getUserInfo(User user) {
 
-        User getUser = userRepository.findById(user.getId()).orElseThrow(
-                () -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        User getUser = userRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         List<UserResponseDto> userResponseDtoList = new ArrayList<>();
         userResponseDtoList.add(UserResponseDto.builder()
@@ -44,7 +44,7 @@ public class MyPageService {
     @Transactional
     public UserResponseDto updatePassword(User user, @Valid PasswordUpdateDto requestDto) {
         String encodePwd = passwordEncoder.encode(requestDto.getNewPassword());
-        User updateUser = userRepository.findById(user.getId()).orElseThrow(
+        User updateUser = userRepository.findByEmail(user.getUsername()).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND));
         updateUser.updatePassword(encodePwd);
         return UserResponseDto.fromUser(updateUser);
@@ -53,7 +53,7 @@ public class MyPageService {
     // 닉네임 수정
     @Transactional
     public UserResponseDto updateNickname(User user, @Valid NicknameUpdateDto requestDto) {
-        User updateUser = userRepository.findById(user.getId()).orElseThrow(
+        User updateUser = userRepository.findByEmail(user.getUsername()).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND));
         updateUser.updateNickname(requestDto.getNewNickname());
         return UserResponseDto.fromUser(updateUser);

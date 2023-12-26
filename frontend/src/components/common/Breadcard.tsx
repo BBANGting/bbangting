@@ -1,12 +1,13 @@
 import { Box, Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 
-type StoreBreadCardProps = {
+type BreadCardProps = {
   breadId: number;
   breadImage: string;
   breadName: string;
   tingTime: string;
   tingStatus: string;
+  storeName?: string;
 };
 
 const extractTime = (tingTime: string) => {
@@ -16,10 +17,11 @@ const extractTime = (tingTime: string) => {
   return `${hours}:${minutes < 10 ? `0${minutes}` : minutes}`;
 };
 
-const StoreBreadCard: React.FC<StoreBreadCardProps> = ({
+const BreadCard: React.FC<BreadCardProps> = ({
   breadId,
   breadImage,
   breadName,
+  storeName,
   tingStatus,
   tingTime,
 }) => {
@@ -82,6 +84,7 @@ const StoreBreadCard: React.FC<StoreBreadCardProps> = ({
           </Box>
 
           <Typography fontSize={20} mt={3}>
+            {storeName && <>[{storeName}]</>}
             {breadName}
           </Typography>
         </Box>
@@ -90,4 +93,4 @@ const StoreBreadCard: React.FC<StoreBreadCardProps> = ({
   );
 };
 
-export default StoreBreadCard;
+export default BreadCard;

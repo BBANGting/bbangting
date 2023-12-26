@@ -1,9 +1,9 @@
 import { Container, Grid, Typography } from '@mui/material';
-import { BreadCard } from '../components/Home/BreadCard';
 
-import _DUMMY from '../json/dummy.json';
 import { getComingBread } from '../apis/api/comingBread';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { TBread } from '../types';
+import BreadCard from '../components/common/Breadcard';
 
 const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -26,45 +26,52 @@ const generateDays = () => {
 };
 
 export const ComingSoon = () => {
+  const [breadList, setBreadList] = useState<TBread[]>([]);
+
   useEffect(() => {
-    getComingBread().then(res => console.log(res));
-  });
+    getComingBread().then(res => {
+      console.log(res);
+      setBreadList(res);
+    });
+  }, []);
 
   return (
     <Container fixed style={{ marginTop: 40, padding: 0 }}>
-      <Typography
-        variant="h5"
-        sx={{ fontWeight: 600, marginLeft: 5, marginBottom: 5 }}
-      >
+      <Typography variant="h5" sx={{ fontWeight: 600, marginBottom: 5 }}>
         오픈 예정
       </Typography>
       <Grid container display="block">
         {generateDays().map((day, idx) => (
-          <>
-            <Typography key={idx} variant="h6" fontWeight={600} ml={5} mb={2}>
+          <div key={idx}>
+            <Typography key={idx} variant="h6" fontWeight={600} mb={2}>
               {day.label}
             </Typography>
             <Grid container display="flex">
-              {_DUMMY.filter(bread => bread.openDate === day.date).length ===
-              0 ? (
-                <Typography variant="h5" ml={5} mb={2} color="#c7c7c7">
+              {breadList.filter(
+                bread => bread.tingDateTime.split('T')[0] === day.date,
+              ).length === 0 ? (
+                <Typography variant="h5" mb={2} color="#c7c7c7">
                   오픈 예정인 빵켓팅이 없습니다.
                 </Typography>
               ) : (
-                _DUMMY
-                  .filter(bread => bread.openDate === day.date)
+                breadList
+                  .filter(
+                    bread => bread.tingDateTime.split('T')[0] === day.date,
+                  )
                   .map((bread, idx) => (
                     <BreadCard
                       key={idx}
-                      store={bread.store}
-                      name={bread.name}
-                      img={bread.img}
-                      openTime={bread.openTime}
+                      breadId={bread.breadId}
+                      storeName={bread.storeName}
+                      breadName={bread.breadName}
+                      breadImage={bread.imgUrl}
+                      tingTime={bread.tingDateTime.split('T')[1]}
+                      tingStatus={bread.tingStatus}
                     />
                   ))
               )}
             </Grid>
-          </>
+          </div>
         ))}
       </Grid>
     </Container>
