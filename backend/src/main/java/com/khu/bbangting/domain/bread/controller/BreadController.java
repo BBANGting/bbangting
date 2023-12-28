@@ -56,7 +56,7 @@ public class BreadController {
     // 리뷰 페이지 호출
     @GetMapping("/review/{breadId}")
     public ResponseEntity<List<ReviewFormDto>> reviewPage(@PathVariable Long breadId) {
-        List<ReviewFormDto> reviewListDto = reviewService.getListOfBread(breadId);
+        List<ReviewFormDto> reviewListDto = reviewService.getListOfBreadReview(breadId);
 
         return ResponseEntity.ok(reviewListDto);
     }

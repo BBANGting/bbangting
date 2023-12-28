@@ -2,9 +2,10 @@ package com.khu.bbangting.domain.user.controller;
 
 import com.khu.bbangting.domain.follow.service.FollowService;
 import com.khu.bbangting.domain.order.dto.OrderHistDto;
+import com.khu.bbangting.domain.review.dto.ReviewFormDto;
+import com.khu.bbangting.domain.review.service.ReviewService;
 import com.khu.bbangting.domain.store.dto.StoreInfoDto;
 import com.khu.bbangting.domain.user.dto.UserInfoDto;
-import com.khu.bbangting.domain.user.dto.UserResponseDto;
 import com.khu.bbangting.domain.user.service.MyPageService;
 import com.khu.bbangting.domain.order.service.OrderService;
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class MyPageController {
     private final OrderService orderService;
     private final MyPageService myPageService;
     private final FollowService followService;
+    private final ReviewService reviewService;
 
     // 마이페이지 호출 (유저 정보 포함)
     @GetMapping("/myPage")
@@ -81,11 +83,12 @@ public class MyPageController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
-    // 5. 리뷰관리 -> 보류
+    // 5. 작성한 리뷰내역
     @GetMapping("/myPage/review")
-    public ResponseEntity<?> reviewForm() {
+    public ResponseEntity<List<ReviewFormDto>> reviewPage(Authentication authentication) {
+        List<ReviewFormDto> reviewListDto = reviewService.getListOfUserReview(authentication);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        return ResponseEntity.ok(reviewListDto);
     }
 
 }

@@ -6,10 +6,12 @@ import com.khu.bbangting.domain.review.dto.ReviewUpdateFormDto;
 import com.khu.bbangting.domain.review.model.Review;
 import com.khu.bbangting.domain.review.repository.ReviewRepository;
 import com.khu.bbangting.domain.user.model.User;
+import com.khu.bbangting.domain.user.repository.UserRepository;
 import com.khu.bbangting.error.CustomException;
 import com.khu.bbangting.error.ErrorCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,9 +23,11 @@ import java.util.stream.Collectors;
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
+    private final UserRepository userRepository;
 
+    // 빵 세부 페이지 리뷰 모음
     @Override
-    public List<ReviewFormDto> getListOfBread(Long breadId) {
+    public List<ReviewFormDto> getListOfBreadReview(Long breadId) {
 
         Bread bread = Bread.builder().id(breadId).build();
 
@@ -32,6 +36,19 @@ public class ReviewServiceImpl implements ReviewService {
         return result.stream().map(breadReview -> fromReview(breadReview)).collect(Collectors.toList());
     }
 
+    // 유저 마이페이지 리뷰 모음
+    @Override
+    public List<ReviewFormDto> getListOfUserReview(Authentication authentication) {
+
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        List<Review> result = reviewRepository.findByUserId(user.getId());
+
+        return result.stream().map(userReview -> fromReview(userReview)).collect(Collectors.toList());
+    }
+
+    // 리뷰 작성
     @Override
     public ReviewFormDto register(User user, Bread bread, @Valid ReviewFormDto requestDto) {
 
@@ -41,6 +58,7 @@ public class ReviewServiceImpl implements ReviewService {
         return fromReview(reviewRepository.save(toEntity(user, bread, requestDto)));
     }
 
+    // 리뷰 수정
     @Override
     public ReviewUpdateFormDto modify(User user, Long reviewId, ReviewUpdateFormDto requestDto) {
 
@@ -57,6 +75,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     }
 
+    // 리뷰 삭제
     @Transactional
     public void remove(Long reviewId) {
 

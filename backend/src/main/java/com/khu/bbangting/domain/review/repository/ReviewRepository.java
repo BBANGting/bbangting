@@ -12,5 +12,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @EntityGraph(attributePaths = {"user"}, type = EntityGraph.EntityGraphType.FETCH)
     List<Review> findByBread(Bread bread);
 
+    List<Review> findByUserId(Long userId);
+
     boolean existsByUserIdAndBreadId(Long userId, Long breadId);
 }

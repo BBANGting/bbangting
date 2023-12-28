@@ -6,6 +6,7 @@ import com.khu.bbangting.domain.review.dto.ReviewUpdateFormDto;
 import com.khu.bbangting.domain.review.model.Review;
 import com.khu.bbangting.domain.user.model.User;
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -14,7 +15,10 @@ import java.util.List;
 public interface ReviewService {
 
     // 빵 상세정보에서 리뷰들 가져오기
-    List<ReviewFormDto> getListOfBread(Long breadId);
+    List<ReviewFormDto> getListOfBreadReview(Long breadId);
+
+    // 마이페이지에서 리뷰내역 가져오기
+    List<ReviewFormDto> getListOfUserReview(Authentication authentication);
 
     //리뷰 작성
     ReviewFormDto register(User user, Bread bread, @Valid ReviewFormDto requestDto);
@@ -40,7 +44,6 @@ public interface ReviewService {
 
     default ReviewFormDto fromReview(Review review) {
         ReviewFormDto breadReviewDto = ReviewFormDto.builder()
-                .nickname(review.getUser().getNickname())
                 .rating(review.getRating())
                 .content(review.getContent())
                 .build();
