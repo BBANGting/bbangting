@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReviewFormDto {
 
-    private String nickname;
     private double rating;
     private String content;
 
