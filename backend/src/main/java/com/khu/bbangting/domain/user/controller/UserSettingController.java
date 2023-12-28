@@ -18,21 +18,22 @@ public class UserSettingController {
 
     // 비밀번호 수정하기
     @PostMapping("/myPage/rePassword")
-    public ResponseEntity<UserResponseDto> updatePassword(
+    public ResponseEntity<?> updatePassword(
             Authentication authentication,
             @RequestBody PasswordUpdateDto requestDto) {
 
-        UserResponseDto updatePassword = myPageService.updatePassword(authentication, requestDto);
-        return ResponseEntity.status(HttpStatus.OK).body(updatePassword);
+        myPageService.updatePassword(authentication, requestDto);
+        return ResponseEntity.ok().build();
     }
 
     // 닉네임 수정하기
     @PostMapping("/myPage/reNickname")
-    public ResponseEntity<UserResponseDto> updateNickname(
+    public ResponseEntity<?> updateNickname(
             Authentication authentication,
             @RequestBody NicknameUpdateDto requestDto) {
-        UserResponseDto updateNickname = myPageService.updateNickname(authentication, requestDto);
-        return ResponseEntity.status(HttpStatus.OK).body(updateNickname);
+
+        myPageService.updateNickname(authentication, requestDto);
+        return ResponseEntity.ok().build();
     }
 
 }
