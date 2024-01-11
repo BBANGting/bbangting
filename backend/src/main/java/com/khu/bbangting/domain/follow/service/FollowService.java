@@ -1,5 +1,7 @@
 package com.khu.bbangting.domain.follow.service;
 
+import com.khu.bbangting.domain.image.model.StoreImage;
+import com.khu.bbangting.domain.image.repository.StoreImageRepository;
 import com.khu.bbangting.domain.user.model.User;
 import com.khu.bbangting.domain.user.repository.UserRepository;
 import com.khu.bbangting.domain.follow.dto.FollowDto;
@@ -27,6 +29,7 @@ import java.util.Optional;
 public class FollowService {
 
     private final StoreRepository storeRepository;
+    private final StoreImageRepository storeImageRepository;
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
 
@@ -81,9 +84,14 @@ public class FollowService {
             Store store = storeRepository.findById(follow.getStore().getId())
                     .orElseThrow(() -> new EntityNotFoundException("해당 id의 유저가 존재하지 않습니다."));
 
+            StoreImage storeImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'Y')
+                    .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 스토어의 로고 이미지를 찾을 수 없습니다."));;
+
             StoreInfoDto storeInfoDto = StoreInfoDto.builder()
                     .storeId(store.getId())
-                    .storeName(store.getStoreName()).build();
+                    .storeName(store.getStoreName())
+                    .imgUrl(storeImage.getImageUrl()).build();
+            System.out.println("storeInfoDto.getImgUrl() = " + storeInfoDto.getImgUrl());
 
             followingList.add(storeInfoDto);
         }

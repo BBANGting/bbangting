@@ -163,7 +163,8 @@ public class MyStoreService {
         Store store = storeRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 user가 생성한 스토어가 존재하지 않습니다. userId = " + userId));
 
-        StoreImage storeImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'Y');
+        StoreImage storeImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'Y')
+                .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 스토어의 로고 이미지를 찾을 수 없습니다."));
 
         return MyStoreInfoDto.builder()
                 .storeId(store.getId())

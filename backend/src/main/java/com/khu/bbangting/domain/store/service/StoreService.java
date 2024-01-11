@@ -32,7 +32,8 @@ public class StoreService {
 
         List<StoreInfoDto> storeInfoList = new ArrayList<>();
         for (Store store : storeList) {
-            StoreImage storeImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'Y');
+            StoreImage storeImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'Y')
+                    .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 스토어의 로고 이미지를 찾을 수 없습니다."));;
 
             StoreInfoDto storeInfoDto = StoreInfoDto.builder()
                     .storeId(store.getId())
@@ -56,7 +57,8 @@ public class StoreService {
 
         List<StoreInfoDto> storeRankingList = new ArrayList<>();
         for (Store store : storeList) {
-            StoreImage storeImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'Y');
+            StoreImage storeImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'Y')
+                    .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 스토어의 로고 이미지를 찾을 수 없습니다."));;
 
             StoreInfoDto storeInfoDto = StoreInfoDto.builder()
                     .storeId(store.getId())
@@ -79,7 +81,8 @@ public class StoreService {
 
         List<StoreInfoDto> searchResultList = new ArrayList<>();
         for (Store store : storeList) {
-            StoreImage storeImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'Y');
+            StoreImage storeImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'Y')
+                    .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 스토어의 로고 이미지를 찾을 수 없습니다."));;
 
             StoreInfoDto storeInfoDto = StoreInfoDto.builder()
                     .storeId(store.getId())
@@ -100,8 +103,10 @@ public class StoreService {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 스토어가 존재하지 않습니다. id = " + storeId));
 
-        StoreImage logoImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'Y');
-        StoreImage storeImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'N');
+        StoreImage logoImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'Y')
+                .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 스토어의 로고 이미지를 찾을 수 없습니다."));;
+        StoreImage storeImage = storeImageRepository.findByStoreIdAndLogoImgYn(store.getId(), 'N')
+                .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 스토어의 대표 이미지를 찾을 수 없습니다."));;
 
         return StoreInfoDto.builder()
                 .storeName(store.getStoreName())
